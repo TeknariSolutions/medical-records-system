@@ -1,0 +1,131 @@
+<div class="container-fluid">
+<!--     <app-page-title title="Jobs List" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+ -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+
+                <!--HEADER-->
+                <div class="card-body border-bottom">
+                    <div class="d-flex align-items-center">
+                      <h5 class="mb-0 card-title flex-grow-1">Lista de Usuarios</h5>
+                      <div class="flex-shrink-0 d-flex gap-1">
+                        <button type="menu" class="btn btn-primary" >
+                            <i class="mdi mdi-plus mr-1"></i>
+                            Agregar Usuario
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- FILTRO -->
+                  <div class="card-body border-bottom">
+                    <div class="row g-3">
+                      <div class="col-xxl-4 col-lg-6">
+                        <input type="search" class="form-control" id="searchInput" placeholder="Search for ...">
+                      </div>
+                      <div class="col-xxl-2 col-lg-6">
+                        <select class="form-select" id="idStatus" aria-label="Default select example">
+                          <option value="">Select Status</option>
+                          <option value="Active">Active</option>
+                          <option value="New">New</option>
+                          <option value="Close">Close</option>
+                        </select>
+                      </div>
+                      <div class="col-xxl-2 col-lg-4">
+                        <select class="form-select" id="idType" aria-label="Default select example">
+                          <option value="">Select Type</option>
+                          <option value="Full Time">Full Time</option>
+                          <option value="Part Time">Part Time</option>
+                          <option value="Internship">Internship</option>
+                          <option value="Freelance">Freelance</option>
+                        </select>
+                      </div>
+                      <div class="col-xxl-2 col-lg-4">
+                        <div id="datepicker1">
+                          <input type="text" placeholder="Datepicker" class="form-control " bsDatepicker>
+          
+                        </div><!-- input-group -->
+                      </div>
+                      <div class="col-xxl-2 col-lg-4">
+                        <button type="button" class="btn btn-soft-secondary w-100"><i class="mdi mdi-filter-outline align-middle"></i> Filtrar </button>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <!-- TABLA -->
+                  <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle dt-responsive nowrap w-100 table-check" id="job-list">
+                            <thead>
+                                <tr>
+                                  <th scope="col">IdUser</th>
+                                  <th scope="col">Name</th>
+                                  <th scope="col">SecondName</th>
+                                  <th scope="col">LastName</th>
+                                  <th scope="col">SecondLastName</th>
+                                  <th scope="col">Email</th>
+                                 
+                                  <th scope="col">IdCompany</th>
+                                  <th scope="col">IdRol</th>
+                                  <th scope="col">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+<!--                                 @for(data of lists;track $index){
+ -->                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>Pedro</td>
+                                        <td>Luis</td>
+                                        <td>Ramirez</td>
+                                        <td>Lopez</td>
+                                        <td>pedroramirezgmail.com</td>
+
+                                        <td>CERMI</td>
+                                        <td>Doctor</td>
+                                       
+
+                                        <td>
+                                            <ul class="list-unstyled hstack gap-1 mb-0">
+                                              <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a routerLink="/jobs/details" class="btn btn-sm btn-soft-primary"><i class="mdi mdi-eye-outline"></i></a>
+                                              </li>
+                                              <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-soft-info" ><i class="mdi mdi-pencil-outline"></i></a>
+                                              </li>
+                                              <li data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                                                <a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-sm btn-soft-danger"><i class="mdi mdi-delete-outline"></i></a>
+                                              </li>
+                                            </ul>
+                                          </td>
+
+                                    </tr>
+                               <!--  } -->
+                              </tbody>
+                        </table>
+
+                    </div>
+
+                    <!-- PAGINADOR -->
+                   <!--  @if(joblist?.length > 0){
+                        <div class="row justify-content-between align-items-center">
+                          <div class="col-auto me-auto">
+                            <p class="text-muted mb-0">Showing <b>{{lists?.length}}</b> of <b>{{joblist?.length}}</b> entries</p>
+                          </div>
+                          <div class="col-auto">
+                            <div class="text-md-right float-md-end pagination-rounded">
+                              <ul class="pagination pagination-rounded justify-content-end mb-2">
+                                <pagination [totalItems]="joblist?.length" [itemsPerPage]="8" (pageChanged)="pageChanged($event)"></pagination>
+                              </ul>
+                            </div>
+                          </div>
+                          
+                        </div>
+                    } -->
+                  </div>
+
+            </div>
+        </div>
+    </div>
+</div>
