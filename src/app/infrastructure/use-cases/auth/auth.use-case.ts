@@ -37,6 +37,8 @@ export class AuthUseCase {
 
   logout(): Observable<boolean> {
     localStorage.removeItem("authToken");
+    localStorage.clear();
+    sessionStorage.clear();
     return of(true);
   }
 }

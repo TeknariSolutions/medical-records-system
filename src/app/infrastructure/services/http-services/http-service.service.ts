@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { catchError } from "rxjs/operators";
-import { IHttpService } from "src/app/core/interfaces/http-services/Ihttp.service";
-import { jwtDecode } from "jwt-decode";
-import { Router } from "@angular/router";
-import { ResponseDTO } from "src/app/core/DTOs/common/response/response.dto";
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { IHttpService } from 'src/app/core/interfaces/http-services/Ihttp.service';
+import { jwtDecode } from 'jwt-decode';
+import { Router } from '@angular/router';
+import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
 //import { DmsNotificationsService } from 'dms-front-core/infrastructure/services/notifications';
 //import { NotificationType } from 'dms-front-core/core/enums';
 
@@ -46,9 +46,9 @@ export class HttpService implements IHttpService {
 
   private handleError(error: any): Observable<never> {
     /*  this._notificationsService.openNotification({
-       type: this._notificationType.ERROR,
-       title: 'Error al Ejecutar el Endpoint',
-     }); */
+      type: this._notificationType.ERROR,
+      title: 'Error al Ejecutar el Endpoint',
+    }); */
     throw error;
   }
 
@@ -110,46 +110,15 @@ export class HttpService implements IHttpService {
     return this.performHttpRequest<T>(urlServie, "get", endpoint, params);
   }
 
-  post(
-    urlServie: string,
-    endpoint: string,
-    params?: any,
-    body?: any
-  ): Observable<ResponseDTO> {
-    return this.performHttpRequest<ResponseDTO>(
-      urlServie,
-      "post",
-      endpoint,
-      params,
-      body
-    );
+  post(urlServie: string,endpoint: string,params?: any,body?: any): Observable<ResponseDTO> {
+    return this.performHttpRequest<ResponseDTO>(urlServie,"post",endpoint,params,body);
   }
 
-  put(
-    urlServie: string,
-    endpoint: string,
-    params?: any,
-    body?: any
-  ): Observable<ResponseDTO> {
-    return this.performHttpRequest<ResponseDTO>(
-      urlServie,
-      "put",
-      endpoint,
-      params,
-      body
-    );
+  put(urlServie: string,endpoint: string,params?: any,body?: any): Observable<ResponseDTO> {
+    return this.performHttpRequest<ResponseDTO>(urlServie,"put",endpoint,params,body);
   }
 
-  delete(
-    urlServie: string,
-    endpoint: string,
-    params?: any
-  ): Observable<ResponseDTO> {
-    return this.performHttpRequest<ResponseDTO>(
-      urlServie,
-      "delete",
-      endpoint,
-      params
-    );
+  delete(urlServie: string,endpoint: string,params?: any): Observable<ResponseDTO> {
+    return this.performHttpRequest<ResponseDTO>(urlServie,"delete",endpoint,params);
   }
 }

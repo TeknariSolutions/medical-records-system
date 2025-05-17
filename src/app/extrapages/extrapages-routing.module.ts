@@ -14,7 +14,7 @@ import { Verification2Component } from './verification2/verification2.component'
 import { SteptwoverificationComponent } from './steptwoverification/steptwoverification.component';
 import { Steptwoverification2Component } from './steptwoverification2/steptwoverification2.component';
 import { ComingsoonComponent } from './comingsoon/comingsoon.component';
-import { Login2Component } from '../presentation/account/auth/login2/login2.component';
+
 
 const routes: Routes = [
     {
@@ -32,10 +32,6 @@ const routes: Routes = [
     {
         path: '500',
         component: Page500Component
-    },
-    {
-        path: 'login-2',
-        component: Login2Component
     },
     {
         path: 'lock-screen-1',

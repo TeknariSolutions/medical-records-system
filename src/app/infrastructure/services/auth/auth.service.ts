@@ -24,24 +24,15 @@ export class AuthService {
     );
   } 
 
- /*  login(email: string, password: string): Observable<ResponseDTO> {
-        const params = {
-            email,
-            password
-        };
-        return this._httpService.post("Auth", params);
-    } */
-
-
-
-
   isLoggedIn(): Observable<boolean> {
     const authToken = localStorage.getItem("authToken");
     return of(!!authToken);
   }
 
-  logout() {
+  logout(): Observable<boolean> {
     localStorage.clear();
-    this._router.navigate(["/auth/login"]);
+    sessionStorage.clear();
+    return of(true);
+    
   }
 }

@@ -1,8 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { AuthenticationService } from '../../core/services/auth.service';
-import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { LanguageService } from '../../core/services/language.service';
@@ -14,6 +12,7 @@ import { getLayoutMode } from 'src/app/store/layouts/layout.selector';
 import { RootReducerState } from 'src/app/store';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { SimplebarAngularModule } from 'simplebar-angular';
+import { AuthService } from 'src/app/infrastructure/services/auth/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -23,9 +22,6 @@ import { SimplebarAngularModule } from 'simplebar-angular';
   imports:[CommonModule,TranslateModule,BsDropdownModule,SimplebarAngularModule],
 })
 
-/**
- * Topbar component
- */
 export class TopbarComponent implements OnInit {
   mode: any
   element: any;
@@ -38,11 +34,13 @@ export class TopbarComponent implements OnInit {
   dataLayout$: Observable<string>;
   // Define layoutMode as a property
 
-  constructor(@Inject(DOCUMENT) private document: any, private router: Router, private authService: AuthenticationService,
-    private authFackservice: AuthfakeauthenticationService,
+  constructor(@Inject(DOCUMENT) private document: any, 
+    private router: Router, 
     public languageService: LanguageService,
     public translate: TranslateService,
-    public _cookiesService: CookieService, public store: Store<RootReducerState>) {
+    public _cookiesService: CookieService, public store: Store<RootReducerState>,
+    private _authService: AuthService,
+  ) {
 
   }
 
@@ -84,36 +82,28 @@ export class TopbarComponent implements OnInit {
     this.languageService.setLanguage(lang);
   }
 
-  /**
-   * Toggles the right sidebar
-   */
+  // Toggles the right sidebar
+  
   toggleRightSidebar() {
     this.settingsButtonClicked.emit();
   }
 
-  /**
-   * Toggle the menu bar when having mobile screen
-   */
+  // Toggle the menu bar when having mobile screen
+
   toggleMobileMenu(event: any) {
     event.preventDefault();
     this.mobileMenuButtonClicked.emit();
   }
 
-  /**
-   * Logout the user
-   */
+  // Cerrar Sesión
   logout() {
-    if (environment.defaultauth === 'firebase') {
-      this.authService.logout();
-    } else {
-      this.authFackservice.logout();
-    }
-    this.router.navigate(['/auth/login']);
+    this._authService.logout().subscribe(() => {
+      this.router.navigate(['/auth/login']);
+    });
   }
 
-  /**
-   * Fullscreen method
-   */
+  // Fullscreen method
+   
   fullscreen() {
     document.body.classList.toggle('fullscreen-enable');
     if (
