@@ -9,24 +9,31 @@ import { ConfigService } from "../common/config/config.service";
   providedIn: "root",
 })
 export class AuthService {
-    
-  constructor(private _httpService: HttpService, 
-    private _configService: ConfigService,
-    private _router: Router) {}
 
-/*   login(userName: string, password: string): Observable<ResponseDTO> {
-    const params = { userName, password };
-    
-    return this._httpService.post("", "'auth/login'", params);
-  } */
-    login(username: string, password: string): Observable<ResponseDTO> {
-      return this._configService.getUrl().pipe(
-          switchMap(url => {
-              const body = { username, password };
-              return this._httpService.post(url, "auth/login", null, body);
-          })
-      );
-  }
+  constructor(private _httpService: HttpService,
+    private _configService: ConfigService,
+    private _router: Router) { }
+
+
+  login(email: string, password: string): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        const body = { email, password };
+        return this._httpService.post(url, "Auth", null, body);
+      })
+    );
+  } 
+
+ /*  login(email: string, password: string): Observable<ResponseDTO> {
+        const params = {
+            email,
+            password
+        };
+        return this._httpService.post("Auth", params);
+    } */
+
+
+
 
   isLoggedIn(): Observable<boolean> {
     const authToken = localStorage.getItem("authToken");

@@ -1,28 +1,28 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { IHttpService } from 'src/app/core/interfaces/http-services/Ihttp.service';
-import { jwtDecode } from 'jwt-decode';
-import { Router } from '@angular/router';
-import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { IHttpService } from "src/app/core/interfaces/http-services/Ihttp.service";
+import { jwtDecode } from "jwt-decode";
+import { Router } from "@angular/router";
+import { ResponseDTO } from "src/app/core/DTOs/common/response/response.dto";
 //import { DmsNotificationsService } from 'dms-front-core/infrastructure/services/notifications';
 //import { NotificationType } from 'dms-front-core/core/enums';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class HttpService implements IHttpService {
   //_notificationType = NotificationType;
 
   constructor(
     private httpClient: HttpClient,
-    private _router: Router,
-    //private _notificationsService: DmsNotificationsService
-  ) {}
+    private _router: Router
+  ) //private _notificationsService: DmsNotificationsService
+  {}
 
   private addJwtTokenHeader(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
 
     if (!token) {
       return new HttpHeaders();
@@ -33,7 +33,7 @@ export class HttpService implements IHttpService {
       const currentTime = Date.now() / 1000;
       if (decoded.exp < currentTime) {
         localStorage.clear();
-        this._router.navigate(['auth/login']);
+        this._router.navigate(["auth/login"]);
       }
 
       return new HttpHeaders({
@@ -45,16 +45,16 @@ export class HttpService implements IHttpService {
   }
 
   private handleError(error: any): Observable<never> {
-   /*  this._notificationsService.openNotification({
-      type: this._notificationType.ERROR,
-      title: 'Error al Ejecutar el Endpoint',
-    }); */
+    /*  this._notificationsService.openNotification({
+       type: this._notificationType.ERROR,
+       title: 'Error al Ejecutar el Endpoint',
+     }); */
     throw error;
-  } 
+  }
 
   private buildUrl(urlServie: string, endpoint: string, params?: any): string {
     let url = `${urlServie}/${endpoint}`;
-    if (params && typeof params === 'object') {
+    if (params && typeof params === "object") {
       const isSingleValue = !(params.constructor === Object);
       const queryParams = new HttpParams({
         fromObject: isSingleValue ? { value: params } : params,
@@ -66,7 +66,7 @@ export class HttpService implements IHttpService {
 
   private performHttpRequest<T>(
     urlServie: string,
-    method: 'get' | 'post' | 'put' | 'delete',
+    method: "get" | "post" | "put" | "delete",
     endpoint: string,
     params?: any,
     body?: any
@@ -76,40 +76,38 @@ export class HttpService implements IHttpService {
       let httpCall: Observable<T>;
 
       switch (method) {
-        case 'get':
+        case "get":
           httpCall = this.httpClient.get<T>(url, {
             headers: this.addJwtTokenHeader(),
           });
           break;
-        case 'post':
+        case "post":
           httpCall = this.httpClient.post<T>(url, body, {
             headers: this.addJwtTokenHeader(),
           });
           break;
-        case 'put':
+        case "put":
           httpCall = this.httpClient.put<T>(url, body, {
             headers: this.addJwtTokenHeader(),
           });
           break;
-        case 'delete':
+        case "delete":
           httpCall = this.httpClient.delete<T>(url, {
             headers: this.addJwtTokenHeader(),
           });
           break;
       }
 
-      httpCall
-        .pipe(catchError(this.handleError.bind(this)))
-        .subscribe({
-          next: (response) => observer.next(response),
-          error: (err) => observer.error(err),
-          complete: () => observer.complete(),
-        });
+      httpCall.pipe(catchError(this.handleError.bind(this))).subscribe({
+        next: (response) => observer.next(response),
+        error: (err) => observer.error(err),
+        complete: () => observer.complete(),
+      });
     });
   }
 
   get<T>(urlServie: string, endpoint: string, params?: any): Observable<T> {
-    return this.performHttpRequest<T>(urlServie, 'get', endpoint, params);
+    return this.performHttpRequest<T>(urlServie, "get", endpoint, params);
   }
 
   post(
@@ -120,7 +118,7 @@ export class HttpService implements IHttpService {
   ): Observable<ResponseDTO> {
     return this.performHttpRequest<ResponseDTO>(
       urlServie,
-      'post',
+      "post",
       endpoint,
       params,
       body
@@ -135,7 +133,7 @@ export class HttpService implements IHttpService {
   ): Observable<ResponseDTO> {
     return this.performHttpRequest<ResponseDTO>(
       urlServie,
-      'put',
+      "put",
       endpoint,
       params,
       body
@@ -149,7 +147,7 @@ export class HttpService implements IHttpService {
   ): Observable<ResponseDTO> {
     return this.performHttpRequest<ResponseDTO>(
       urlServie,
-      'delete',
+      "delete",
       endpoint,
       params
     );
