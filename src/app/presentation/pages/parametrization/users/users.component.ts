@@ -5,6 +5,7 @@ import { UserDTO } from 'src/app/core/DTOs/app/user.dto';
 import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
 import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
 import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-case';
+import { CreateUpdateUserComponent } from './create-update-user/create-update-user.component';
 
 @Component({
   selector: 'app-users',
@@ -19,7 +20,7 @@ export class UsersComponent implements OnInit  {
 
    constructor(
     private router: Router,
-    private _phoneBookUseCase: UsersUseCase,
+    private _userUseCase: UsersUseCase,
     private modalService: BsModalService
    ) {}
 
@@ -35,12 +36,26 @@ export class UsersComponent implements OnInit  {
       pageSize: 1000
     };
 
-    this._phoneBookUseCase.GetListUsers(paginator, '').subscribe({
+    this._userUseCase.GetListUsers(paginator, '').subscribe({
       next: (data: TableResultDTO) => {
         this.users = data.results;
         this.isLoading = false;
       }
     });
+  }
+
+  openUserModal() {
+    this.modalRef = this.modalService.show(CreateUpdateUserComponent, {
+      initialState: {
+      },
+      class: 'modal-lg'
+    });
+
+    this.modalRef.content.onClose = (result: any) => {
+      if (result === 'refresh') {
+        this.loadUsers(); 
+      }
+    };
   }
 
 }
