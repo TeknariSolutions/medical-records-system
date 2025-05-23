@@ -4,15 +4,75 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">{{userData ? 'Actualizar Usuario' : 'Crear Usuario'}}</h4>
+                    <h4 class="mb-5">{{userData ? 'Actualizar Usuario' : 'Crear Usuario'}}</h4>
                     <form class="mt-4" [formGroup]="userForm" (ngSubmit)="onSubmit()">
                         <div class="row mb-3">
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Nombre<span
+                                    <label for="name" class="form-label">Correo<span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="name" formControlName="phoneBookName">
+                                        <input type="email" class="form-control" id="email" formControlName="email">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Contraseña<span
+                                            class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="email" formControlName="password">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">
+                                        Primer Nombre
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="name" formControlName="name">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">
+                                        Segundo Nombre
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="secondName" formControlName="secondName">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">
+                                        Primer Apellido
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="lastName" formControlName="lastName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">
+                                        Segundo Apellido
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="secondLastName" formControlName="secondLastName">
                                     </div>
                                 </div>
                             </div>

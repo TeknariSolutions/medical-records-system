@@ -5,8 +5,11 @@ export interface UserDTO {
   idCompany: 0,
   idRol: number;
   name: string;
-  secondName: string;
+  secondName?: string;
   lastName: string;
-  secondLastName: string;
+  secondLastName?: string;
   isActive: boolean;
+  roleDescription?: string;
 }
+
+

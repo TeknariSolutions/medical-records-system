@@ -43,12 +43,12 @@ export class CreateUpdateUserComponent implements OnInit {
       email: ['', [Validators.required]],
       password: ['', [Validators.required]],
       idCompany: 1,
-      idRol: [0, [Validators.required]],
+      idRol: 1,
       name: ['', [Validators.required]],
-      secondName: ['', [Validators.required]],
+      secondName: [''],
       lastName: ['', [Validators.required]],
-      secondLastName: ['', [Validators.required]],
-      isActive: ['', [Validators.required]],
+      secondLastName: [''],
+      isActive: true
     });
   }
 
@@ -76,7 +76,7 @@ export class CreateUpdateUserComponent implements OnInit {
         secondName,
         lastName,
         secondLastName,
-        isActive
+        isActive,
       };
 
       const operation = this.isEditMode

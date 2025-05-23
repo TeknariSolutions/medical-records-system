@@ -1,3 +1,9 @@
+<!-- Loading State -->
+@if(isLoading) {
+<app-loading message="Cargando Usuarios"></app-loading>
+}
+
+
 <div class="container-fluid">
   <!-- Breadcrumb -->
   <div class="row">
@@ -93,6 +99,7 @@
                   <th scope="col">Correo</th>
                   <th scope="col">Nombre</th>
                   <th scope="col">Activo</th>
+                  <th scope="col">Rol</th>
                   <th scope="col" class="align-middle text-center" style="width: 10%;">
                     Acciones
                   </th>
@@ -104,6 +111,7 @@
                   <td>{{ data.email }}</td>
                   <td>{{ data.name }} {{ data.secondName }} {{ data.lastName }} {{ data.secondLastName }}</td>
                   <td>{{ data.isActive }}</td>
+                  <td>{{ data.roleDescription }}</td>
 
                   <!-- Actions -->
                   <td class="d-flex justify-content-end">

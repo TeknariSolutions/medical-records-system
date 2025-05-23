@@ -6,8 +6,14 @@ import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
 import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
 import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-case';
 import { CreateUpdateUserComponent } from './create-update-user/create-update-user.component';
+import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
+
 
 @Component({
+   standalone: true,
+  imports: [
+    LoadingComponent
+  ],
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
