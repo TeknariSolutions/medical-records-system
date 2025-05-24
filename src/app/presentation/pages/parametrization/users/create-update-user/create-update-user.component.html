@@ -61,8 +61,9 @@
                                         [ngClass]="{ 'is-invalid': submitted && userForm.get('idRol')?.invalid }">
                                     </ng-select>
                                     <div class="invalid-feedback" *ngIf="submitted && userForm.get('idRol')?.errors">
-                                        <span *ngIf="userForm.get('idRol')?.errors['required']">Este campo es
-                                            obligatorio.</span>
+                                        <span *ngIf="userForm.get('idRol')?.errors['required']">
+                                            Este campo es obligatorio.
+                                        </span>
                                     </div>
                                 </div>
 
