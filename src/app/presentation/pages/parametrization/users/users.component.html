@@ -3,7 +3,6 @@
 <app-loading message="Cargando Usuarios"></app-loading>
 }
 
-
 <div class="container-fluid">
   <!-- Breadcrumb -->
   <div class="row">
@@ -72,10 +71,6 @@
               Lista de Usuarios
             </h4>
             <div class="flex-shrink-0 d-flex gap-1">
-              <!-- <button type="menu" class="btn btn-primary" (click)="openUserModal()">
-                <i class="mdi mdi-plus mr-1"></i>
-                Nuevo Usuario
-              </button> -->
               <button type="menu" class="btn btn-primary" (click)="openUserModal()">
                 <i class="mdi mdi-plus mr-1"></i>
                 Nuevo Usuario
@@ -110,33 +105,26 @@
                 <tr>
                   <td>{{ data.email }}</td>
                   <td>{{ data.name }} {{ data.secondName }} {{ data.lastName }} {{ data.secondLastName }}</td>
-                  <td>{{ data.isActive }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{'badge-soft-success': data.isActive === true,'badge-soft-danger': data.isActive === false}">
+                      {{ data.isActive ? 'ACTIVO' : 'INACTIVO' }}
+                    </span>
+                  </td> 
+        
                   <td>{{ data.roleDescription }}</td>
 
                   <!-- Actions -->
                   <td class="d-flex justify-content-end">
 
                     <ul class="list-unstyled hstack gap-1 mb-0">
-                     <!--  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
-                        <button class="btn btn-sm btn-soft-info" (click)="editPhoneBook(data)">
-                          <i class="mdi mdi-pencil-outline"></i>
-                        </button>
-                      </li>
-
-                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
-                        <button class="btn btn-sm btn-soft-danger" (click)="deletePhoneBook(data.idPhoneBook)">
-                          <i class="mdi mdi-delete-outline"></i>
-                        </button>
-                      </li> -->
-
                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
-                        <button class="btn btn-sm btn-soft-info">
+                        <button class="btn btn-sm btn-soft-info" (click)="editUser(data)">
                           <i class="mdi mdi-pencil-outline"></i>
                         </button>
                       </li>
 
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
-                        <button class="btn btn-sm btn-soft-danger">
+                        <button class="btn btn-sm btn-soft-danger" (click)="deleteUser(data.idUser)">
                           <i class="mdi mdi-delete-outline"></i>
                         </button>
                       </li>

@@ -1,7 +1,7 @@
 export interface UserDTO {
   idUser: number;
   email: string;
-  password: string;
+  password?: string;
   idCompany: 0,
   idRol: number;
   name: string;

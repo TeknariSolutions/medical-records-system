@@ -7,11 +7,14 @@ import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-resu
 import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-case';
 import { CreateUpdateUserComponent } from './create-update-user/create-update-user.component';
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
+import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
+import { NgClass } from '@angular/common';
 
 
 @Component({
    standalone: true,
   imports: [
+    NgClass,
     LoadingComponent
   ],
   selector: 'app-users',
@@ -27,7 +30,8 @@ export class UsersComponent implements OnInit  {
    constructor(
     private router: Router,
     private _userUseCase: UsersUseCase,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private _notificationService: NotificationsService
    ) {}
 
 
@@ -63,5 +67,34 @@ export class UsersComponent implements OnInit  {
       }
     };
   }
+
+   editUser(user: UserDTO): void {
+    const initialState = {
+      userData: user,
+      onClose: (result: string) => {
+        if (result === 'refresh') {
+          this.loadUsers(); 
+        }
+      }
+    };
+    this.modalRef = this.modalService.show(CreateUpdateUserComponent, { initialState, class: 'modal-lg'  });
+  }
+
+  deleteUser(idUser: number): void {
+    this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
+        if (confirmed) {
+          this.isLoading = true;
+          this._userUseCase.DeleteUser(idUser).subscribe({
+            next: () => {
+              this.loadUsers();
+              this.isLoading = false;
+            },
+            error: () => {
+              this.isLoading = false;
+            }
+          });
+        }
+      });
+  } 
 
 }

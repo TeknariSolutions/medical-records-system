@@ -1,5 +1,4 @@
 <div class="container-fluid">
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -7,72 +6,145 @@
                     <h4 class="mb-5">{{userData ? 'Actualizar Usuario' : 'Crear Usuario'}}</h4>
                     <form class="mt-4" [formGroup]="userForm" (ngSubmit)="onSubmit()">
                         <div class="row mb-3">
+                            <!-- Correo-->
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Correo<span
+                                    <label for="email" class="form-label">Correo <span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="email" class="form-control" id="email" formControlName="email">
+                                        <input type="email" class="form-control" id="email" formControlName="email"
+                                            [ngClass]="{ 'is-invalid': submitted && userForm.get('email')?.invalid }" />
+                                        <div class="invalid-feedback"
+                                            *ngIf="submitted && userForm.get('email')?.errors">
+                                            @if(userForm.get('email')?.errors['required']) {
+                                            <span>Este campo es obligatorio.</span>
+                                            }
+                                            @if(userForm.get('email')?.errors['email']) {
+                                            <span>Debe ser un correo electrónico válido.</span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Contraseña-->
+                            @if(!userData) {
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Contraseña<span
-                                            class="text-danger">*</span></label>
+                                    <label for="email" class="form-label">
+                                        Contraseña
+                                        <span class="text-danger">*</span>
+                                    </label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="email" formControlName="password">
+                                        <input type="text" class="form-control" id="password" formControlName="password"
+                                            [ngClass]="{ 'is-invalid': submitted && userForm.get('password')?.invalid }" />
+                                        <div class="invalid-feedback"
+                                            *ngIf="submitted && userForm.get('password')?.errors">
+                                            @if(userForm.get('password')?.errors['required']) {
+                                            <span>Este campo es obligatorio.</span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            }
+
+                            <!--Rol-->
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="idRol" class="form-label">
+                                        Rol 
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <ng-select [items]="roles" bindLabel="description" bindValue="idRol"
+                                        formControlName="idRol" placeholder="Selecciona un rol"
+                                        [ngClass]="{ 'is-invalid': submitted && userForm.get('idRol')?.invalid }">
+                                    </ng-select>
+                                    <div class="invalid-feedback" *ngIf="submitted && userForm.get('idRol')?.errors">
+                                        <span *ngIf="userForm.get('idRol')?.errors['required']">Este campo es
+                                            obligatorio.</span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
                         <div class="row mb-3">
+                            <!--Primer Nombre-->
                             <div class="col-12 col-lg-6">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">
+                                    <label for="email" class="form-label">
                                         Primer Nombre
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="name" formControlName="name">
+                                        <input type="text" class="form-control" id="name" formControlName="name"
+                                            [ngClass]="{ 'is-invalid': submitted && userForm.get('name')?.invalid }" />
+                                        <div class="invalid-feedback" *ngIf="submitted && userForm.get('name')?.errors">
+                                            @if(userForm.get('name')?.errors['required']) {
+                                            <span>Este campo es obligatorio.</span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!--Segundo Nombre-->
                             <div class="col-12 col-lg-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">
                                         Segundo Nombre
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="secondName" formControlName="secondName">
+                                        <input type="text" class="form-control" id="secondName"
+                                            formControlName="secondName">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!--Primer Nombre-->
                         <div class="row mb-3">
                             <div class="col-12 col-lg-6">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">
+                                    <label for="email" class="form-label">
                                         Primer Apellido
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="lastName" formControlName="lastName">
+                                        <input type="text" class="form-control" id="lastName" formControlName="lastName"
+                                            [ngClass]="{ 'is-invalid': submitted && userForm.get('name')?.invalid }" />
+                                        <div class="invalid-feedback"
+                                            *ngIf="submitted && userForm.get('lastName')?.errors">
+                                            @if(userForm.get('lastName')?.errors['required']) {
+                                            <span>Este campo es obligatorio.</span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!--Segundo Apellido-->
                             <div class="col-12 col-lg-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">
                                         Segundo Apellido
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="secondLastName" formControlName="secondLastName">
+                                        <input type="text" class="form-control" id="secondLastName"
+                                            formControlName="secondLastName">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <div class="form-check form-switch form-switch-lg mb-3">
+                                        <input class="form-check-input" type="checkbox" id="SwitchCheckSizelg"
+                                            formControlName="isActive" checked disabled>
+                                        <label class="form-check-label" for="SwitchCheckSizelg">
+                                            Está Activo
+                                        </label>
                                     </div>
                                 </div>
                             </div>
