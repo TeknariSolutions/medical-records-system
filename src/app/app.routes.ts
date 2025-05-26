@@ -28,11 +28,11 @@ export const routes: Routes = [
             import("./../app/presentation/pages/parametrization/parametrization.module").then((m) => m.ParametrizationModule),
         canActivate: [AuthGuard],
     }, */
-    {
+   /*  {
         path: "pages",
         loadChildren: () =>
             import("./extrapages/extrapages.module").then((m) => m.ExtrapagesModule),
-    },
+    }, */
    
     { path: "**", component: Page404Component },
 ];

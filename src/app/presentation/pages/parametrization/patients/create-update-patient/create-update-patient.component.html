@@ -1,0 +1,369 @@
+<!-- Loading State -->
+<!-- @if(isLoading) {
+<app-loading message="Cargando Pacientes"></app-loading>
+} -->
+
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex align-items-center justify-content-between">
+        <h4 class="mb-0">Parametrización</h4>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+              <a href="javascript: void(0);">Pacientes</a>
+            </li>
+            <li class="breadcrumb-item active">Formulario de Pacientes</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mt-2 mb-4 title">Crear Paciente</h4>
+
+                    <form class="mt-4">
+                        
+                        <div id="basic-example">
+                            <ng-stepper #cdkStepper [linear]="true" class="wizard">
+
+                            <cdk-step [optional]="false">
+                                <ng-template cdkStepLabel>
+                                <span class="number">1</span>
+                                <span>Datos personales</span>
+                                </ng-template>
+                                @if(cdkStepper.selectedIndex === 0){
+                                    <section>
+                                        <div class="row mb-3">
+                                            <!-- Primer Nombre-->
+                                            <div class="col-12 col-lg-6 col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="text" class="form-label">Primer Nombre<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Segundo Nombre-->
+                                            <div class="col-12 col-lg-6 col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="email" class="form-label">Segundo Nombre<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="email" class="form-control" id="email"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <!-- Primer Apellido-->
+                                            <div class="col-12 col-lg-6 col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="text" class="form-label">Primer Apellido<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Segundo Apellido-->
+                                            <div class="col-12 col-lg-6 col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="text" class="form-label">Segundo Apellido<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <!-- Tipo de Documento-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="documentType" class="form-label">
+                                                        Tipo de Documento
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <select id="documentType" name="documentType" class="form-control">
+                                                        <option value="CC">Cédula de Ciudadanía</option>
+                                                        <option value="TI">Tarjeta de Identidad</option>
+                                                        <option value="CE">Cédula de Extranjería</option>
+                                                    </select>          
+                                                </div>
+                                            </div>
+
+                                            <!-- Documento-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="text" class="form-label">Documento<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" id="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Fecha de Nacimiento-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="email" class="form-label">Fecha de Nacimiento<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="date" class="form-control" id="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <!-- Sexo-->
+                                            <div class="col-12 col-lg-6 col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="sex" class="form-label">
+                                                        Sexo
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <select id="sex" name="sex" class="form-control">
+                                                        <option value="M">Masculino</option>
+                                                        <option value="F">Femenino</option>
+                                                        <option value="O">Otro</option>
+                                                    </select>          
+                                                </div>
+                                            </div>
+
+                                            <!--Estado Civil-->
+                                            <div class="col-12 col-lg-6 col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="maritalStatus" class="form-label">
+                                                        Estado Civil
+                                                        <span class="text-danger">*</span></label>
+                                                    <select id="maritalStatus" name="maritalStatus" class="form-control">
+                                                        <option value="soltero">Soltero</option>
+                                                        <option value="casado">Casado</option>
+                                                        <option value="union">Unión libre</option>
+                                                        <option value="divorciado">Divorciado</option>
+                                                    </select> 
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                            <li class="previous list-inline-item" aria-disabled="true">
+                                                <button class="btn btn-light"
+                                                    cdkStepperPrevious>Anterior</button>
+                                                </li>
+                                            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>
+                                                Siguiente
+                                            </button>
+                                            </li>
+                                        </ul>
+                                    </section>
+                                }
+                            </cdk-step>
+
+                            <cdk-step [optional]="true">
+                                <ng-template cdkStepLabel>
+                                <span class="number">2</span>
+                                <span>Información de Contacto</span>
+                                </ng-template>
+                                @if(cdkStepper.selectedIndex === 1){
+                                    <section>
+                                        <div class="row mb-3">
+                                            <!--Dirección-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="address" class="form-label">
+                                                        Dirección
+                                                        <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="address"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!--Departamento-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="residenceDepartment" class="form-label">
+                                                        Departamento
+                                                        <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="residenceDepartment"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!--Ciudad-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="city" class="form-label">
+                                                        Ciudad
+                                                        <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="city"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <!--Teléfono-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="phoneNumber" class="form-label">
+                                                        Teléfono
+                                                        <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="phoneNumber"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!--Teléfono Alternativo-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="phoneNumber2" class="form-label">
+                                                        Teléfono Alternativo
+                                                        <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="phoneNumber2"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!--Correo-->
+                                            <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="email" class="form-label">
+                                                        Correo
+                                                        <span class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="email" class="form-control" id="email"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                        <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light" cdkStepperPrevious>Anterior</button></li>
+                                            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>Siguiente</button></li>
+                                        </ul>
+                                    </section>
+                                }
+                            </cdk-step>
+
+                            <cdk-step [optional]="true">
+                                <ng-template cdkStepLabel>
+                                <span class="number">3.</span>
+                                <span>Bank Details</span>
+                                </ng-template>
+                                @if(cdkStepper.selectedIndex === 2){
+                                <section>
+                                <div>
+                                    <form>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="basicpill-namecard-input">Name on Card</label>
+                                            <input type="text" class="form-control" id="basicpill-namecard-input">
+                                        </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label>Credit Card Type</label>
+                                            <select class="form-select">
+                                            <option selected>Select Card Type</option>
+                                            <option value="AE">American Express</option>
+                                            <option value="VI">Visa</option>
+                                            <option value="MC">MasterCard</option>
+                                            <option value="DI">Discover</option>
+                                            </select>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="basicpill-cardno-input">Credit Card Number</label>
+                                            <input type="text" class="form-control" id="basicpill-cardno-input">
+                                        </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="basicpill-card-verification-input">Card Verification Number</label>
+                                            <input type="text" class="form-control" id="basicpill-card-verification-input">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="basicpill-expiration-input">Expiration Date</label>
+                                            <input type="text" class="form-control" id="basicpill-expiration-input">
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                    </form>
+                                </div>
+
+                                <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                    <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>Previous</button></li>
+                                    <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>Next</button></li>
+                                </ul>
+                                </section>}
+                            </cdk-step>
+
+                            <cdk-step [optional]="true">
+                                <ng-template cdkStepLabel>
+                                <span class="number">4.</span>
+                                <span>Confirm Detail</span>
+                                </ng-template>
+                                @if(cdkStepper.selectedIndex === 3){
+                                <section>
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-6">
+                                    <div class="text-center">
+                                        <div class="mb-4">
+                                        <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                                        </div>
+                                        <div>
+                                        <h5>Confirm Detail</h5>
+                                        <p class="text-muted">If several languages coalesce, the grammar of the resulting</p>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                    <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary" cdkStepperPrevious>Previous</button></li>
+                                    <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>Finish</button></li>
+                                </ul>
+                                </section>
+                                }
+                            </cdk-step>
+
+                            </ng-stepper>
+                        </div>
+
+                        
+                   </form> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,142 @@
+<!-- Loading State -->
+@if(isLoading) {
+<app-loading message="Cargando Pacientes"></app-loading>
+}
+
+<div class="container-fluid">
+  <!-- Breadcrumb -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex align-items-center justify-content-between">
+        <h4 class="mb-0">Parametrización</h4>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+              <a href="javascript: void(0);">Pacientes</a>
+            </li>
+            <li class="breadcrumb-item active">Lista de Pacientes</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mt-1 mb-1">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bx bx-search-alt-2"></i>
+                  </span>
+                  <input type="text" class="form-control" id="name" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 d-flex justify-content-end align-items-center gap-3">
+              <div class="mb-0">
+                <button type="button" class="btn btn-light px-5">
+                  <i class="bx bx-x me-1"></i> 
+                  Cancelar
+                </button>
+              </div>
+
+              <div class="mb-0">
+                <button type="button" class="btn btn-success px-5">
+                  <i class="bx bx-search-alt-2"></i>
+                  Filtrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Table -->
+  <div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-4">
+                    <h4 class="mb-0 card-title flex-grow-1">
+                        Lista de Pacientes
+                    </h4>
+                    <div class="flex-shrink-0 d-flex gap-1">
+                        <button type="menu" class="btn btn-primary" (click)="createPatient()">
+                            <i class="mdi mdi-plus mr-1"></i>
+                            Nuevo Paciente
+                        </button>
+                    </div>
+                </div>
+
+                <!-- No Data -->
+                @if(!isLoading && patients.length === 0) {
+                <div class="no-data-container d-flex justify-content-center ">
+                    <p>No hay datos disponibles</p>
+                </div>
+                }
+
+                <!-- Table with data -->
+                @if(!isLoading && patients.length > 0) {
+                    <table class="table table-centered table-nowrap mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Documento</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">EPS</th>
+                                <th scope="col">Telefono</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col" class="align-middle text-center" style="width: 10%;">
+                                    Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(data of patients; track $index){
+                                <tr>
+                                    <td>{{ data.nameUser }} {{ data.lastNameUser }}</td>
+                                    <td>{{ data.idDocument }}</td>
+                                    <td>{{ data.documentType }}</td>
+                                    <td>{{ data.idEps }}</td>
+                                    <td>{{ data.phoneNumber }}</td>
+                                    <td>{{ data.email }}</td>
+
+                                    <!-- Actions -->
+                                    <td class="d-flex justify-content-end">
+                                    
+                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                                <button class="btn btn-sm btn-soft-info">
+                                                    <i class="mdi mdi-pencil-outline"></i>
+                                                </button>
+                                            </li>
+                                    
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                                                <button class="btn btn-sm btn-soft-danger" (click)="deletePatient(data.idPatient)">
+                                                    <i class="mdi mdi-delete-outline"></i>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                }
+
+            </div>
+        </div>
+    </div>
+  </div>
+
+</div>

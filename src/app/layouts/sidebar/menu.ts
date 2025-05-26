@@ -3,17 +3,17 @@ import { MenuItem } from './menu.model';
 export const MENU: MenuItem[] = [
     {
         id: 1,
-        label: 'MENUITEMS.MENU.TEXT',
+        label: 'Menú',
         isTitle: true
     },
     {
         id: 2,
-        label: 'MENUITEMS.DASHBOARDS.TEXT',
+        label: 'Dashboard',
         icon: 'bx-home-circle',
         subItems: [
             {
                 id: 3,
-                label: 'MENUITEMS.DASHBOARDS.LIST.DEFAULT',
+                label: 'Lista',
                 link: '/dashboard',
                 parentId: 2
             }
@@ -21,18 +21,24 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 2,
-        label: 'MENUITEMS.PARAMETRIZATION.TEXT',
+        label: 'Parametrización',
         isTitle: true
     },
     {
         id: 2,
-        label: 'MENUITEMS.PARAMETRIZATION.TEXT',
+        label: 'Parametrización',
         icon: 'bx-home-circle',
         subItems: [
             {
                 id: 3,
-                label: 'MENUITEMS.PARAMETRIZATION.LIST.USERS',
+                label: 'Usuarios',
                 link: '/parametrization/users',
+                parentId: 2
+            },
+            {
+                id: 3,
+                label: 'Pacientes',
+                link: '/parametrization/patients',
                 parentId: 2
             }
         ]
