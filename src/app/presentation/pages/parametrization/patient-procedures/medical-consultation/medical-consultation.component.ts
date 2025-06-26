@@ -1,0 +1,95 @@
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
+import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
+import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
+import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
+import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
+import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
+import { CreateUpdateMedicalConsultationComponent } from './create-update-medical-consultation/create-update-medical-consultation.component';
+
+@Component({
+  selector: 'app-medical-consultation',
+  templateUrl: './medical-consultation.component.html',
+  styleUrl: './medical-consultation.component.scss',
+  standalone: true,
+  imports: [
+    CommonModule,
+    LoadingComponent,
+    CreateUpdateMedicalConsultationComponent
+  ]
+})
+export class MedicalConsultationComponent implements OnInit {
+
+  @Input() idPatient!: number;
+  @Output() createNewConsultation = new EventEmitter<void>();
+
+  consults: MedicalConsultationDTO[] = [];
+  isLoading: boolean = false;
+
+  currentPage: number = 1;
+  pageSize: number = 10;
+  pageSizeOptions = [5, 10, 25, 100];
+  totalRecords: number = 0;
+
+  showForm: boolean = false;
+
+  constructor(
+    private router: Router,
+    private _medicalConsultationUseCase: MedicalConsultationUseCase,
+    private _notificationService: NotificationsService
+  ) { }
+
+  ngOnInit(): void {
+    if (this.idPatient) {
+      console.log(this.idPatient)
+
+      this.loadConsults();
+    }
+  }
+
+  loadConsults() {
+    this.isLoading = true;
+
+    const paginatorDTO: PaginatorDTO = {
+      pageIndex: this.currentPage,
+      pageSize: this.pageSize,
+    };
+
+    this._medicalConsultationUseCase.GetListMedicalConsultationByIdPatient(paginatorDTO, this.idPatient).subscribe({
+      next: (data: TableResultDTO) => {
+        this.consults = data.results;
+        this.totalRecords = data.totalRecords;
+        this.isLoading = false;
+
+        console.log(this.consults)
+      }
+    });
+  }
+
+  onNewConsultationClick() {
+    this.showForm = true;
+    this.createNewConsultation.emit();
+  }
+
+  onBackToList() {
+    this.showForm = false;
+    this.loadConsults(); // Opcional: recargar si se acaba de crear algo
+  }
+
+  selectedConsultation?: MedicalConsultationDTO;
+
+  onEditConsultation(consultation: MedicalConsultationDTO) {
+    this.selectedConsultation = consultation;
+    this.showForm = true;
+  }
+  
+
+
+
+
+
+
+
+}

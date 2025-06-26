@@ -13,6 +13,7 @@ import { RootReducerState } from 'src/app/store';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { AuthService } from 'src/app/infrastructure/services/auth/auth.service';
+import { JwtDecoderHelper } from 'src/app/infrastructure/helpers/decodec-token.helper';
 
 @Component({
   selector: 'app-topbar',
@@ -38,24 +39,19 @@ export class TopbarComponent implements OnInit {
     private router: Router, 
     public languageService: LanguageService,
     public translate: TranslateService,
-    public _cookiesService: CookieService, public store: Store<RootReducerState>,
+    public _cookiesService: CookieService, 
+    public store: Store<RootReducerState>,
     private _authService: AuthService,
-  ) {
-
-  }
-
-  listLang: any = [
-    { text: 'English', flag: 'assets/images/flags/us.jpg', lang: 'en' },
-    { text: 'Spanish', flag: 'assets/images/flags/spain.jpg', lang: 'es' },
-    { text: 'German', flag: 'assets/images/flags/germany.jpg', lang: 'de' },
-    { text: 'Italian', flag: 'assets/images/flags/italy.jpg', lang: 'it' },
-    { text: 'Russian', flag: 'assets/images/flags/russia.jpg', lang: 'ru' },
-  ];
+    private jwtHelper: JwtDecoderHelper 
+  ) {}
 
   openMobileMenu: boolean;
 
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
+
+  name: string = '';
+  lastName: string = '';
 
   ngOnInit() {
     // this.initialAppState = initialState;
@@ -66,21 +62,21 @@ export class TopbarComponent implements OnInit {
     this.element = document.documentElement;
 
     this.cookieValue = this._cookiesService.get('lang');
-    const val = this.listLang.filter(x => x.lang === this.cookieValue);
-    this.countryName = val.map(element => element.text);
-    if (val.length === 0) {
-      if (this.flagvalue === undefined) { this.valueset = 'assets/images/flags/us.jpg'; }
-    } else {
-      this.flagvalue = val.map(element => element.flag);
-    }
-  }
 
-  setLanguage(text: string, lang: string, flag: string) {
-    this.countryName = text;
-    this.flagvalue = flag;
-    this.cookieValue = lang;
-    this.languageService.setLanguage(lang);
-  }
+    // ✅ Leer token desde localStorage
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+      const decoded = this.jwtHelper.getDecodedAccessToken(token);
+      if (decoded) {
+        this.name = decoded.Name?.trim() || '';
+        this.lastName = decoded.LastName?.trim() || '';
+      }
+    }
+  } 
+
+
+
 
   // Toggles the right sidebar
   

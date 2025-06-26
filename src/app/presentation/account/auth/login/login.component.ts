@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from 'src/app/infrastructure/services/auth/auth.service';
+import { AuthUseCase } from 'src/app/infrastructure/use-cases/auth/auth.use-case';
+import { AlertModule } from 'ngx-bootstrap/alert';
 import { JwtDecoderHelper } from 'src/app/infrastructure/helpers/decodec-token.helper';
-import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
 
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AlertModule
+  ],
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  standalone:true,
-  imports:[CommonModule,FormsModule,ReactiveFormsModule]
+  styleUrls: ['./login.component.scss']
 })
 
 export class LoginComponent implements OnInit {
@@ -23,43 +28,69 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   fieldTextType!: boolean;
 
-
   year: number = new Date().getFullYear();
+
+  loginFailed = false;
+  loading = false;
 
   constructor(
     private formBuilder: FormBuilder,
-    private _authService: AuthService,
-    private _jwtDecoderHelper: JwtDecoderHelper,
-     private route: ActivatedRoute,
-    private router: Router, 
-  )
-     { }
+    private _authUseCase: AuthUseCase,
+    private router: Router,
+    private jwtHelper: JwtDecoderHelper
+  ) { }
 
   ngOnInit() {
+    this.initForm();
+  }
+
+  private initForm(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }
 
   get f() { return this.loginForm.controls; }
 
- 
-  onSubmit() {
+    onSubmit() {
     this.submitted = true;
-  
-    this._authService.login(this.loginForm.controls['email'].value, this.loginForm.controls['password'].value).subscribe((response: ResponseDTO) => {
-    this.router.navigate(['/']);
+    this.loginFailed = false;
 
-      if (response.isSuccess) {
-        const authToken = response.data;
-        localStorage.setItem('authToken', authToken);
-        const claims = this._jwtDecoderHelper.getDecodedAccessToken(response.data) as any;
-      } 
-    });
+    if (this.loginForm.valid) {
+      this.loading = true;
+
+      const { email, password } = this.loginForm.value;
+
+      this._authUseCase.login(email, password).subscribe({
+        next: (response: any) => {
+          this.loading = false;
+
+          const token = localStorage.getItem('authToken');
+
+          if (token) {
+            const decoded = this.jwtHelper.getDecodedAccessToken(token);
+
+            if (decoded && decoded.IdUser && decoded.IdCompany && decoded.IdRol) {
+              localStorage.setItem('IdUser', decoded.IdUser);
+              localStorage.setItem('IdCompany', decoded.IdCompany);
+              localStorage.setItem('IdRol', decoded.IdRol);
+            }
+
+            this.router.navigate(['/parametrization/patients']);
+          } else {
+            this.loginFailed = true;
+          }
+        },
+        error: err => {
+          this.loading = false;
+          this.loginFailed = true;
+          console.error('Error al iniciar sesión', err);
+        }
+      });
+    }
   }
-  
-  
+
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
   }

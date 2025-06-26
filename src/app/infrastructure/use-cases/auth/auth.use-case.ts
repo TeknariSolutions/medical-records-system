@@ -8,7 +8,6 @@ import { AuthService } from "../../services/auth/auth.service";
   providedIn: "root",
 })
 export class AuthUseCase {
-  // _notificationType = NotificationType;
 
   constructor(private _auth: AuthService) {}
 
@@ -20,10 +19,6 @@ export class AuthUseCase {
           localStorage.setItem("authToken", authToken);
           return of(true);
         } else {
-          /* this._notificationsService.openNotification({
-                    type: this._notificationType.ERROR,
-                    title: response.message!,
-                }); */
           return of(false);
         }
       })

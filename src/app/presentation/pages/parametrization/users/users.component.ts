@@ -12,7 +12,7 @@ import { NgClass } from '@angular/common';
 
 
 @Component({
-   standalone: true,
+  standalone: true,
   imports: [
     NgClass,
     LoadingComponent
@@ -21,18 +21,18 @@ import { NgClass } from '@angular/common';
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
-export class UsersComponent implements OnInit  {
+export class UsersComponent implements OnInit {
 
   users: UserDTO[] = [];
   isLoading: boolean = false;
   modalRef?: BsModalRef;
 
-   constructor(
+  constructor(
     private router: Router,
     private _userUseCase: UsersUseCase,
     private modalService: BsModalService,
     private _notificationService: NotificationsService
-   ) {}
+  ) { }
 
 
   ngOnInit(): void {
@@ -63,38 +63,38 @@ export class UsersComponent implements OnInit  {
 
     this.modalRef.content.onClose = (result: any) => {
       if (result === 'refresh') {
-        this.loadUsers(); 
+        this.loadUsers();
       }
     };
   }
 
-   editUser(user: UserDTO): void {
+  editUser(user: UserDTO): void {
     const initialState = {
       userData: user,
       onClose: (result: string) => {
         if (result === 'refresh') {
-          this.loadUsers(); 
+          this.loadUsers();
         }
       }
     };
-    this.modalRef = this.modalService.show(CreateUpdateUserComponent, { initialState, class: 'modal-lg'  });
+    this.modalRef = this.modalService.show(CreateUpdateUserComponent, { initialState, class: 'modal-lg' });
   }
 
   deleteUser(idUser: number): void {
     this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
-        if (confirmed) {
-          this.isLoading = true;
-          this._userUseCase.DeleteUser(idUser).subscribe({
-            next: () => {
-              this.loadUsers();
-              this.isLoading = false;
-            },
-            error: () => {
-              this.isLoading = false;
-            }
-          });
-        }
-      });
-  } 
+      if (confirmed) {
+        this.isLoading = true;
+        this._userUseCase.DeleteUser(idUser).subscribe({
+          next: () => {
+            this.loadUsers();
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
 
 }

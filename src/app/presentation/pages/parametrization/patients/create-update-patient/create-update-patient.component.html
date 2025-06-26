@@ -8,11 +8,13 @@
   <div class="row">
     <div class="col-12">
       <div class="page-title-box d-flex align-items-center justify-content-between">
-        <h4 class="mb-0">Parametrización</h4>
+        <span class="mb-0">Parametrización</span>
         <div class="page-title-right">
           <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
-              <a href="javascript: void(0);">Pacientes</a>
+               <a [routerLink]="['/parametrization/patients']" class="text-decoration-none text-dark">
+                    Pacientes
+                </a>
             </li>
             <li class="breadcrumb-item active">Formulario de Pacientes</li>
           </ol>
@@ -25,158 +27,227 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="mt-2 mb-4 title">Crear Paciente</h4>
+                    <h4 class="mt-2 mb-4 title">{{patientData ? 'Actualizar Paciente' : 'Crear Paciente'}}</h4>
 
-                    <form class="mt-4">
-                        
                         <div id="basic-example">
                             <ng-stepper #cdkStepper [linear]="true" class="wizard">
 
                                 <!--Datos Personales-->
-                                <cdk-step [optional]="false">
-                                    <ng-template cdkStepLabel>
-                                    <span class="number">1</span>
-                                    <span>Datos personales</span>
-                                    </ng-template>
-                                    @if(cdkStepper.selectedIndex === 0){
-                                        <section>
-                                            <div class="row mb-3">
-                                                <!-- Primer Nombre-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="text" class="form-label">Primer Nombre<span
-                                                                class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="text"/>
+                                <form class="mt-4" [formGroup]="patientForm.get('personalInfo')"> 
+                                    <cdk-step [optional]="false">
+                                        <ng-template cdkStepLabel>
+                                        <span class="number">1</span>
+                                        <span>Datos Personales</span>
+                                        </ng-template>
+                                        @if(cdkStepper.selectedIndex === 0){
+                                            <section>
+                                                <div class="row mb-3">
+                                                    <!-- Primer Nombre-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="firstName" class="form-label">
+                                                                Primer Nombre 
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="firstName" formControlName="firstName"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.firstName')?.invalid }"/>
+                                                                @if(submitted && patientForm.get('personalInfo.firstName')?.errors) {
+                                                                    <div class="invalid-feedback">
+                                                                        @if(patientForm.get('personalInfo.firstName')?.errors['required']) {
+                                                                        <span>Este campo es obligatorio.</span>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Segundo Nombre-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="secondName" class="form-label">
+                                                                Segundo Nombre
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="secondName" formControlName="secondName"/>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Segundo Nombre-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="email" class="form-label">Segundo Nombre<span
-                                                                class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <input type="email" class="form-control" id="email"/>
+                                                <div class="row mb-3">
+                                                    <!-- Primer Apellido-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="text" class="form-label">
+                                                                Primer Apellido
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="firstLastName" formControlName="firstLastName"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.firstLastName')?.invalid }"/>
+                                                                @if(submitted && patientForm.get('personalInfo.firstLastName')?.errors) {
+                                                                    <div class="invalid-feedback">
+                                                                        @if(patientForm.get('personalInfo.firstLastName')?.errors['required']) {
+                                                                        <span>Este campo es obligatorio.</span>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
 
-                                            <div class="row mb-3">
-                                                <!-- Primer Apellido-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="text" class="form-label">Primer Apellido<span
-                                                                class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="text"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Segundo Apellido-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="text" class="form-label">Segundo Apellido<span
-                                                                class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="text"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <!-- Tipo de Documento-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="documentType" class="form-label">
-                                                            Tipo de Documento
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <select id="documentType" name="documentType" class="form-control">
-                                                            <option value="CC">Cédula de Ciudadanía</option>
-                                                            <option value="TI">Tarjeta de Identidad</option>
-                                                            <option value="CE">Cédula de Extranjería</option>
-                                                        </select>          
-                                                    </div>
-                                                </div>
-
-                                                <!-- Documento-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="text" class="form-label">Documento<span
-                                                                class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <input type="number" class="form-control" id="text"/>
+                                                    <!-- Segundo Apellido-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="secondLastName" class="form-label">
+                                                                Segundo Apellido
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="secondLastName" formControlName="secondLastName"/>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Fecha de Nacimiento-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="email" class="form-label">Fecha de Nacimiento<span
-                                                                class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <input type="date" class="form-control" id="text"/>
+                                                <div class="row mb-3">
+                                                    <!-- Tipo de Documento-->
+                                                    <div class="col-12 col-lg-4 col-md-4">
+                                                        <div class="mb-2">
+                                                            <label for="documentType" class="form-label">
+                                                                Tipo de Documento
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <ng-select [items]="documentTypes" bindLabel="label" bindValue="value" formControlName="documentType"
+                                                                placeholder="Selecciona un tipo de documento"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.documentType')?.invalid }">
+                                                            </ng-select>
+                                                            @if(submitted && patientForm.get('personalInfo.documentType')?.errors) {
+                                                                <div class="invalid-feedback">
+                                                                    @if(patientForm.get('personalInfo.documentType')?.errors['required']) {
+                                                                        <span>
+                                                                            Este campo es obligatorio.
+                                                                        </span>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Documento-->
+                                                    <div class="col-12 col-lg-4 col-md-4">
+                                                        <div class="mb-2">
+                                                            <label for="text" class="form-label">
+                                                                Documento
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" id="idDocument" formControlName="idDocument"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.idDocument')?.invalid }"/>
+                                                                @if(submitted && patientForm.get('personalInfo.idDocument')?.errors) {
+                                                                    <div class="invalid-feedback">
+                                                                        @if(patientForm.get('personalInfo.idDocument')?.errors['required']) {
+                                                                        <span>Este campo es obligatorio.</span>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Fecha de Nacimiento-->
+                                                    <div class="col-12 col-lg-4 col-md-4">
+                                                        <div class="mb-2">
+                                                            <label for="birthDay" class="form-label">
+                                                                Fecha de Nacimiento
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <input type="date" class="form-control" id="birthDay" formControlName="birthDay"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.birthDay')?.invalid }"/>
+                                                                @if(submitted && patientForm.get('personalInfo.birthDay')?.errors) {
+                                                                    <div class="invalid-feedback">
+                                                                        @if(patientForm.get('personalInfo.birthDay')?.errors['required']) {
+                                                                        <span>Este campo es obligatorio.</span>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <!-- Sexo-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="sex" class="form-label">
+                                                                Sexo
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <select id="sex" name="sex" class="form-control" formControlName="sex" placeholder="Selecciona un género"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.sex')?.invalid }">
+                                                                    <option value="M">Masculino</option>
+                                                                    <option value="F">Femenino</option>
+                                                                    <option value="O">Otro</option>
+                                                                </select>
+                                                                @if(submitted && patientForm.get('personalInfo.sex')?.errors) {
+                                                                <div class="invalid-feedback">
+                                                                    @if(patientForm.get('personalInfo.sex')?.errors['required']) {
+                                                                    <span>Este campo es obligatorio.</span>
+                                                                    }
+                                                                </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!--Estado Civil-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="maritalStatus" class="form-label">
+                                                                Estado Civil
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <select id="maritalStatus" name="maritalStatus" class="form-control" formControlName="maritalStatus"
+                                                            [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.maritalStatus')?.invalid }">
+                                                                <option value="soltero">Soltero</option>
+                                                                <option value="casado">Casado</option>
+                                                                <option value="union">Unión libre</option>
+                                                                <option value="divorciado">Divorciado</option>
+                                                            </select>
+                                                            @if(submitted && patientForm.get('personalInfo.maritalStatus')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('personalInfo.maritalStatus')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                            </div>
+                                                <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                                    <li class="next list-inline-item" aria-disabled="false">
+                                                        <button class="btn btn-primary" (click)="goToNextStep(cdkStepper)">
+                                                        Siguiente
+                                                    </button>
+                                                    </li>
+                                                </ul>
+                                            </section>
+                                        }
+                                    </cdk-step>
+                                </form>
 
-                                            <div class="row mb-3">
-                                                <!-- Sexo-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="sex" class="form-label">
-                                                            Sexo
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <select id="sex" name="sex" class="form-control">
-                                                            <option value="M">Masculino</option>
-                                                            <option value="F">Femenino</option>
-                                                            <option value="O">Otro</option>
-                                                        </select>          
-                                                    </div>
-                                                </div>
-
-                                                <!--Estado Civil-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="maritalStatus" class="form-label">
-                                                            Estado Civil
-                                                            <span class="text-danger">*</span></label>
-                                                        <select id="maritalStatus" name="maritalStatus" class="form-control">
-                                                            <option value="soltero">Soltero</option>
-                                                            <option value="casado">Casado</option>
-                                                            <option value="union">Unión libre</option>
-                                                            <option value="divorciado">Divorciado</option>
-                                                        </select> 
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                                                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>
-                                                    Siguiente
-                                                </button>
-                                                </li>
-                                            </ul>
-                                        </section>
-                                    }
-                                </cdk-step>
-
-                                <!--Información de Contacto-->
-                                <cdk-step [optional]="true">
-                                    <ng-template cdkStepLabel>
-                                    <span class="number">2</span>
-                                    <span>Información de Contacto</span>
-                                    </ng-template>
-                                    @if(cdkStepper.selectedIndex === 1){
+                                <!--Datos de Contacto-->
+                                <form class="mt-4" [formGroup]="patientForm.get('contactInfo')">
+                                    <cdk-step [optional]="true">
+                                        <ng-template cdkStepLabel>
+                                            <span class="number">2</span>
+                                            <span>Datos de Contacto</span>
+                                        </ng-template>
+                                        @if(cdkStepper.selectedIndex === 1){
                                         <section>
                                             <div class="row mb-3">
                                                 <!--Dirección-->
@@ -184,224 +255,370 @@
                                                     <div class="mb-2">
                                                         <label for="address" class="form-label">
                                                             Dirección
-                                                            <span class="text-danger">*</span></label>
+                                                            <span class="text-danger">*</span>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="address"/>
+                                                            <input type="text" class="form-control" id="address" formControlName="address"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.address')?.invalid }" />
+                                                            @if(submitted && patientForm.get('contactInfo.address')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.address')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!--Departamento-->
+                                
+                                                <!-- Departamento -->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="residenceDepartment" class="form-label">
-                                                            Departamento
-                                                            <span class="text-danger">*</span></label>
+                                                            Departamento 
+                                                            <span class="text-danger">*</span>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="residenceDepartment"/>
+                                                            <select id="residenceDepartment" class="form-control" formControlName="residenceDepartment"
+                                                                (change)="onDepartmentChange($event.target.value)"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.residenceDepartment')?.invalid }">
+                                                                <option value="">Selecciona un departamento</option>
+                                                                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+                                                            </select>
+                                                
+                                                            @if(submitted && patientForm.get('contactInfo.residenceDepartment')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.residenceDepartment')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!--Ciudad-->
+                                                
+                                                <!-- Ciudad -->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="city" class="form-label">
-                                                            Ciudad
-                                                            <span class="text-danger">*</span></label>
+                                                            Ciudad 
+                                                            <span class="text-danger">*</span>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="city"/>
+                                                            <select id="city" class="form-control" formControlName="city" [disabled]="!cities.length"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.city')?.invalid }">
+                                                                <option value="">Selecciona una ciudad</option>
+                                                                <option *ngFor="let city of cities" [value]="city.name">{{ city.name }}</option>
+                                                            </select>
+                                                
+                                                            @if(submitted && patientForm.get('contactInfo.city')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.city')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
+                                    
                                             <div class="row mb-3">
                                                 <!--Teléfono-->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="phoneNumber" class="form-label">
                                                             Teléfono
-                                                            <span class="text-danger">*</span></label>
+                                                            <span class="text-danger">*</span>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="phoneNumber"/>
+                                                            <input type="number" class="form-control" id="phoneNumber" formControlName="phoneNumber"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.phoneNumber')?.invalid }" />
+                                                            @if(submitted && patientForm.get('contactInfo.phoneNumber')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.phoneNumber')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                    
                                                 <!--Teléfono Alternativo-->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="phoneNumber2" class="form-label">
                                                             Teléfono Alternativo
-                                                            <span class="text-danger">*</span></label>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="phoneNumber2"/>
+                                                            <input type="number" class="form-control" id="phoneNumber2" formControlName="phoneNumber2"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.phoneNumber2')?.invalid }" />
+                                                            @if(submitted && patientForm.get('contactInfo.phoneNumber2')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.phoneNumber2')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                    
                                                 <!--Correo-->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="email" class="form-label">
                                                             Correo
                                                             <span class="text-danger">*</span></label>
+                                                            <div class="input-group">
+                                                                <input type="email" class="form-control" id="email" formControlName="email"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.email')?.invalid }" />
+                                                                @if(submitted && patientForm.get('contactInfo.email')?.errors) {
+                                                                <div class="invalid-feedback">
+                                                                    @if(patientForm.get('contactInfo.email')?.errors['required']) {
+                                                                    <span>Este campo es obligatorio.</span>
+                                                                    }
+                                                                </div>
+                                                                }
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    
+                                            <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light"
+                                                        cdkStepperPrevious>Anterior</button></li>
+                                                <li class="next list-inline-item" aria-disabled="false">
+                                                    <button class="btn btn-primary" (click)="goToNextStep(cdkStepper)">
+                                                        Siguiente
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </section>
+                                        }
+                                    </cdk-step>
+                                </form>
+                                
+                                <!--Información Médica-->
+                                <form class="mt-4" [formGroup]="patientForm.get('medicalInfo')"> 
+                                    <cdk-step [optional]="true">
+                                        <ng-template cdkStepLabel>
+                                        <span class="number">3</span>
+                                        <span>Información Médica</span>
+                                        </ng-template>
+                                        @if(cdkStepper.selectedIndex === 2){
+                                        <section>
+                                            <div class="row mb-3">
+                                                <!--¿Tiene discapacidad?-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                            <label for="isDisAbility" class="form-label">
+                                                                Tiene discapacidad ?
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <select id="isDisAbility" name="isDisAbility" class="form-control" formControlName="isDisAbility"
+                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.isDisAbility')?.invalid }">
+                                                                    <option [ngValue]="true">Sí</option>
+                                                                    <option [ngValue]="false">No</option>
+                                                                </select>
+                                                                <!-- Mensaje de validación -->
+                                                                @if(submitted && patientForm.get('medicalInfo.isDisAbility')?.errors) {
+                                                                <div class="invalid-feedback">
+                                                                    @if(patientForm.get('medicalInfo.isDisAbility')?.errors['required']) {
+                                                                    <span>Este campo es obligatorio.</span>
+                                                                    }
+                                                                </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            
+                                                <!--Descripción de la discapacidad-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="disAbilityDescription" class="form-label">Descripción de la discapacidad</label>
+                                                        <input type="text" class="form-control" id="disAbilityDescription" name="disAbilityDescription" formControlName="disAbilityDescription">
+                                                    </div>
+                                                </div>
+                                            
+                                                <!--Tipo de Sangre-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="bloodType" class="form-label">
+                                                            Tipo de Sangre
+                                                            <span class="text-danger">*</span>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="email" class="form-control" id="email"/>
+                                                            <select id="bloodType" name="bloodType" class="form-control" formControlName="bloodType"
+                                                                placeholder="Selecciona una opción"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.bloodType')?.invalid }">
+                                                               <option *ngFor="let type of bloodTypes" [value]="type">{{ type }}</option>
+
+                                                            </select>
+                                                            @if(submitted && patientForm.get('medicalInfo.bloodType')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('medicalInfo.bloodType')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <!--EPS-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="idEps" class="form-label">
+                                                            EPS
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="idEps" formControlName="idEps"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.idEps')?.invalid }" />
+                                                            @if(submitted && patientForm.get('medicalInfo.idEps')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('medicalInfo.idEps')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Estrato-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="stratum" class="form-label">
+                                                            Estrato
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="stratum" name="stratum" class="form-control" formControlName="stratum"
+                                                                placeholder="Selecciona una opción"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.stratum')?.invalid }">
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                                <option value="5">5</option>
+                                                                <option value="6">6</option>
+                                                            </select>
+                                                            @if(submitted && patientForm.get('medicalInfo.stratum')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('medicalInfo.stratum')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Régimen-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="regime" class="form-label">
+                                                            Régimen
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="regime" name="regime" class="form-control" formControlName="regime"
+                                                                placeholder="Selecciona una opción"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.regime')?.invalid }">
+                                                                <option value="subsidiado">Subsidiado</option>
+                                                                <option value="contributivo">Contributivo</option>
+                                                            </select>
+                                                            @if(submitted && patientForm.get('medicalInfo.regime')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('medicalInfo.regime')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                                                <li class="previous list-inline-item" aria-disabled="true">
+                                                    <button class="btn btn-light" cdkStepperPrevious>
+                                                        Anterior
+                                                    </button>
+                                                </li>
+
+                                                <li class="next list-inline-item" aria-disabled="false">
+                                                    <button class="btn btn-primary" (click)="goToNextStep(cdkStepper)">
+                                                        Siguiente
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </section>}
+                                    </cdk-step>
+                                </form>
+
+                                <!--Información Adicional-->
+                                <form class="mt-4" [formGroup]="patientForm.get('aditionalInfo')"> 
+
+                                    <cdk-step [optional]="true">
+                                        <ng-template cdkStepLabel>
+                                        <span class="number">4</span>
+                                        <span>Información Adicional</span>
+                                        </ng-template>
+                                        @if(cdkStepper.selectedIndex === 3){
+                                        <section>
+                                            <div class="row mb-3">
+                                                <!--Ocupación-->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="job" class="form-label">
+                                                            Ocupación
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="job" formControlName="job"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Grupo Étnico-->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="ethnic" class="form-label">
+                                                            Grupo Étnico
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="ethnic" formControlName="ethnic"/>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         
                                             <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                                                <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light" cdkStepperPrevious>Anterior</button></li>
-                                                <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>Siguiente</button></li>
+                                                <li class="previous list-inline-item" aria-disabled="true">
+                                                    <button class="btn btn-light" cdkStepperPrevious>
+                                                        Anterior
+                                                    </button>
+                                                </li>
+
+                                                <li class="next list-inline-item" aria-disabled="false">
+                                                    <button class="btn btn-primary" (click)="onSubmit()">
+                                                        Guardar
+                                                    </button>
+                                                </li>
                                             </ul>
                                         </section>
-                                    }
-                                </cdk-step>
-
-                                <!--Información Médica-->
-                                <cdk-step [optional]="true">
-                                    <ng-template cdkStepLabel>
-                                    <span class="number">3</span>
-                                    <span>Información Médica</span>
-                                    </ng-template>
-                                    @if(cdkStepper.selectedIndex === 2){
-                                    <section>
-                                        <div class="row mb-3">
-                                            <!--¿Tiene discapacidad?-->
-                                            <div class="col-12 col-lg-4 col-md-4">
-                                                <div class="mb-2">
-                                                    <label for="isDisAbility" class="form-label">
-                                                        ¿Tiene discapacidad?
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <select id="isDisAbility" name="isDisAbility" class="form-control">
-                                                        <option value="true">Si</option>
-                                                        <option value="fslse">No</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        
-                                            <!--Descripción de la discapacidad-->
-                                            <div class="col-12 col-lg-4 col-md-4">
-                                                <div class="mb-2">
-                                                    <label for="disAbilityDescription" class="form-label">Descripción de la discapacidad</label>
-                                                    <input type="text" class="form-control" id="disAbilityDescription" name="disAbilityDescription">
-                                                </div>
-                                            </div>
-                                        
-                                            <!--Tipo de Sangre-->
-                                            <div class="col-12 col-lg-4 col-md-4">
-                                                <div class="mb-2">
-                                                    <label for="bloodType" class="form-label">
-                                                        Tipo de Sangre
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="text" class="form-control" id="bloodType" name="bloodType">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <!--EPS-->
-                                            <div class="col-12 col-lg-4 col-md-4">
-                                                <div class="mb-2">
-                                                    <label for="idEps" class="form-label">
-                                                        EPS
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="text" class="form-control" id="idEps" name="idEps">
-                                                </div>
-                                            </div>
-
-                                            <!--Estrato-->
-                                            <div class="col-12 col-lg-4 col-md-4">
-                                                <div class="mb-2">
-                                                    <label for="stratum" class="form-label">
-                                                        Estrato
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <select id="stratum" name="stratum" class="form-control">
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                        <option value="5">5</option>
-                                                        <option value="6">6</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!--Régimen-->
-                                            <div class="col-12 col-lg-4 col-md-4">
-                                                <div class="mb-2">
-                                                    <label for="regime" class="form-label">
-                                                        Régimen
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <select id="regime" name="regime" class="form-control">
-                                                        <option value="subsidiado">Subsidiado</option>
-                                                        <option value="contributivo">Contributivo</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                                            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light" cdkStepperPrevious>Anterior</button></li>
-                                            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>Siguiente</button></li>
-                                        </ul>
-                                    </section>}
-                                </cdk-step>
-
-                                <!--Información Adicional-->
-                                <cdk-step [optional]="true">
-                                    <ng-template cdkStepLabel>
-                                    <span class="number">4</span>
-                                    <span>Información Adicional</span>
-                                    </ng-template>
-                                    @if(cdkStepper.selectedIndex === 3){
-                                    <section>
-                                        <div class="row mb-3">
-                                            <!--Ocupación-->
-                                            <div class="col-12 col-lg-6 col-md-6">
-                                                <div class="mb-2">
-                                                    <label for="job" class="form-label">
-                                                        Ocupación
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="text" class="form-control" id="job" name="job">
-                                                </div>
-                                            </div>
-
-                                            <!--Grupo Étnico-->
-                                            <div class="col-12 col-lg-6 col-md-6">
-                                                <div class="mb-2">
-                                                    <label for="ethnic" class="form-label">
-                                                        Grupo Étnico
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="text" class="form-control" id="ethnic" name="ethnic">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    
-                                        <ul class="list-inline wizard d-flex justify-content-end mb-0">
-                                            <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light" cdkStepperPrevious>Anterior</button></li>
-                                            <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary" cdkStepperNext>Guardar</button></li>
-                                        </ul>
-                                    </section>
-                                    }
-                                </cdk-step>
+                                        }
+                                    </cdk-step>
+                                </form>
                                 
                             </ng-stepper>
                         </div>
-
-                        
-                   </form> 
                 </div>
             </div>
         </div>

@@ -34,7 +34,7 @@ export class RightsidebarComponent implements OnInit {
   initialAppState!: LayoutState;
   constructor(private eventService: EventService, public store: Store<RootReducerState>) { }
 
-  ngOnInit() {
+   ngOnInit() {
     this.initialAppState = initialState;
     this.store.select('layout').subscribe((data) => {
       this.mode = data.LAYOUT_MODE;
@@ -45,9 +45,7 @@ export class RightsidebarComponent implements OnInit {
     })
     this.attribute = '';
 
-    /**
-     * horizontal-vertical layput set
-     */
+   
     this.attribute = document.body.getAttribute('data-layout');
     const vertical = document.getElementById('is-layout');
     if (vertical != null) {
@@ -57,7 +55,37 @@ export class RightsidebarComponent implements OnInit {
       vertical.removeAttribute('checked');
     }
   }
+ 
+  
+/*   ngOnInit() {
+  this.initialAppState = initialState;
 
+  this.store.select('layout').subscribe((data) => {
+    this.mode = data.LAYOUT_MODE;
+    this.theme = data.DATA_LAYOUT;
+    this.topbar = data.TOPBAR_TYPE;
+    this.layoutSize = data.LAYOUT_WIDTH;
+
+    // ✅ Si no viene definido en el store, establecer 'light' por defecto
+    this.sidebar = 'light';
+
+    // Establecer el atributo si aún no está
+    document.documentElement.setAttribute('data-sidebar', this.sidebar);
+  });
+
+  this.attribute = document.body.getAttribute('data-layout');
+
+  const vertical = document.getElementById('is-layout');
+  if (vertical != null) {
+    vertical.setAttribute('checked', 'true');
+  }
+  if (this.attribute === 'horizontal') {
+    vertical?.removeAttribute('checked');
+  }
+}
+ */
+  
+  
   /**
    * Hide the sidebar
    */

@@ -55,7 +55,7 @@ export class PatientsUseCase {
     );
   }
 
-  GetListPatients(paginator: PaginatorDTO, Filter?: string):Observable<TableResultDTO> {
+  GetListPatients(paginator: PaginatorDTO, Filter?: string): Observable<TableResultDTO> {
     return this._patientsService.GetListPatients(paginator, Filter).pipe(
       map((response: ResponseDTO) => {
         if (!response.isSuccess) {

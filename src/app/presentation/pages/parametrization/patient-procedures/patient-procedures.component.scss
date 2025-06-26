@@ -1,0 +1,46 @@
+.card-title {
+    font-size: 17px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.info-label {
+  font-weight: bold;
+  min-width: 120px; /* Puedes ajustar este ancho según tu diseño */
+  display: inline-block;
+}
+
+.info-value {
+  flex: 1;
+}
+
+ $primary: #1AAE9F;
+
+ .custom-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  cursor: pointer;
+
+  i {
+    font-size: 2rem;
+    color: $primary;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: $primary;
+
+    i {
+      transform: scale(1.1);
+      color: darken($primary, 10%);
+    }
+  }
+}

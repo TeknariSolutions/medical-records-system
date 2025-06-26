@@ -8,7 +8,7 @@
   <div class="row">
     <div class="col-12">
       <div class="page-title-box d-flex align-items-center justify-content-between">
-        <h4 class="mb-0">Parametrización</h4>
+        <span class="mb-0">Parametrización</span>
         <div class="page-title-right">
           <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
@@ -43,12 +43,12 @@
               <div class="mb-0">
                 <button type="button" class="btn btn-light px-5">
                   <i class="bx bx-x me-1"></i> 
-                  Cancelar
+                  Limpiar
                 </button>
               </div>
 
               <div class="mb-0">
-                <button type="button" class="btn btn-success px-5">
+                <button type="button" class="btn btn-primary px-5">
                   <i class="bx bx-search-alt-2"></i>
                   Filtrar
                 </button>
@@ -66,9 +66,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-4">
-                    <h4 class="mb-0 card-title flex-grow-1">
+                    <h5 class="mb-0 flex-grow-1">
                         Lista de Pacientes
-                    </h4>
+                    </h5>
                     <div class="flex-shrink-0 d-flex gap-1">
                         <button type="menu" class="btn btn-primary" (click)="createPatient()">
                             <i class="mdi mdi-plus mr-1"></i>
@@ -86,6 +86,7 @@
 
                 <!-- Table with data -->
                 @if(!isLoading && patients.length > 0) {
+                  <div class="table-responsive">
                     <table class="table table-centered table-nowrap mb-0">
                         <thead class="table-light">
                             <tr>
@@ -102,37 +103,63 @@
                         </thead>
                         <tbody>
                             @for(data of patients; track $index){
-                                <tr>
-                                    <td>{{ data.nameUser }} {{ data.lastNameUser }}</td>
-                                    <td>{{ data.idDocument }}</td>
-                                    <td>{{ data.documentType }}</td>
-                                    <td>{{ data.idEps }}</td>
-                                    <td>{{ data.phoneNumber }}</td>
-                                    <td>{{ data.email }}</td>
-
-                                    <!-- Actions -->
-                                    <td class="d-flex justify-content-end">
-                                    
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
-                                                <button class="btn btn-sm btn-soft-info">
-                                                    <i class="mdi mdi-pencil-outline"></i>
-                                                </button>
-                                            </li>
-                                    
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
-                                                <button class="btn btn-sm btn-soft-danger" (click)="deletePatient(data.idPatient)">
-                                                    <i class="mdi mdi-delete-outline"></i>
-                                                </button>
-                                            </li>
+                              <tr>
+                                <td>{{ data.firstName }} {{ data.secondName }} {{ data.firstLastName }} {{ data.secondLastName }}</td>
+                                <td>{{ data.idDocument }}</td>
+                                <td>{{ data.documentType }}</td>
+                                <td>{{ data.idEps }}</td>
+                                <td>{{ data.phoneNumber }}</td>
+                                <td>{{ data.email }}</td>
+                              
+                                <!-- Actions -->
+                                <td class="d-flex justify-content-end">
+                                  <ul class="list-inline font-size-20 contact-links mb-0">
+                                    <li class="list-inline-item">
+                              
+                                      <div dropdown class="dropdown">
+                                        <a dropdownToggle href="javascript: void(0);" class="dropdown-toggle card-drop px-2 show"
+                                          aria-expanded="true">
+                                          <i class="mdi mdi-dots-horizontal font-size-18"></i> </a>
+                              
+                                        <ul *dropdownMenu class="dropdown-menu dropdown-menu-end show" placement="bottom-end">
+                                          <li>
+                                            <a class="dropdown-item edit-list" (click)="editPatient(data)">
+                                              <i class="mdi mdi-pencil-outline font-size-16 text-success me-1"></i>
+                                              Editar
+                                            </a>
+                                          </li>
+                              
+                                          <li>
+                                            <a class="dropdown-item edit-list" (click)="deletePatient(data.idPatient)">
+                                              <i class="mdi mdi-delete-outline font-size-16 text-danger me-1"></i>
+                                              Eliminar
+                                            </a>
+                                          </li>
+                              
+                                          <li>
+                                            <a class="dropdown-item edit-list" (click)="viewPatientProcedures(data)">
+                                              <i class="mdi mdi-eye-outline font-size-16 text-info me-1"></i>
+                                              Historia Clinica
+                                            </a>
+                                          </li>
+                              
                                         </ul>
-                                    </td>
-                                </tr>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                </td>
+                              
+                              </tr>
                             }
                         </tbody>
-
-                    </table>
+                    </table> 
+                  </div>
                 }
+
+                <!-- Pagination -->
+                <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalRecords]="totalRecords"
+                  [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)">
+                </app-pagination>
 
             </div>
         </div>

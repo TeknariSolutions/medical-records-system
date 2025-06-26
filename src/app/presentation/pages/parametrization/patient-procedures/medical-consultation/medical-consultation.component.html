@@ -1,0 +1,95 @@
+<!-- Loading State -->
+@if(isLoading) {
+<app-loading message="Cargando Consultas"></app-loading>
+}
+
+<div class="container-fluid">
+  <!-- Container Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          @if (!showForm) {
+          <div class="d-flex align-items-center mb-4">
+            <h5 class="mb-0 flex-grow-1">Lista de Consultas</h5>
+            <div class="flex-shrink-0 d-flex gap-1">
+              <button type="button" class="btn btn-primary" (click)="onNewConsultationClick()">
+                <i class="mdi mdi-plus mr-1"></i>
+                Nueva Consulta
+              </button>
+            </div>
+          </div>
+
+          <!-- No Data -->
+          @if(!isLoading && consults.length === 0) {
+          <div class="no-data-container d-flex justify-content-center">
+            <p>No hay datos disponibles</p>
+          </div>
+          }
+
+          <!-- Table with data -->
+          @if(!isLoading && consults.length > 0) {
+          <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Motivo</th>
+                  <th scope="col" class="align-middle text-center" style="width: 10%">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for(data of consults; track $index){
+                <tr>
+                  <td>{{ data.status }}</td>
+                  <!--  <td>
+                    <span class="badge" [ngClass]="{'badge-soft-success': data.status === true,'badge-soft-danger': data.isActive === false}">
+                      {{ data.status ? 'ACTIVO' : 'INACTIVO' }}
+                    </span>
+                  </td>  -->
+                  <td>{{ data.consultationDate }}</td>
+                  <td>{{ data.consultationReason }}</td>
+
+                  <!-- Actions -->
+                  <td class="d-flex justify-content-end">
+                    <ul class="list-unstyled hstack gap-1 mb-0">
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                        <button class="btn btn-sm btn-soft-info" (click)="onEditConsultation(data)">
+                          <i class="mdi mdi-pencil-outline"></i>
+                        </button>
+                      </li>
+
+                      <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                        <button class="btn btn-sm btn-soft-danger">
+                          <i class="mdi mdi-delete-outline"></i>
+                        </button>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          }
+          }
+
+          <!-- Si estamos en el formulario -->
+          @if (showForm) {
+          <button class="btn btn-outline-secondary mb-3" (click)="onBackToList()">
+            ← Atrás
+          </button>
+          
+          <app-create-update-medical-consultation [idPatient]="idPatient"
+          [consultationToEdit]="selectedConsultation" 
+          (backToList)="onBackToList()"></app-create-update-medical-consultation>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

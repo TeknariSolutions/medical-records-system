@@ -5,11 +5,12 @@ import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { Observable, switchMap } from 'rxjs';
 import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
 import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
+import { IPatientService } from 'src/app/core/interfaces/app/Ipatient.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PatientsService {
+export class PatientsService implements IPatientService {
 
   constructor(
     private _httpService: HttpService,
@@ -43,7 +44,7 @@ export class PatientsService {
     );
   }
 
-   GetListPatients(paginator: PaginatorDTO, Filter?: string): Observable<ResponseDTO> {
+  GetListPatients(paginator: PaginatorDTO, Filter?: string): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {
         let params: any = {

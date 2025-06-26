@@ -142,9 +142,28 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   /**
    * Initialize
    */
-  initialize(): void {
+ /*  initialize(): void {
     this.menuItems = MENU;
+  } */
+
+  initialize(): void {
+    const roleId = Number(localStorage.getItem('IdRol'));
+    const filteredMenu = JSON.parse(JSON.stringify(MENU)) as MenuItem[];
+
+    // Recorrer y filtrar subItems basados en rol
+    for (const item of filteredMenu) {
+      if (item.subItems) {
+        item.subItems = item.subItems.filter(sub => {
+          return (
+            !sub.roleAuthenticated || sub.roleAuthenticated.includes(roleId)
+          );
+        });
+      }
+    }
+
+    this.menuItems = filteredMenu;
   }
+
 
   /**
    * Returns true or false if given menu item has child or not

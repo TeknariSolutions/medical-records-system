@@ -1,0 +1,21 @@
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <!-- Items por página -->
+  <div class="d-flex align-items-center">
+    <span class="me-2">Items por pagina:</span>
+    <select class="form-select form-select-sm w-auto" [(ngModel)]="pageSize" (change)="onPageSizeChanged($event.target.value)">
+        <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+    </select>
+  </div>
+
+  <!-- Rango actual -->
+  <div>
+    {{ startIndex + 1 }} – {{ endIndex }} de {{ totalRecords }}
+  </div>
+
+  <!-- Botones -->
+  <div class="d-flex gap-2 buttons">
+    <button class="btn btn-link px-2" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">‹</button>
+    <button class="btn btn-link px-2" [disabled]="currentPage >= totalPages" (click)="onPageChange(currentPage + 1)">›</button>
+  </div>
+</div>
+

@@ -1,0 +1,162 @@
+
+<div class="row">
+  <div class="col-12">
+    <h4 class="mt-2 mb-4 title">
+      {{ consultationToEdit ? 'Actualizar Consulta' : 'Crear Consulta' }}
+    </h4>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Motivo y Fecha -->
+      <div class="mb-3">
+        <label>Motivo de Consulta</label>
+        <input formControlName="consultationReason" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label>Fecha</label>
+        <input formControlName="consultationDate" type="date" class="form-control" />
+      </div>
+
+      <!-- Signos Vitales -->
+      <h5 class="mt-4">Signos Vitales</h5>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label>Presión Arterial</label>
+          <input formControlName="vitalSigns_BP" class="form-control" placeholder="Ej: 120/80" />
+        </div>
+        <div class="col-md-4 mb-3">
+          <label>Frecuencia Cardíaca</label>
+          <input formControlName="vitalSigns_HR" type="number" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+          <label>Frecuencia Respiratoria</label>
+          <input formControlName="vitalSigns_RR" type="number" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+          <label>Temperatura</label>
+          <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
+        </div>
+        <div class="col-md-4 mb-3">
+          <label>Saturación de Oxígeno SpO2</label>
+          <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Examen Físico -->
+      <h5 class="mt-4">Examen Físico</h5>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>Cabeza y Cuello</label>
+          <textarea formControlName="physicalExam_HeadNeck" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Tórax</label>
+          <textarea formControlName="physicalExam_Chest" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Corazón</label>
+          <textarea formControlName="physicalExam_Heart" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Abdomen</label>
+          <textarea formControlName="physicalExam_Abdomen" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Genitourinario GU</label>
+          <textarea formControlName="physicalExam_GU" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Musculoesquelético</label>
+          <textarea formControlName="physicalExam_Musculoskeletal" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Neurológico</label>
+          <textarea formControlName="physicalExam_Neuro" class="form-control"></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Piel</label>
+          <textarea formControlName="physicalExam_Skin" class="form-control"></textarea>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="mb-3">
+        <label>Observaciones</label>
+        <textarea formControlName="observations" class="form-control" rows="3"></textarea>
+      </div>
+
+      <!-- Estado e Indicador de primera vez -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>Estado</label>
+          <select formControlName="status" class="form-select">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Completado">Completado</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3 d-flex align-items-center">
+          <input type="checkbox" formControlName="isFirstTime" class="form-check-input me-2" id="firstTimeCheck" />
+          <label for="firstTimeCheck" class="form-check-label">Es primera vez</label>
+        </div>
+      </div>
+
+      <!-- Diagnosticos -->
+      <div *ngIf="form.get('diagnoses') as diagnosisArray" formArrayName="diagnoses">
+        <h5 class="mt-4">Diagnósticos</h5>
+      
+        <div *ngFor="let diag of diagnosisArray.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3 rounded">
+          <div class="row">
+            <div class="col-md-4">
+              <label>Código</label>
+              <input type="text" formControlName="diagnosisCode" class="form-control" />
+            </div>
+            <div class="col-md-4">
+              <label>Descripción</label>
+              <!-- <input type="text" formControlName="diagnosisDescription" class="form-control" /> -->
+              <input type="text" class="form-control" 
+              [formControlName]="'diagnosisDescription'" [attr.autocomplete]="'off'"
+                (input)="onDiagnosisSearch($event.target.value, i)" (focus)="showSuggestions[i] = true" />
+                <ul
+                  class="list-group position-absolute mt-1 z-3"
+                  *ngIf="showSuggestions[i] && cie10Results[i]?.length"
+                  style="max-height: 200px; overflow-y: auto; width: 100%"
+                >
+                  <li
+                    *ngFor="let option of cie10Results[i]"
+                    class="list-group-item list-group-item-action"
+                    (click)="selectDiagnosis(option, i)"
+                  >
+                    {{ option.code }} - {{ option.title?.value }}
+                  </li>
+                </ul>
+
+            </div>
+            <div class="col-md-4">
+              <label>Tipo</label>
+              <input type="text" formControlName="diagnosisType" class="form-control" />
+            </div>
+            <div class="col-md-12 mt-2">
+              <label>Comentario</label>
+              <textarea formControlName="comment" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mt-2">
+              <input type="checkbox" formControlName="isPrincipal" />
+              <label class="ms-1">Principal</label>
+            </div>
+            <div class="col-md-6 mt-2 text-end">
+              <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      
+        <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button>
+      </div>
+
+      <!-- Botones -->
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="button" class="btn btn-secondary ms-2" (click)="back()">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+
