@@ -25,4 +25,21 @@ export interface PatientDTO {
   bloodType: string;
   maritalStatus: string;
   createdBy: number;
+
+  createdAt: string;
+  updatedBy: number,
+  updatedAt: string;
+  nameOfGuardian: string;
+  idDocumentGuardian: string;
+  documentTypeGuradian: string;
+  relationship: string;
+  addressOfGuardian: string;
+  phoneNumberOfGuardian: string;
+  emailOfGuardian: string;
 }
+
+
+
+
+
+

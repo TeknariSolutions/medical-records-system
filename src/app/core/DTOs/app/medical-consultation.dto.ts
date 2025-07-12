@@ -22,6 +22,19 @@ export interface MedicalConsultationDTO {
   observations: string;
   status: string;
   createdBy: number;
+  createdAt: string;
+
   isFirstTime: boolean;
   diagnoses?: MedicalDiagnosisDTO[];
+
+  updateBy: number;
+  glasgowScore: number;
+  consciousnessStatus: string;
+  hydrationStatus: string;
+  moodStatus: string;
+  respiratoryStatus: string;
+  generalStatus: string;
+  weightKg: number;
+  heightCm: string;
+  bmi: number;
 }

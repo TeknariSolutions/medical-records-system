@@ -1,25 +1,49 @@
 
 <div class="row">
   <div class="col-12">
-    <h4 class="mt-2 mb-4 title">
-      {{ consultationToEdit ? 'Actualizar Consulta' : 'Crear Consulta' }}
-    </h4>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <div class="row justify-content-between align-items-center">
+      <h4 class="mt-2 mb-4 title w-auto">
+        {{ consultationToEdit ? 'Actualizar Consulta' : 'Crear Consulta' }}
+      </h4>
+      
+      <p class="w-auto">
+        Fecha: {{ form.get('consultationDate')?.value | date:'dd/MM/yyyy' }}
+      </p>
+    </div>
+
+
       <!-- Motivo y Fecha -->
       <div class="mb-3">
         <label>Motivo de Consulta</label>
-        <input formControlName="consultationReason" class="form-control" />
+        <input class="form-control" formControlName="consultationReason"/>
       </div>
 
       <div class="mb-3">
-        <label>E/A</label>
-        <input class="form-control" />
+        <label>E/A (Estado de Animo)</label>
+        <input class="form-control" formControlName="moodStatus" />
       </div>
 
       <div class="mb-3">
-        <label>Fecha</label>
-        <input formControlName="consultationDate" type="date" class="form-control" />
+        <label>Nivel de Glasgow</label>
+        <input class="form-control" type="number" formControlName="glasgowScore"/>
+      </div>
+
+      <div class="mb-3">
+        <label>Estado de Conciencia</label>
+        <input class="form-control" type="text" formControlName="consciousnessStatus" />
+      </div>
+
+      <div class="mb-3">
+        <label>Estado de Respiración</label>
+        <input class="form-control" type="text" formControlName="respiratoryStatus" />
+      </div>
+
+      <div class="mb-3">
+        <label>Estado General</label>
+        <input class="form-control" type="text" formControlName="generalStatus" />
       </div>
 
       <!-- Signos Vitales -->
@@ -27,7 +51,7 @@
       <div class="row">
         <div class="col-md-4 mb-3">
           <label>Presión Arterial</label>
-          <input formControlName="vitalSigns_BP" class="form-control" placeholder="Ej: 120/80" />
+          <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
         </div>
         <div class="col-md-4 mb-3">
           <label>Frecuencia Cardíaca</label>
@@ -38,11 +62,11 @@
           <input formControlName="vitalSigns_RR" type="number" class="form-control" />
         </div>
         <div class="col-md-4 mb-3">
-          <label>Temperatura</label>
+          <label>Temperatura (Decimal)</label>
           <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
         </div>
         <div class="col-md-4 mb-3">
-          <label>Saturación de Oxígeno SpO2</label>
+          <label>Saturación de Oxígeno SpO2 (Decimal)</label>
           <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
         </div>
       </div>
@@ -52,59 +76,59 @@
       <div class="row">
 
         <div class="col-md-4 mb-3">
-          <label>Peso</label>
-          <input class="form-control" />
+          <label>Peso (Kg) (Decimal)</label>
+          <input class="form-control" type="number" formControlName="weightKg"/>
         </div>
 
         <div class="col-md-4 mb-3">
-          <label>Talla</label>
-          <input class="form-control" />
+          <label>Talla (cms) (Decimal)</label>
+          <input class="form-control" type="text" formControlName="heightCm"/>
         </div>
 
         <div class="col-md-4 mb-3">
-          <label>IMC</label>
-          <input class="form-control" />
+          <label>IMC (Decimal)</label>
+          <input class="form-control" type="number" formControlName="bmi"/>
         </div>
 
 
         <div class="col-md-6 mb-3">
           <label>Cabeza y Cuello</label>
-          <textarea formControlName="physicalExam_HeadNeck" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_HeadNeck" type="text"  class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Tórax</label>
-          <textarea formControlName="physicalExam_Chest" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_Chest" type="text"  class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Corazón</label>
-          <textarea formControlName="physicalExam_Heart" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_Heart" type="text"  class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Abdomen</label>
-          <textarea formControlName="physicalExam_Abdomen" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_Abdomen" type="text"  class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Genitourinario GU</label>
-          <textarea formControlName="physicalExam_GU" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_GU" type="text"  class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Musculoesquelético</label>
-          <textarea formControlName="physicalExam_Musculoskeletal" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_Musculoskeletal" type="text"  class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Neurológico</label>
-          <textarea formControlName="physicalExam_Neuro" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_Neuro" type="text" class="form-control"></textarea>
         </div>
         <div class="col-md-6 mb-3">
           <label>Piel</label>
-          <textarea formControlName="physicalExam_Skin" class="form-control"></textarea>
+          <textarea formControlName="physicalExam_Skin" type="text" class="form-control"></textarea>
         </div>
       </div>
 
       <!-- Observaciones -->
       <div class="mb-3">
         <label>Observaciones</label>
-        <textarea formControlName="observations" class="form-control" rows="3"></textarea>
+        <textarea formControlName="observations" type="text" class="form-control" rows="3"></textarea>
       </div>
 
       <!-- Estado e Indicador de primera vez -->
@@ -135,23 +159,6 @@
             <div class="col-md-4">
               <label>Descripción</label>
              <input type="text" formControlName="diagnosisDescription" class="form-control" />
-             <!--  <input type="text" class="form-control" 
-              [formControlName]="'diagnosisDescription'" [attr.autocomplete]="'off'"
-                (input)="onDiagnosisSearch($event.target.value, i)" (focus)="showSuggestions[i] = true" />
-                <ul
-                  class="list-group position-absolute mt-1 z-3"
-                  *ngIf="showSuggestions[i] && cie10Results[i]?.length"
-                  style="max-height: 200px; overflow-y: auto; width: 100%"
-                >
-                  <li
-                    *ngFor="let option of cie10Results[i]"
-                    class="list-group-item list-group-item-action"
-                    (click)="selectDiagnosis(option, i)"
-                  >
-                    {{ option.code }} - {{ option.title?.value }}
-                  </li>
-                </ul> -->
-
             </div>
             <div class="col-md-4">
               <label>Tipo</label>

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
 import { MedicalDiagnosisDTO } from 'src/app/core/DTOs/app/medical-diagnosis.dto';
-import { Cie10Service } from 'src/app/infrastructure/services/common/CIE10/cie10.service';
+import { MedicalConsultationDiagnosisUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation-diagnosis.use-case';
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-create-update-medical-consultation',
@@ -20,35 +21,30 @@ import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app
 export class CreateUpdateMedicalConsultationComponent {
 
   @Input() idPatient!: number;
-  @Output() backToList = new EventEmitter<void>();
   @Input() consultationToEdit?: MedicalConsultationDTO;
+  @Output() backToList = new EventEmitter<void>();
 
- form: FormGroup;
+  form: FormGroup;
 
- //diagnoses: MedicalDiagnosisDTO[] = [];
- showDiagnosisSection = false;
-
- //cie10Results: any[] = [];
-
- cie10Results: any[][] = []; // Una lista por cada diagnóstico
- showSuggestions: boolean[] = []; // Controlar visibilidad individual de sugerencias
-
-
-   constructor(
+  constructor(
     private fb: FormBuilder,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
-    private cie10Service: Cie10Service
+    private _medicalConsultationDiagnosisUseCase: MedicalConsultationDiagnosisUseCase
   ) {
-    this.form = this.fb.group({
+   /*  this.form = this.fb.group({
       consultationReason: ['', Validators.required],
-      consultationDate: [new Date(), Validators.required],
-
+      consultationDate: [new Date()],
+      glasgowScore: [''],
+      consciousnessStatus: [''],
+      hydrationStatus: [''],
+      moodStatus: [''],
+      respiratoryStatus: [''],
+      generalStatus: [''],
       vitalSigns_BP: [''],
       vitalSigns_HR: [null],
       vitalSigns_RR: [null],
       vitalSigns_Temp: [null],
       vitalSigns_SPO2: [null],
-
       physicalExam_HeadNeck: [''],
       physicalExam_Chest: [''],
       physicalExam_Heart: [''],
@@ -57,115 +53,85 @@ export class CreateUpdateMedicalConsultationComponent {
       physicalExam_Musculoskeletal: [''],
       physicalExam_Neuro: [''],
       physicalExam_Skin: [''],
-
       observations: [''],
       status: ['Pendiente'],
-      isFirstTime: [true]
+      isFirstTime: [true],
+      weightKg: [''],
+      heightCm: [''],
+      bmi: [''],
+    }); */
+    this.form = this.fb.group({
+      idMedicalConsultation: [0],      // importante
+      updateBy: [0],                   // importante
+      consultationReason: ['', Validators.required],
+      consultationDate: [new Date()],
+      glasgowScore: [0],
+      consciousnessStatus: [''],
+      hydrationStatus: [''],
+      moodStatus: [''],
+      respiratoryStatus: [''],
+      generalStatus: [''],
+      vitalSigns_BP: [''],
+      vitalSigns_HR: [null],
+      vitalSigns_RR: [null],
+      vitalSigns_Temp: [null],
+      vitalSigns_SPO2: [null],
+      physicalExam_HeadNeck: [''],
+      physicalExam_Chest: [''],
+      physicalExam_Heart: [''],
+      physicalExam_Abdomen: [''],
+      physicalExam_GU: [''],
+      physicalExam_Musculoskeletal: [''],
+      physicalExam_Neuro: [''],
+      physicalExam_Skin: [''],
+      observations: [''],
+      status: ['Pendiente'],
+      isFirstTime: [true],
+      weightKg: [0],
+      heightCm: [''],
+      bmi: [0],
     });
   }
 
-  onSearchCie10(term: string) {
-    if (term.length < 3) return;
 
-    /*  this.cie10Service.searchCodes(term).subscribe({
-       next: (res) => {
-         this.cie10Results = res.destinations || [];
-       },
-       error: (err) => {
-         console.error('Error al buscar CIE-10:', err);
-       }
-     }); */
-    this.cie10Service.searchCodes('asma').subscribe(data => {
-      console.log('Resultados:', data);
-    });
-
-  }
-
-  onDiagnosisSearch(term: string, index: number): void {
-    if (term.length < 3) {
-      this.cie10Results[index] = [];
-      return;
-    }
-
-    this.cie10Service.searchCodes(term).subscribe((results: any) => {
-      this.cie10Results[index] = results;
-    });
-  }
-
-  selectDiagnosis(option: any, index: number): void {
-    const diagnosisGroup = this.form.get('diagnoses')?.get(`${index}`);
-    if (!diagnosisGroup) return;
-
-    diagnosisGroup.patchValue({
-      diagnosisCode: option.code,
-      diagnosisDescription: option.title?.value
-    });
-
-    this.showSuggestions[index] = false;
-  }
-
-
-
-
-  /* ngOnInit(): void {
-    if (this.consultationToEdit) {
-      this.form.patchValue(this.consultationToEdit);
-    }
-  } */
-
-   /* ngOnInit(): void {
-    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-    this.showDiagnosisSection = idRol === 1;
-
-    if (this.consultationToEdit) {
-      this.form.patchValue(this.consultationToEdit);
-    }
-  } */
-
-  /* ngOnInit(): void {
-    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-    if (idRol === 1) {
-      this.form.addControl('diagnoses', this.fb.array([]));
-      this.addDiagnosis(); // agrega uno por defecto si quieres
-    }
-
-    if (this.consultationToEdit) {
-      this.form.patchValue(this.consultationToEdit);
-
-      // Si hay diagnósticos en edición
-      if (idRol === 1 && this.consultationToEdit.diagnoses) {
-        this.consultationToEdit.diagnoses.forEach(d => {
-          const group = this.createDiagnosisGroup();
-          group.patchValue(d);
-          this.diagnoses.push(group);
-        });
-      }
-    }
-  } */
-
-    ngOnInit(): void {
+ ngOnInit(): void {
   const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
 
-  // Solo si el usuario es administrador (rol 1)
+  // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
   if (idRol === 1 && !this.form.contains('diagnoses')) {
     this.form.addControl('diagnoses', this.fb.array([]));
-    this.addDiagnosis(); // Opcional: agrega un grupo por defecto
-  }
-
-  if (this.consultationToEdit) {
-    this.form.patchValue(this.consultationToEdit);
-
-    if (idRol === 1 && this.consultationToEdit.diagnoses) {
-      const array = this.form.get('diagnoses') as FormArray;
-      this.consultationToEdit.diagnoses.forEach(d => {
-        const group = this.createDiagnosisGroup();
-        group.patchValue(d);
-        array.push(group);
-      });
-    }
   }
 }
 
+ngOnChanges(changes: SimpleChanges): void {
+  if (changes['consultationToEdit'] && this.consultationToEdit) {
+    console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
+
+    this.form.patchValue(this.consultationToEdit);
+
+    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
+
+    if (idRol === 1) {
+      // Asegúrate de que existe el FormArray
+      if (!this.form.contains('diagnoses')) {
+        this.form.addControl('diagnoses', this.fb.array([]));
+      }
+      const array = this.form.get('diagnoses') as FormArray;
+      array.clear();
+
+      if (this.consultationToEdit.diagnoses?.length) {
+        this.consultationToEdit.diagnoses.forEach(d => {
+          const group = this.createDiagnosisGroup();
+          group.patchValue(d);
+          array.push(group);
+        });
+      } else {
+        // Si no hay diagnósticos previos, agrega uno vacío para que el admin pueda crear
+        this.addDiagnosis();
+      }
+    }
+  }
+}
 
 
   get diagnoses(): FormArray {
@@ -174,106 +140,29 @@ export class CreateUpdateMedicalConsultationComponent {
 
   private createDiagnosisGroup(): FormGroup {
     return this.fb.group({
+      idMedicalConsultationDiagnosis: [0],
+      idMedicalConsultation: [0],
       diagnosisCode: ['', Validators.required],
       diagnosisDescription: ['', Validators.required],
       diagnosisType: [''],
       isPrincipal: [false],
       comment: [''],
-      createdBy: [0]
+      updatedBy: [0],
+      updatedAt: [''],
+      createdBy: [0],
+      createdAt: ['']
     });
   }
-
- /*  addDiagnosis(): void {
-    this.diagnoses.push(this.createDiagnosisGroup());
-  } */
 
   addDiagnosis(): void {
     this.diagnoses.push(this.createDiagnosisGroup());
-
-    // 🔧 Agrega una lista vacía para resultados de búsqueda y sugerencias
-    this.cie10Results.push([]);
-    this.showSuggestions.push(false);
   }
-
-
-  /* removeDiagnosis(index: number): void {
-    this.diagnoses.removeAt(index);
-  } */
 
   removeDiagnosis(index: number): void {
     this.diagnoses.removeAt(index);
-
-    // 🔧 Elimina también sus sugerencias y estado visual
-    this.cie10Results.splice(index, 1);
-    this.showSuggestions.splice(index, 1);
   }
-
-
-  /* addDiagnosis() {
-    const diagnosis: MedicalDiagnosisDTO = {
-      diagnosisCode: '',
-      diagnosisDescription: '',
-      diagnosisType: '',
-      isPrincipal: false,
-      comment: '',
-      createdBy: parseInt(localStorage.getItem('IdUser') || '0', 10)
-    };
-    this.diagnoses.push(diagnosis);
-  }
-
-  removeDiagnosis(index: number) {
-    this.diagnoses.splice(index, 1);
-  } */
 
  /*  submit() {
-  if (this.form.valid) {
-    const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
-    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-
-    if (!idUser) {
-      alert("No se encontró el usuario en el localStorage.");
-      return;
-    }
-
-    const formValues = this.form.value;
-
-    const consultation: MedicalConsultationDTO = {
-      ...formValues,
-      idPatient: this.idPatient,
-      idUser,
-      createdBy: idUser,
-      idMedicalConsultation: this.consultationToEdit?.idMedicalConsultation || 0,
-
-      // Cast numéricos para cumplir con el DTO
-      vitalSigns_HR: Number(formValues.vitalSigns_HR),
-      vitalSigns_RR: Number(formValues.vitalSigns_RR),
-      vitalSigns_Temp: Number(formValues.vitalSigns_Temp),
-      vitalSigns_SPO2: Number(formValues.vitalSigns_SPO2),
-    };
-
-    const isEdit = consultation.idMedicalConsultation > 0;
-
-    const operation = isEdit
-      ? this._medicalConsultationUseCase.UpdateMedicalConsultation(consultation)
-      : this._medicalConsultationUseCase.CreateMedicalConsultation(consultation);
-
-    operation.subscribe({
-      next: (response) => {
-        console.log('📦 Respuesta completa:', response);
-        if (response.isSuccess) {
-          this.backToList.emit();
-        }
-      },
-      error: (err) => {
-        console.error('❌ Error en la petición:', err);
-      }
-    });
-  } else {
-    this.form.markAllAsTouched();
-  }
-} */
-
-  /*  submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -281,35 +170,53 @@ export class CreateUpdateMedicalConsultationComponent {
 
     const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
     const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
+    const isEdit = !!this.consultationToEdit?.idMedicalConsultation;
 
     const formValues = this.form.value;
 
-    const baseData = {
+    const now = new Date().toISOString();
+
+    const baseData: MedicalConsultationDTO = {
       ...formValues,
       idPatient: this.idPatient,
       idUser,
       createdBy: idUser,
+      createdAt: now,
       vitalSigns_HR: Number(formValues.vitalSigns_HR),
       vitalSigns_RR: Number(formValues.vitalSigns_RR),
       vitalSigns_Temp: Number(formValues.vitalSigns_Temp),
       vitalSigns_SPO2: Number(formValues.vitalSigns_SPO2),
     };
 
-    const isEdit = this.consultationToEdit?.idMedicalConsultation > 0;
-
-    let operation;
-
     if (isEdit) {
+      // Edita la consulta
       const updatedConsultation: MedicalConsultationDTO = {
         ...baseData,
         idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation
       };
-      operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(updatedConsultation);
+
+      this._medicalConsultationUseCase.UpdateMedicalConsultation(updatedConsultation).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            if (idRol === 1 && this.diagnoses.length > 0) {
+              this.createDiagnosesForExistingConsultation(this.consultationToEdit!.idMedicalConsultation);
+            } else {
+              this.backToList.emit();
+            }
+          }
+        },
+        error: (err) => {
+          console.error('❌ Error al actualizar la consulta:', err);
+        }
+      });
+
     } else {
+      // Crea la consulta
+      let operation;
       if (idRol === 1) {
         const newConsultationWithDiagnosis: MedicalConsultationDTO = {
           ...baseData,
-          diagnoses: this.diagnoses
+          diagnoses: this.diagnoses.value
         };
         operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
       } else {
@@ -319,20 +226,20 @@ export class CreateUpdateMedicalConsultationComponent {
         };
         operation = this._medicalConsultationUseCase.CreateMedicalConsultation(newConsultation);
       }
-    }
 
-    operation.subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          this.backToList.emit();
+      operation.subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.backToList.emit();
+          }
+        },
+        error: (err) => {
+          console.error('❌ Error al crear la consulta:', err);
         }
-      },
-      error: (err) => {
-        console.error('❌ Error en la petición:', err);
-      }
-    });
+      });
+    }
   } */
-  
+
   submit() {
   if (this.form.invalid) {
     this.form.markAllAsTouched();
@@ -341,46 +248,199 @@ export class CreateUpdateMedicalConsultationComponent {
 
   const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
   const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-  const isEdit = !!this.consultationToEdit;
+  const isEdit = !!this.consultationToEdit?.idMedicalConsultation;
 
-  const formValues = this.form.getRawValue(); // ✅ Seguro para serializar
+  const formValues = this.form.value;
+  const now = new Date().toISOString();
 
-  // Asegurar que cada diagnóstico tenga el campo createdBy
-  const diagnosesWithCreator = (formValues.diagnoses || []).map((d: any) => ({
-    ...d,
-    createdBy: idUser
-  }));
-
-  const consultation: MedicalConsultationDTO = {
-    ...formValues,
-    idPatient: this.idPatient,
-    idUser,
-    createdBy: idUser,
-    idMedicalConsultation: this.consultationToEdit?.idMedicalConsultation || 0,
+  // Construimos solo los campos que realmente necesita el backend, excluyendo 'diagnoses'
+ /*  const baseData: MedicalConsultationDTO = {
+    consultationReason: formValues.consultationReason,
+    consultationDate: formValues.consultationDate,
+    glasgowScore: formValues.glasgowScore,
+    consciousnessStatus: formValues.consciousnessStatus,
+    hydrationStatus: formValues.hydrationStatus,
+    moodStatus: formValues.moodStatus,
+    respiratoryStatus: formValues.respiratoryStatus,
+    generalStatus: formValues.generalStatus,
+    vitalSigns_BP: formValues.vitalSigns_BP,
     vitalSigns_HR: Number(formValues.vitalSigns_HR),
     vitalSigns_RR: Number(formValues.vitalSigns_RR),
     vitalSigns_Temp: Number(formValues.vitalSigns_Temp),
     vitalSigns_SPO2: Number(formValues.vitalSigns_SPO2),
-    diagnoses: diagnosesWithCreator
-  };
+    physicalExam_HeadNeck: formValues.physicalExam_HeadNeck,
+    physicalExam_Chest: formValues.physicalExam_Chest,
+    physicalExam_Heart: formValues.physicalExam_Heart,
+    physicalExam_Abdomen: formValues.physicalExam_Abdomen,
+    physicalExam_GU: formValues.physicalExam_GU,
+    physicalExam_Musculoskeletal: formValues.physicalExam_Musculoskeletal,
+    physicalExam_Neuro: formValues.physicalExam_Neuro,
+    physicalExam_Skin: formValues.physicalExam_Skin,
+    observations: formValues.observations,
+    status: formValues.status,
+    isFirstTime: formValues.isFirstTime,
+    weightKg: formValues.weightKg,
+    heightCm: formValues.heightCm,
+    bmi: formValues.bmi,
+    idPatient: this.idPatient,
+    idUser,
+    createdBy: idUser,
+    createdAt: now
+  }; */
+    const baseData: MedicalConsultationDTO = {
+      idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
+      updateBy: idUser,  // o 0 si quieres, pero normalmente debe ser el id del usuario que hace la acción
 
-  const operation$ = isEdit
-    ? this._medicalConsultationUseCase.UpdateMedicalConsultation(consultation)
-    : (idRol === 1
-        ? this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(consultation)
-        : this._medicalConsultationUseCase.CreateMedicalConsultation(consultation));
+      idPatient: this.idPatient,
+      idUser,
+      createdBy: idUser,
+      createdAt: now,
 
-  operation$.subscribe({
-    next: (res) => {
-      if (res.isSuccess) {
-        this.backToList.emit();
+      consultationReason: formValues.consultationReason,
+      consultationDate: formValues.consultationDate,
+      glasgowScore: Number(formValues.glasgowScore),
+      consciousnessStatus: formValues.consciousnessStatus,
+      hydrationStatus: formValues.hydrationStatus,
+      moodStatus: formValues.moodStatus,
+      respiratoryStatus: formValues.respiratoryStatus,
+      generalStatus: formValues.generalStatus,
+      vitalSigns_BP: formValues.vitalSigns_BP,
+      vitalSigns_HR: Number(formValues.vitalSigns_HR),
+      vitalSigns_RR: Number(formValues.vitalSigns_RR),
+      vitalSigns_Temp: Number(formValues.vitalSigns_Temp),
+      vitalSigns_SPO2: Number(formValues.vitalSigns_SPO2),
+      physicalExam_HeadNeck: formValues.physicalExam_HeadNeck,
+      physicalExam_Chest: formValues.physicalExam_Chest,
+      physicalExam_Heart: formValues.physicalExam_Heart,
+      physicalExam_Abdomen: formValues.physicalExam_Abdomen,
+      physicalExam_GU: formValues.physicalExam_GU,
+      physicalExam_Musculoskeletal: formValues.physicalExam_Musculoskeletal,
+      physicalExam_Neuro: formValues.physicalExam_Neuro,
+      physicalExam_Skin: formValues.physicalExam_Skin,
+      observations: formValues.observations,
+      status: formValues.status,
+      isFirstTime: formValues.isFirstTime,
+      weightKg: Number(formValues.weightKg),
+      heightCm: formValues.heightCm,
+      bmi: Number(formValues.bmi),
+      // diagnoses solo si aplica (caso create con admin)
+    };
+
+  if (isEdit) {
+    // Caso editar: agregamos el ID de la consulta a actualizar
+    const updatedConsultation: MedicalConsultationDTO = {
+      ...baseData,
+      idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation
+    };
+
+    console.log('👉 Data que voy a mandar a Update:', updatedConsultation);
+
+    this._medicalConsultationUseCase.UpdateMedicalConsultation(updatedConsultation).subscribe({
+      next: (response) => {
+        if (response.isSuccess) {
+          // Si es admin y hay diagnósticos en el form, creamos los diagnósticos
+          if (idRol === 1 && this.diagnoses.length > 0) {
+            this.createDiagnosesForExistingConsultation(this.consultationToEdit!.idMedicalConsultation);
+          } else {
+            this.backToList.emit();
+          }
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error al actualizar la consulta:', err);
       }
-    },
-    error: (err) => {
-      console.error('❌ Error en la petición:', err);
+    });
+
+  } else {
+    // Caso crear
+    let operation;
+
+    /* if (idRol === 1) {
+      // Admin: crea consulta junto con diagnósticos
+      const newConsultationWithDiagnosis: MedicalConsultationDTO = {
+        ...baseData,
+        diagnoses: this.diagnoses.value
+      };
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
+    }  */
+
+    if (idRol === 1) {
+      // Admin: crea consulta junto con diagnósticos
+      const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
+        ...d,
+        idMedicalConsultationDiagnosis: 0, // indica que es nuevo
+        //idMedicalConsultation: null,          // el backend lo asigna
+        createdBy: d.createdBy || idUser,
+        createdAt: d.createdAt || now,
+        updatedBy: idUser,
+        updatedAt: now
+      }));
+
+      const newConsultationWithDiagnosis: MedicalConsultationDTO = {
+        ...baseData,
+        diagnoses: preparedDiagnoses
+      };
+
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
     }
-  });
+
+    
+    
+    else {
+      // Otros roles: crea consulta sin diagnósticos
+      const newConsultation: MedicalConsultationDTO = {
+        ...baseData,
+        idMedicalConsultation: 0
+      };
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultation(newConsultation);
+    }
+
+    console.log('👉 Data que voy a mandar a Create:', operation);
+
+    operation.subscribe({
+      next: (response) => {
+        if (response.isSuccess) {
+          this.backToList.emit();
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error al crear la consulta:', err);
+      }
+    });
+  }
 }
+
+  
+  private createDiagnosesForExistingConsultation(idMedicalConsultation: number) {
+    const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
+    const now = new Date().toISOString();
+
+    const createObservables = this.diagnoses.controls.map(control => {
+      const diag: MedicalDiagnosisDTO = {
+        ...control.value,
+        idMedicalConsultation,
+        createdBy: control.value.createdBy || idUser,
+        createdAt: control.value.createdAt || now,
+        updatedBy: idUser,
+        updatedAt: now
+      };
+      return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
+    });
+
+    forkJoin(createObservables).subscribe({
+      next: (responses) => {
+        const allSuccess = responses.every(res => res.isSuccess);
+        if (allSuccess) {
+          this.backToList.emit();
+        } else {
+          console.warn('⚠️ Algunos diagnósticos no se pudieron crear');
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error al crear diagnósticos:', err);
+      }
+    });
+  }
 
   back() {
     this.backToList.emit();

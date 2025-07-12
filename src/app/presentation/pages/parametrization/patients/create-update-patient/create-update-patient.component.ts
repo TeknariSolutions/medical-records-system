@@ -11,6 +11,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { take } from 'rxjs';
 import { LocationService } from 'src/app/infrastructure/services/common/location/location.service';
+import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS-Colombia/eps-colombia.service';
 
 @Component({
   standalone: true,
@@ -38,6 +39,9 @@ export class CreateUpdatePatientComponent implements OnInit {
   departments: any[] = [];
   cities: any[] = [];
 
+  // EPS
+  epsList: Eps[] = [];
+
   // Tipos de documento
   documentTypes = [
     { value: 'CC', label: 'Cédula de Ciudadanía' },
@@ -55,6 +59,24 @@ export class CreateUpdatePatientComponent implements OnInit {
   // Tipos de Sangre
   bloodTypes = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
 
+  // Parentescos
+  relationships = [
+    { value: 'PADRE', label: 'Padre' },
+    { value: 'MADRE', label: 'Madre' },
+    { value: 'HIJO', label: 'Hijo(a)' },
+    { value: 'HERMANO', label: 'Hermano(a)' },
+    { value: 'ABUELO', label: 'Abuelo(a)' },
+    { value: 'TÍO', label: 'Tío(a)' },
+    { value: 'SOBRINO', label: 'Sobrino(a)' },
+    { value: 'PRIMO', label: 'Primo(a)' },
+    { value: 'CÓNYUGE', label: 'Cónyuge' },
+    { value: 'PAREJA', label: 'Pareja o compañero(a) permanente' },
+    { value: 'YERNO', label: 'Yerno / Nuera' },
+    { value: 'SUEGRO', label: 'Suegro(a)' },
+    { value: 'NIETO', label: 'Nieto(a)' },
+    { value: 'OTRO', label: 'Otro' }
+  ];
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,11 +84,14 @@ export class CreateUpdatePatientComponent implements OnInit {
     private router: Router,
     public bsModalRef: BsModalRef,
     private _dataTransferService: DataTransferService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private _epsService: EpsColombiaService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    
+    this.loadEPS();
 
     this.loadDepartments();
 
@@ -101,6 +126,14 @@ export class CreateUpdatePatientComponent implements OnInit {
               phoneNumber: patient.phoneNumber,
               phoneNumber2: patient.phoneNumber2,
               email: patient.email,
+
+              nameOfGuardian: patient.nameOfGuardian,
+              idDocumentGuardian: patient.idDocumentGuardian,
+              documentTypeGuradian: patient.documentTypeGuradian,
+              relationship: patient.relationship,
+              addressOfGuardian: patient.addressOfGuardian,
+              phoneNumberOfGuardian: patient.phoneNumberOfGuardian,
+              emailOfGuardian: patient.emailOfGuardian,
             },
             medicalInfo: {
               isDisAbility: patient.isDisAbility,
@@ -149,7 +182,15 @@ export class CreateUpdatePatientComponent implements OnInit {
         city: ['', Validators.required],
         phoneNumber: ['', Validators.required],
         phoneNumber2: [''],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.email]],
+
+        nameOfGuardian: [''],
+        idDocumentGuardian: [''],
+        documentTypeGuradian: [''],
+        relationship: [''],
+        addressOfGuardian: [''],
+        phoneNumberOfGuardian: [''],
+        emailOfGuardian: [''],
       }),
 
       medicalInfo: this.formBuilder.group({
@@ -199,6 +240,12 @@ export class CreateUpdatePatientComponent implements OnInit {
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
+  }
+
+  loadEPS(): void {
+      this._epsService.getEpsList().subscribe(data => {
+      this.epsList = data;
+    });
   }
 
   loadDepartments() {
@@ -270,7 +317,18 @@ export class CreateUpdatePatientComponent implements OnInit {
         job: formValue.aditionalInfo.job,
         ethnic: formValue.aditionalInfo.ethnic,
         idCompany: Number(IdCompany),
-        createdBy: Number(IdUser)
+        createdBy: Number(IdUser),
+
+        createdAt: new Date().toISOString(),
+        updatedBy: Number(IdUser),
+        updatedAt: new Date().toISOString(),
+        nameOfGuardian: formValue.contactInfo.nameOfGuardian,
+        idDocumentGuardian: formValue.contactInfo.idDocumentGuardian,
+        documentTypeGuradian: formValue.contactInfo.documentTypeGuradian,
+        relationship: formValue.contactInfo.relationship,
+        addressOfGuardian: formValue.contactInfo.addressOfGuardian,
+        phoneNumberOfGuardian: formValue.contactInfo.phoneNumberOfGuardian,
+        emailOfGuardian: formValue.contactInfo.emailOfGuardian,
       };
 
       const payload = patientData;

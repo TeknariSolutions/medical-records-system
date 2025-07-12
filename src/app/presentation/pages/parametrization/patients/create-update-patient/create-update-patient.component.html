@@ -385,6 +385,101 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!--Datos del acudiente-->
+                                            <div class="row mb-3">
+                                                <h5>Datos del Acudiente</h5>
+                                            
+                                                <!--Nombre del acudiente-->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="phoneNumber" class="form-label">
+                                                            Nombre
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="nameOfGuardian" formControlName="nameOfGuardian" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                                <!-- Parentesco -->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="relationship" class="form-label">
+                                                            Parentesco
+                                                        </label>
+                                                        <ng-select [items]="relationships" bindLabel="label" bindValue="value" formControlName="relationship"
+                                                            placeholder="Selecciona un parentesco">
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                            
+                                                <!-- Tipo de Documento-->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="documentType" class="form-label">
+                                                            Tipo de Documento
+                                                        </label>
+                                                        <ng-select [items]="documentTypes" bindLabel="label" bindValue="value"
+                                                            formControlName="documentTypeGuradian" placeholder="Selecciona un tipo de documento">
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                            
+                                                <!-- Documento-->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="text" class="form-label">
+                                                            Documento
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="idDocumentGuardian"
+                                                                formControlName="idDocumentGuardian" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        
+                                             <div class="row mb-3">
+
+                                                <!--Direccion del acudiente-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="phoneNumber" class="form-label">
+                                                            Dirección
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="addressOfGuardian" formControlName="addressOfGuardian" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Telefono del acudiente-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="phoneNumberOfGuardian" class="form-label">
+                                                            Telefono
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="phoneNumberOfGuardian" formControlName="phoneNumberOfGuardian" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--Correo del acudiente-->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="emailOfGuardian" class="form-label">
+                                                            Correo
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="email" class="form-control" id="emailOfGuardian" formControlName="emailOfGuardian" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                             </div>
                                     
                                             <ul class="list-inline wizard d-flex justify-content-end mb-0">
                                                 <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light"
@@ -471,7 +566,7 @@
 
                                             <div class="row mb-3">
                                                 <!--EPS-->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                                <!-- <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="idEps" class="form-label">
                                                             EPS
@@ -480,6 +575,31 @@
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="idEps" formControlName="idEps"
                                                                 [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.idEps')?.invalid }" />
+                                                            @if(submitted && patientForm.get('medicalInfo.idEps')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('medicalInfo.idEps')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="idEps" class="form-label">
+                                                            EPS
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="idEps" name="idEps" class="form-control" formControlName="idEps"
+                                                                placeholder="Selecciona una opción"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.idEps')?.invalid }">
+                                                                <option *ngFor="let eps of epsList" [value]="eps.idEps">
+                                                                    {{ eps.nombre }}
+                                                                </option>
+                                                            </select>
                                                             @if(submitted && patientForm.get('medicalInfo.idEps')?.errors) {
                                                             <div class="invalid-feedback">
                                                                 @if(patientForm.get('medicalInfo.idEps')?.errors['required']) {
