@@ -106,9 +106,9 @@ export class CreateUpdateMedicalConsultationComponent {
     this.form.addControl('diagnoses', this.fb.array([]));
   }
 
- /*  this.cie10Service.searchCodes('asma').subscribe(data => {
+ this.cie10Service.searchCodes('asma').subscribe(data => {
       console.log('Resultados:', data);
-  }); */
+  }); 
 }
 
  onSearchCie10(term: string) {

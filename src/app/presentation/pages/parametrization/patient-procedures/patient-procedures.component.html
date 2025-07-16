@@ -24,7 +24,7 @@
             <h4 class="card-title mb-1">{{patientData.firstName}} {{patientData.secondName}} 
                 {{patientData.firstLastName}} {{patientData.secondLastName}}
             </h4>
-            <p>{{patientData.idDocument}}</p>
+            <p>{{patientData.documentType}}: {{patientData.idDocument}}</p>
     
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">
@@ -60,6 +60,11 @@
                          <div class="info-row">
                             <span class="info-label">EPS:</span>
                             <span class="info-value">Sanitas</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">Edad:</span>
+                            <span class="info-value">{{patientData.birthDay}}</span>
                         </div>
                         
                     </div>
