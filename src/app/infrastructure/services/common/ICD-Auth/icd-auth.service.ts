@@ -1,7 +1,7 @@
 // auth.service.ts
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class IcdAuthService {
@@ -16,8 +16,17 @@ export class IcdAuthService {
       .set('grant_type', 'client_credentials')
       .set('scope', 'icdapi_access');
 
-    return this.http.post<any>(this.tokenUrl, body).pipe(
-      map((response) => response.access_token)
+   return this.http.post<any>(this.tokenUrl, body).pipe(
+      map((response) => response.access_token
+    ) 
+
+    /*  return this.http.post<any>(this.tokenUrl, body).pipe(
+      tap(response => console.log('Token Response:', response)),
+      map(response => response.access_token)
+    ); */
+
+
+      
     );
   }
 }

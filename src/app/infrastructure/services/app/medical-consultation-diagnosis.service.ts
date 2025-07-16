@@ -17,11 +17,31 @@ export class MedicalConsultationDiagnosisService implements IMedicalConsultation
   ) { }
 
 
-   CreateMedicalConsultationDiagnosis(medicalConsultationDiagnosis: MedicalDiagnosisDTO): Observable<ResponseDTO> {
+  CreateMedicalConsultationDiagnosis(medicalConsultationDiagnosis: MedicalDiagnosisDTO): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        return this._httpService.post(url, "CreateMedicalConsultationDiagnosis", null, medicalConsultationDiagnosis);
+      })
+    );
+  }
+
+  UpdateMedicalConsultationDiagnosis(medicalConsultationDiagnosis: MedicalDiagnosisDTO): Observable<ResponseDTO> {
       return this._configService.getUrl().pipe(
         switchMap(url => {
-          return this._httpService.post(url, "CreateMedicalConsultationDiagnosis", null, medicalConsultationDiagnosis);
+          return this._httpService.put(url, "UpdateMedicalConsultationDiagnosis", null, medicalConsultationDiagnosis);
         })
       );
     }
+
+  GetListMedicalConsultationDiagnosisByIdMedicalConsultation(idMedicalConsultation?: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idMedicalConsultation
+        };
+        return this._httpService.get<ResponseDTO>(url, "GetListMedicalConsultationDiagnosisByIdMedicalConsultation", params);
+      })
+    );
+  }
+
 }

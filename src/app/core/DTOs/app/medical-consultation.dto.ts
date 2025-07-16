@@ -20,7 +20,7 @@ export interface MedicalConsultationDTO {
   physicalExam_Neuro: string;
   physicalExam_Skin: string;
   observations: string;
-  status: string;
+  status: boolean;
   createdBy: number;
   createdAt: string;
 

@@ -4,4 +4,6 @@ import { MedicalDiagnosisDTO } from '../../DTOs/app/medical-diagnosis.dto';
 
 export interface IMedicalConsultationDiagnosisService {
     CreateMedicalConsultationDiagnosis(medicalConsultationDiagnosis: MedicalDiagnosisDTO): Observable<ResponseDTO>;
+    UpdateMedicalConsultationDiagnosis(medicalConsultationDiagnosis: MedicalDiagnosisDTO): Observable<ResponseDTO>;
+    GetListMedicalConsultationDiagnosisByIdMedicalConsultation(idMedicalConsultation?: number): Observable<ResponseDTO>;
 }

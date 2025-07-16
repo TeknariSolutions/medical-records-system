@@ -28,4 +28,37 @@ export class MedicalConsultationDiagnosisUseCase {
         );
     }
 
+
+    UpdateMedicalConsultationDiagnosis(medicalConsultationDiagnosis: MedicalDiagnosisDTO): Observable<ResponseDTO> {
+        return this._medicalConsultationDiagnosisService.UpdateMedicalConsultationDiagnosis(medicalConsultationDiagnosis).pipe(
+            map((response: ResponseDTO) => {
+                if (response.isSuccess) {
+                    this._notificationService.showToastSuccessMessage(response.message || 'Diagnosticos actualizados exitosamente');
+                } else {
+                    this._notificationService.showToastErrorMessage(response.message || 'Ocurrió un error al actualizar los diagnosticos');
+                }
+
+                return response; 
+            })
+        );
+    }
+
+
+    GetListMedicalConsultationDiagnosisByIdMedicalConsultation(idMedicalConsultation?: number): Observable<MedicalDiagnosisDTO[]> {
+        return this._medicalConsultationDiagnosisService
+            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(idMedicalConsultation)
+            .pipe(
+                map((response: ResponseDTO) => {
+                    if (!response.isSuccess) {
+                        this._notificationService.showToastErrorMessage(response.message!);
+                        return [];
+                    }
+                    return response.data as MedicalDiagnosisDTO[];
+                })
+            );
+    }
+
+
+
 }
+
