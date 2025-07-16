@@ -106,9 +106,9 @@ export class CreateUpdateMedicalConsultationComponent {
     this.form.addControl('diagnoses', this.fb.array([]));
   }
 
-  this.cie10Service.searchCodes('asma').subscribe(data => {
+ /*  this.cie10Service.searchCodes('asma').subscribe(data => {
       console.log('Resultados:', data);
-  });
+  }); */
 }
 
  onSearchCie10(term: string) {
@@ -161,7 +161,12 @@ export class CreateUpdateMedicalConsultationComponent {
   ngOnChanges(changes: SimpleChanges): void {
   if (changes['consultationToEdit'] && this.consultationToEdit) {
     console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
-    this.form.patchValue(this.consultationToEdit);
+    //this.form.patchValue(this.consultationToEdit);
+
+    const normalized = this.normalizeConsultationData(this.consultationToEdit);
+    console.log('✅ Normalized data:', normalized);
+    this.form.patchValue(normalized);
+
 
     const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
     if (idRol === 1) {
@@ -216,11 +221,49 @@ export class CreateUpdateMedicalConsultationComponent {
   }
 }
 
-
-
   get diagnoses(): FormArray {
     return this.form.get('diagnoses') as FormArray;
   }
+
+  private normalizeConsultationData(c: any): any {
+    return {
+      idMedicalConsultation: c.idMedicalConsultation ?? 0,
+      updateBy: parseInt(localStorage.getItem('IdUser') || '0', 10),
+
+      consultationReason: c.consultationReason ?? '',
+      consultationDate: c.consultationDate ? new Date(c.consultationDate) : new Date(),
+
+      glasgowScore: c.glasgowScore != null ? Number(c.glasgowScore) : 0,
+      consciousnessStatus: c.consciousnessStatus ?? '',
+      hydrationStatus: c.hydrationStatus ?? '',
+      moodStatus: c.moodStatus ?? '',
+      respiratoryStatus: c.respiratoryStatus ?? '',
+      generalStatus: c.generalStatus ?? '',
+
+      vitalSigns_BP: c.vitalSigns_BP ?? '',
+      vitalSigns_HR: c.vitalSigns_HR != null ? Number(c.vitalSigns_HR) : 0,
+      vitalSigns_RR: c.vitalSigns_RR != null ? Number(c.vitalSigns_RR) : 0,
+      vitalSigns_Temp: c.vitalSigns_Temp != null ? Number(c.vitalSigns_Temp) : 0,
+      vitalSigns_SPO2: c.vitalSigns_SPO2 != null ? Number(c.vitalSigns_SPO2) : 0,
+
+      physicalExam_HeadNeck: c.physicalExam_HeadNeck ?? '',
+      physicalExam_Chest: c.physicalExam_Chest ?? '',
+      physicalExam_Heart: c.physicalExam_Heart ?? '',
+      physicalExam_Abdomen: c.physicalExam_Abdomen ?? '',
+      physicalExam_GU: c.physicalExam_GU ?? '',
+      physicalExam_Musculoskeletal: c.physicalExam_Musculoskeletal ?? '',
+      physicalExam_Neuro: c.physicalExam_Neuro ?? '',
+      physicalExam_Skin: c.physicalExam_Skin ?? '',
+
+      observations: c.observations ?? '',
+      status: c.status ?? false,
+      isFirstTime: c.isFirstTime ?? true,
+      weightKg: c.weightKg != null ? Number(c.weightKg) : 0,
+      heightCm: c.heightCm ?? '',
+      bmi: c.bmi != null ? Number(c.bmi) : 0
+    };
+  }
+
 
   private createDiagnosisGroup(): FormGroup {
     return this.fb.group({

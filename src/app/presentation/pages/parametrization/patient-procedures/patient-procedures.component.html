@@ -27,29 +27,41 @@
             <p>{{patientData.idDocument}}</p>
     
             <div class="row">
-                <div class="col-12 col-md-6 col-lg-6">
+                <div class="col-12 col-md-6 col-lg-4">
                     <div class="info-group">
                         <div class="info-row">
-                            <span class="info-label">Dirección:</span>
-                            <span class="info-value">{{patientData.address}}</span>
+                            <span class="info-label">Estado civil:</span>
+                            <span class="info-value">{{patientData.maritalStatus}}</span>
                         </div>
+
                         <div class="info-row">
-                            <span class="info-label">EPS:</span>
-                            <span class="info-value">Sanitas</span>
+                            <span class="info-label">Ocupación:</span>
+                            <span class="info-value">{{patientData.job}}</span>
                         </div>
                     </div>
                 </div>
-    
-                <div class="col-12 col-md-6 col-lg-6">
+
+                <div class="col-12 col-md-6 col-lg-4">
                     <div class="info-group">
                         <div class="info-row">
                             <span class="info-label">Teléfono:</span>
                             <span class="info-value">{{patientData.phoneNumber}}</span>
                         </div>
+
                         <div class="info-row">
-                            <span class="info-label">Ocupación:</span>
-                            <span class="info-value">{{patientData.job}}</span>
+                            <span class="info-label">Ciudad:</span>
+                            <span class="info-value">{{patientData.city}}</span>
                         </div>
+                    </div>
+                </div>
+    
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="info-group">
+                         <div class="info-row">
+                            <span class="info-label">EPS:</span>
+                            <span class="info-value">Sanitas</span>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
