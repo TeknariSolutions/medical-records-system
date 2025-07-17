@@ -212,10 +212,11 @@
                                                             </label>
                                                             <select id="maritalStatus" name="maritalStatus" class="form-control" formControlName="maritalStatus"
                                                             [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.maritalStatus')?.invalid }">
-                                                                <option value="soltero">Soltero</option>
-                                                                <option value="casado">Casado</option>
-                                                                <option value="union">Unión libre</option>
-                                                                <option value="divorciado">Divorciado</option>
+                                                                <option value="Soltero/a">Soltero/a</option>
+                                                                <option value="Casado/a">Casado/a</option>
+                                                                <option value="Unión libre">Unión libre/a</option>
+                                                                <option value="Divorciado/a">Divorciado/a</option>
+                                                                <option value="Viudo/a">Viudo/a</option>
                                                             </select>
                                                             @if(submitted && patientForm.get('personalInfo.maritalStatus')?.errors) {
                                                             <div class="invalid-feedback">
@@ -566,26 +567,6 @@
 
                                             <div class="row mb-3">
                                                 <!--EPS-->
-                                                <!-- <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="idEps" class="form-label">
-                                                            EPS
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="idEps" formControlName="idEps"
-                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.idEps')?.invalid }" />
-                                                            @if(submitted && patientForm.get('medicalInfo.idEps')?.errors) {
-                                                            <div class="invalid-feedback">
-                                                                @if(patientForm.get('medicalInfo.idEps')?.errors['required']) {
-                                                                <span>Este campo es obligatorio.</span>
-                                                                }
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div> -->
-
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="idEps" class="form-label">

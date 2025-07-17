@@ -243,10 +243,12 @@ export class CreateUpdatePatientComponent implements OnInit {
   }
 
   loadEPS(): void {
-      this._epsService.getEpsList().subscribe(data => {
+    this._epsService.getEpsList().subscribe(data => {
       this.epsList = data;
     });
   }
+
+
 
   loadDepartments() {
     this.locationService.getDepartments().subscribe({

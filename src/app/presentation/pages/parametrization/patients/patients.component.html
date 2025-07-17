@@ -22,7 +22,7 @@
   </div>
 
   <!-- Filter -->
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
@@ -58,7 +58,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- Container Table -->
   <div class="row">
@@ -91,11 +91,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th scope="col">Nombre</th>
-                                <th scope="col">Documento</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col">EPS</th>
+                                <th scope="col" style="width: 10%;">Tipo</th>
+                                <th scope="col">Nº Documento</th>
                                 <th scope="col">Telefono</th>
-                                <th scope="col">Correo</th>
+                                <th scope="col">EPS</th>
                                 <th scope="col" class="align-middle text-center" style="width: 10%;">
                                     Acciones
                                 </th>
@@ -105,14 +104,13 @@
                             @for(data of patients; track $index){
                               <tr>
                                 <td>{{ data.firstName }} {{ data.secondName }} {{ data.firstLastName }} {{ data.secondLastName }}</td>
-                                <td>{{ data.idDocument }}</td>
                                 <td>{{ data.documentType }}</td>
-                                <td>{{ data.idEps }}</td>
+                                <td>{{ data.idDocument }}</td>
                                 <td>{{ data.phoneNumber }}</td>
-                                <td>{{ data.email }}</td>
-                              
+                                <td>{{ data.idEps }}</td>
+                               
                                 <!-- Actions -->
-                                <td class="d-flex justify-content-end">
+                                <!-- <td class="d-flex justify-content-end">
                                   <ul class="list-inline font-size-20 contact-links mb-0">
                                     <li class="list-inline-item">
                               
@@ -147,8 +145,27 @@
                                       </div>
                                     </li>
                                   </ul>
-                                </td>
+                                </td> -->
                               
+                                  <!-- Actions -->
+                                <td class="d-flex justify-content-end">
+                                
+                                  <ul class="list-unstyled hstack gap-1 mb-0">
+                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                      <button class="btn btn-sm btn-soft-info" (click)="editPatient(data)">
+                                        <i class="mdi mdi-pencil-outline"></i>
+                                      </button>
+                                    </li>
+
+                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Historia Clinica">
+                                      <button class="btn btn-sm btn-soft-success" (click)="viewPatientProcedures(data)">
+                                        <i class="mdi mdi-account-circle"></i>
+                                      </button>
+                                    </li>
+                                  </ul>
+
+                                </td>
+
                               </tr>
                             }
                         </tbody>

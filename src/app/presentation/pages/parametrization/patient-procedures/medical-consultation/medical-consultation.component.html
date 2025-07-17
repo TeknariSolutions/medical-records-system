@@ -47,7 +47,7 @@
                 <tr>
                   <!-- <td>{{ data.status }}</td> -->
                   <td>
-                    <span class="badge" [ngClass]="{'badge-soft-success': data.status === true,'badge-soft-danger': data.status === false}">
+                    <span class="badge" [ngClass]="{'badge-soft-success': data.status === true,'badge-soft-warning': data.status === false}">
                       {{ data.status ? 'CERRADO' : 'PENDIENTE' }}
                     </span>
                   </td>

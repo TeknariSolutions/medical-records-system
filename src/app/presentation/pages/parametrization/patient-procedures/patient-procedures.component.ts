@@ -5,6 +5,7 @@ import { take } from 'rxjs';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { MedicalConsultationComponent } from './medical-consultation/medical-consultation.component';
+import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS-Colombia/eps-colombia.service';
 
 @Component({
   selector: 'app-patient-procedures',
@@ -25,11 +26,15 @@ export class PatientProceduresComponent implements OnInit {
 
   showCreateConsultation = false;
 
+  // EPS
+  epsList: any[] = [];
+
   constructor(
-    private _dataTransferService: DataTransferService
+    private _dataTransferService: DataTransferService,
+    private _epsService: EpsColombiaService
   ) { }
 
-  ngOnInit(): void {
+/*   ngOnInit(): void {
 
     this._dataTransferService.getData$()
           .pipe(take(1))
@@ -42,7 +47,51 @@ export class PatientProceduresComponent implements OnInit {
             }
       });
 
+  } */
+
+  ngOnInit(): void {
+     this.loadEPS();
+
+    this._dataTransferService.getData$()
+      .pipe(take(1))
+      .subscribe(patient => {
+        if (patient) {
+          this.patientData = patient;
+        } else {
+          // Intentar cargar desde sessionStorage
+          this._dataTransferService.loadFromStorage();
+          const saved = sessionStorage.getItem('patientData');
+          if (saved) {
+            this.patientData = JSON.parse(saved);
+          }
+        }
+        console.log(this.patientData);
+      });
   }
+
+  loadEPS(): void {
+  this._epsService.getEpsList().subscribe(data => {
+    this.epsList = data;
+  });
+}
+
+  getEpsName(idEps: number): string {
+    return this.epsList.find(e => e.idEps === idEps)?.nombre || 'N/A';
+  }
+
+  getAgeFromBirthDay(birthDay: string): number {
+    const today = new Date();
+    const birthDate = new Date(birthDay);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
+
+
 
 
 

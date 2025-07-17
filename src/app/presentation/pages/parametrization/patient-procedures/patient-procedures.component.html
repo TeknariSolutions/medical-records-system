@@ -59,12 +59,19 @@
                     <div class="info-group">
                          <div class="info-row">
                             <span class="info-label">EPS:</span>
-                            <span class="info-value">Sanitas</span>
+                            <span class="info-value">
+                                {{ getEpsName(patientData.idEps) }}
+                            </span>
                         </div>
 
                         <div class="info-row">
                             <span class="info-label">Edad:</span>
-                            <span class="info-value">{{patientData.birthDay}}</span>
+                            <span class="info-value">
+                                {{
+                                patientData.birthDay ? getAgeFromBirthDay(patientData.birthDay) + ' años' : 'N/A'
+                                }}
+                            </span>
+
                         </div>
                         
                     </div>
