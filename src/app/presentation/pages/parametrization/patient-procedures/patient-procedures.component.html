@@ -21,9 +21,14 @@
     <!-- Patient Info -->
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title mb-1">{{patientData.firstName}} {{patientData.secondName}} 
-                {{patientData.firstLastName}} {{patientData.secondLastName}}
+            <h4 class="card-title mb-2 text-center title-custom">
+                Historia Clinica
             </h4>
+
+            <h6 class="mb-1">{{patientData.firstName}} {{patientData.secondName}} 
+                {{patientData.firstLastName}} {{patientData.secondLastName}}
+            </h6>
+
             <p>{{patientData.documentType}}: {{patientData.idDocument}}</p>
     
             <div class="row">
@@ -80,23 +85,6 @@
         </div>
     </div>
 
-
-<!-- <div class="row">
-    <div class="col-12 col-md-6 col-lg-3">
-        <div class="card justify-content-center custom-card text-center p-3">
-            <i class="mdi mdi-charity"></i>
-            <h4 class="card-title mt-2">Consultas</h4>
-        </div>
-    </div>
-
-     <div class="col-12 col-md-6 col-lg-3">
-        <div class="card justify-content-center custom-card text-center p-3">
-            <i class="mdi mdi-clipboard-edit-outline"></i>
-            <h4 class="card-title mt-2">Antecedentes</h4>
-        </div>
-    </div>
-</div> -->
-
 <!-- Cards de navegación -->
 <div class="row" *ngIf="!showConsultations">
     <div class="col-12 col-md-6 col-lg-4">
@@ -116,14 +104,13 @@
 
 <!-- Componente MedicalConsultation -->
 <div *ngIf="showConsultations">
-    <button class="btn btn-outline-secondary mb-3" (click)="showConsultations = false">
-        ← Atrás
+    <button class="btn btn-outline-secondary mb-3 button-back" (click)="showConsultations = false">
+        <i class="mdi mdi-chevron-left"></i>
+        Volver al inicio
     </button>
 
     <app-medical-consultation [idPatient]="patientData?.idPatient"></app-medical-consultation>
 </div>
-
-
 
 </div>
 

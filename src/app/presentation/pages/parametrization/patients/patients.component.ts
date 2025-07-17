@@ -65,6 +65,7 @@ export class PatientsComponent implements OnInit {
   }
 
   createPatient() {
+    this._dataTransferService.clearData();  // limpia el dato antes de navegar
     this.router.navigate(['parametrization/create-update-patient']);
   }
 

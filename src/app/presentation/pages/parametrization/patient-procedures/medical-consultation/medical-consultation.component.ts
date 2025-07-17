@@ -8,6 +8,7 @@ import { NotificationsService } from 'src/app/infrastructure/services/common/not
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
 import { CreateUpdateMedicalConsultationComponent } from './create-update-medical-consultation/create-update-medical-consultation.component';
+import { PaginationComponent } from 'src/app/presentation/common/pagination/pagination.component';
 
 @Component({
   selector: 'app-medical-consultation',
@@ -17,7 +18,8 @@ import { CreateUpdateMedicalConsultationComponent } from './create-update-medica
   imports: [
     CommonModule,
     LoadingComponent,
-    CreateUpdateMedicalConsultationComponent
+    CreateUpdateMedicalConsultationComponent,
+    PaginationComponent
   ]
 })
 export class MedicalConsultationComponent implements OnInit {
@@ -69,6 +71,7 @@ export class MedicalConsultationComponent implements OnInit {
   }
 
   onNewConsultationClick() {
+    this.selectedConsultation = undefined; 
     this.showForm = true;
     this.createNewConsultation.emit();
   }
@@ -84,12 +87,16 @@ export class MedicalConsultationComponent implements OnInit {
     this.selectedConsultation = consultation;
     this.showForm = true;
   }
-  
 
+  onPageChange(newPage: number): void {
+    this.currentPage = newPage;
+    this.loadConsults();
+  }
 
-
-
-
-
+  onPageSizeChange(newSize: number): void {
+    this.pageSize = newSize;
+    this.currentPage = 1; // reinicia a la primera página
+    this.loadConsults();
+  }
 
 }

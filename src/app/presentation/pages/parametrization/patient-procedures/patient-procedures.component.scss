@@ -2,15 +2,25 @@
     font-size: 17px;
 }
 
+.title-custom {
+  color: #1AAE9F;;
+}
+
+h6 {
+  font-size: 14px;
+}
+
 .info-row {
   display: flex;
   margin-bottom: 0.5rem;
+  font-size: 12px;
 }
 
 .info-label {
   font-weight: bold;
-  min-width: 120px; /* Puedes ajustar este ancho según tu diseño */
+  //min-width: 120px; /* Puedes ajustar este ancho según tu diseño */
   display: inline-block;
+  margin-right: 15px;
 }
 
 .info-value {
@@ -44,3 +54,27 @@
     }
   }
 }
+
+
+
+.button-back {
+    border: none;
+
+    padding: 3px 6px;
+    color: #1AAE9F;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+        background-color: white !important;
+        //transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(41, 197, 158, 0.245);
+        border: 1px solid #1AAE9F;
+    }
+
+    i {
+        font-size: 20px;
+    }
+}
+   

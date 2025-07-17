@@ -28,6 +28,8 @@ export interface MedicalConsultationDTO {
   diagnoses?: MedicalDiagnosisDTO[];
 
   updateBy: number;
+  //updatedAt: number,
+
   glasgowScore: number;
   consciousnessStatus: string;
   hydrationStatus: string;

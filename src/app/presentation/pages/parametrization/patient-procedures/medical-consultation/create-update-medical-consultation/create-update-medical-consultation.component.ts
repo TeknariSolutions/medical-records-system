@@ -45,43 +45,11 @@ export class CreateUpdateMedicalConsultationComponent {
     private _icdAuthService: IcdAuthService
   ) {
 
-   /*  this.form = this.fb.group({
-      idMedicalConsultation: [0],      
-      updateBy: [0],                
-      consultationReason: ['', Validators.required],
-      consultationDate: [new Date()],
-      glasgowScore: [0],
-      consciousnessStatus: [''],
-      hydrationStatus: [''],
-      moodStatus: [''],
-      respiratoryStatus: [''],
-      generalStatus: [''],
-      vitalSigns_BP: [''],
-      vitalSigns_HR: [null],
-      vitalSigns_RR: [null],
-      vitalSigns_Temp: [null],
-      vitalSigns_SPO2: [null],
-      physicalExam_HeadNeck: [''],
-      physicalExam_Chest: [''],
-      physicalExam_Heart: [''],
-      physicalExam_Abdomen: [''],
-      physicalExam_GU: [''],
-      physicalExam_Musculoskeletal: [''],
-      physicalExam_Neuro: [''],
-      physicalExam_Skin: [''],
-      observations: [''],
-      status: [false],
-      isFirstTime: [true],
-      weightKg: [0],
-      heightCm: [''],
-      bmi: [0],
-    }); */
-    
-   
     this.form = this.fb.group({
       basicInfo: this.fb.group({
-        consultationReason: [''],
-        consultationDate: [new Date()],
+        consultationReason: ['', Validators.required],
+        consultationDate: [new Date().toISOString()],
+        //consultationDate: [new Date()],
         isFirstTime: [true],
         status: [false]
       }),
@@ -208,7 +176,7 @@ export class CreateUpdateMedicalConsultationComponent {
                 array.push(group);
               });
             } else {
-              this.addDiagnosis();
+              //this.addDiagnosis();
             }
           });
       } else {
@@ -230,45 +198,6 @@ export class CreateUpdateMedicalConsultationComponent {
   goToNextStep() {
     this.stepper.next();
   }
-
-  /* private normalizeConsultationData(c: any): any {
-    return {
-      idMedicalConsultation: c.idMedicalConsultation ?? 0,
-      updateBy: parseInt(localStorage.getItem('IdUser') || '0', 10),
-
-      consultationReason: c.consultationReason ?? '',
-      consultationDate: c.consultationDate ? new Date(c.consultationDate) : new Date(),
-
-      glasgowScore: c.glasgowScore != null ? Number(c.glasgowScore) : 0,
-      consciousnessStatus: c.consciousnessStatus ?? '',
-      hydrationStatus: c.hydrationStatus ?? '',
-      moodStatus: c.moodStatus ?? '',
-      respiratoryStatus: c.respiratoryStatus ?? '',
-      generalStatus: c.generalStatus ?? '',
-
-      vitalSigns_BP: c.vitalSigns_BP ?? '',
-      vitalSigns_HR: c.vitalSigns_HR != null ? Number(c.vitalSigns_HR) : 0,
-      vitalSigns_RR: c.vitalSigns_RR != null ? Number(c.vitalSigns_RR) : 0,
-      vitalSigns_Temp: c.vitalSigns_Temp != null ? Number(c.vitalSigns_Temp) : 0,
-      vitalSigns_SPO2: c.vitalSigns_SPO2 != null ? Number(c.vitalSigns_SPO2) : 0,
-
-      physicalExam_HeadNeck: c.physicalExam_HeadNeck ?? '',
-      physicalExam_Chest: c.physicalExam_Chest ?? '',
-      physicalExam_Heart: c.physicalExam_Heart ?? '',
-      physicalExam_Abdomen: c.physicalExam_Abdomen ?? '',
-      physicalExam_GU: c.physicalExam_GU ?? '',
-      physicalExam_Musculoskeletal: c.physicalExam_Musculoskeletal ?? '',
-      physicalExam_Neuro: c.physicalExam_Neuro ?? '',
-      physicalExam_Skin: c.physicalExam_Skin ?? '',
-
-      observations: c.observations ?? '',
-      status: c.status ?? false,
-      isFirstTime: c.isFirstTime ?? true,
-      weightKg: c.weightKg != null ? Number(c.weightKg) : 0,
-      heightCm: c.heightCm ?? '',
-      bmi: c.bmi != null ? Number(c.bmi) : 0
-    };
-  } */
 
   private normalizeConsultationData(c: any): any {
     return {
@@ -367,111 +296,78 @@ export class CreateUpdateMedicalConsultationComponent {
   }
 
 
- submit() {
+submit() {
   if (this.form.invalid) {
     this.form.markAllAsTouched();
     return;
   }
 
+  console.log('👉 submit llamado');
+  console.log(this.form.value);
+  console.log('🧪 consultationToEdit:', this.consultationToEdit);
+
   const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
   const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
   const isEdit = !!this.consultationToEdit?.idMedicalConsultation;
-
-  const formValues = this.form.value;
   const now = new Date().toISOString();
 
-  // ✅ Convertir todos los campos numéricos que pueden venir null a números (o 0)
- /*  const baseData: MedicalConsultationDTO = {
+  const formValues = this.form.value;
+
+  // 🎯 Construir el objeto base que coincide con el payload que me diste del swagger
+  const baseData: MedicalConsultationDTO = {
     idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
     idPatient: this.idPatient,
-    idUser,
-    createdBy: idUser,
-    createdAt: now,
-    updateBy: idUser,
+    idUser: idUser,
 
-    consultationReason: formValues.consultationReason,
-    consultationDate: formValues.consultationDate,
-    glasgowScore: Number(formValues.glasgowScore) || 0,
-    consciousnessStatus: formValues.consciousnessStatus,
-    hydrationStatus: formValues.hydrationStatus,
-    moodStatus: formValues.moodStatus,
-    respiratoryStatus: formValues.respiratoryStatus,
-    generalStatus: formValues.generalStatus,
-    vitalSigns_BP: formValues.vitalSigns_BP,
-    vitalSigns_HR: Number(formValues.vitalSigns_HR) || 0,
-    vitalSigns_RR: Number(formValues.vitalSigns_RR) || 0,
-    vitalSigns_Temp: Number(formValues.vitalSigns_Temp) || 0,
-    vitalSigns_SPO2: Number(formValues.vitalSigns_SPO2) || 0,
-    physicalExam_HeadNeck: formValues.physicalExam_HeadNeck,
-    physicalExam_Chest: formValues.physicalExam_Chest,
-    physicalExam_Heart: formValues.physicalExam_Heart,
-    physicalExam_Abdomen: formValues.physicalExam_Abdomen,
-    physicalExam_GU: formValues.physicalExam_GU,
-    physicalExam_Musculoskeletal: formValues.physicalExam_Musculoskeletal,
-    physicalExam_Neuro: formValues.physicalExam_Neuro,
-    physicalExam_Skin: formValues.physicalExam_Skin,
-    observations: formValues.observations,
-    status: formValues.status,
-    isFirstTime: formValues.isFirstTime,
-    weightKg: Number(formValues.weightKg) || 0,
-    heightCm: formValues.heightCm,
-    bmi: Number(formValues.bmi) || 0
-  }; */
+    consultationReason: formValues.basicInfo.consultationReason,
+    consultationDate: formValues.basicInfo.consultationDate,
+    isFirstTime: formValues.basicInfo.isFirstTime,
+    status: formValues.basicInfo.status,
 
-  //const formValues = this.form.value;
+    // clinicalStates
+    moodStatus: formValues.clinicalStates.moodStatus,
+    hydrationStatus: formValues.clinicalStates.hydrationStatus,
+    glasgowScore: Number(formValues.clinicalStates.glasgowScore) || 0,
+    consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
+    respiratoryStatus: formValues.clinicalStates.respiratoryStatus,
+    generalStatus: formValues.clinicalStates.generalStatus,
 
-   const baseData: MedicalConsultationDTO = {
-     idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
-     idPatient: this.idPatient,
-     idUser,
-     createdBy: idUser,
-     createdAt: now,
-     updateBy: idUser,
+    // vitalSigns
+    vitalSigns_BP: formValues.vitalSigns.vitalSigns_BP,
+    vitalSigns_HR: Number(formValues.vitalSigns.vitalSigns_HR) || 0,
+    vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR) || 0,
+    vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp) || 0,
+    vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2) || 0,
 
-     // basicInfo
-     consultationReason: formValues.basicInfo.consultationReason,
-     consultationDate: formValues.basicInfo.consultationDate,
-     isFirstTime: formValues.basicInfo.isFirstTime,
-     status: formValues.basicInfo.status,
+    // physicalExam
+    weightKg: Number(formValues.physicalExam.weightKg) || 0,
+    heightCm: formValues.physicalExam.heightCm,
+    bmi: Number(formValues.physicalExam.bmi) || 0,
+    physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
+    physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
+    physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
+    physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
+    physicalExam_GU: formValues.physicalExam.physicalExam_GU,
+    physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
+    physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
+    physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
+    observations: formValues.physicalExam.observations,
 
-     // clinicalStates
-     moodStatus: formValues.clinicalStates.moodStatus,
-     hydrationStatus: formValues.clinicalStates.hydrationStatus,
-     glasgowScore: Number(formValues.clinicalStates.glasgowScore) || 0,
-     consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
-     respiratoryStatus: formValues.clinicalStates.respiratoryStatus,
-     generalStatus: formValues.clinicalStates.generalStatus,
+    // Campos de auditoría
+    createdBy: isEdit ? this.consultationToEdit!.createdBy : idUser,
+    createdAt: isEdit ? this.consultationToEdit!.createdAt : now,
+    updateBy: idUser, // siempre el que edita
+  };
 
-     // vitalSigns
-     vitalSigns_BP: formValues.vitalSigns.vitalSigns_BP,
-     vitalSigns_HR: Number(formValues.vitalSigns.vitalSigns_HR) || 0,
-     vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR) || 0,
-     vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp) || 0,
-     vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2) || 0,
-
-     // physicalExam
-     weightKg: Number(formValues.physicalExam.weightKg) || 0,
-     heightCm: formValues.physicalExam.heightCm,
-     bmi: Number(formValues.physicalExam.bmi) || 0,
-     physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
-     physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
-     physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
-     physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
-     physicalExam_GU: formValues.physicalExam.physicalExam_GU,
-     physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
-     physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
-     physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
-     observations: formValues.physicalExam.observations
-   };
-
+  console.log('👉 Data preparada para enviar:', baseData);
 
   if (isEdit) {
-    // Caso editar: igual que antes
-    console.log('👉 Data que voy a mandar a Update:', baseData);
-
+    // ✅ Modo edición
     this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData).subscribe({
       next: (response) => {
         if (response.isSuccess) {
+          console.log('✅ Consulta actualizada correctamente');
+          // Si eres admin y tienes diagnósticos, guárdalos
           if (idRol === 1 && this.diagnoses.length > 0) {
             this.saveDiagnosesForExistingConsultation();
           } else {
@@ -485,42 +381,36 @@ export class CreateUpdateMedicalConsultationComponent {
     });
 
   } else {
+    // ✅ Modo crear
     let operation;
 
     if (idRol === 1) {
-      // ✅ Caso crear con admin: preparar diagnósticos
+      // Crear con diagnósticos (admin)
       const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
         ...d,
         idMedicalConsultationDiagnosis: 0,
-        createdBy: d.createdBy || idUser,
-        createdAt: d.createdAt || now,
+        createdBy: idUser,
+        createdAt: now,
         updatedBy: idUser,
-        updatedAt: now
+        updatedAt: now,
       }));
-
-      // ✅ Armar payload envolviendo en createMedicalConsultationWithMedicalDiagnosisDTO
-      /* const payload = {
-        createMedicalConsultationWithMedicalDiagnosisDTO: {
-          ...baseData,
-          diagnoses: preparedDiagnoses
-        }
-      }; */
 
       const newConsultationWithDiagnosis: MedicalConsultationDTO = {
         ...baseData,
         diagnoses: preparedDiagnoses
       };
 
-      console.log('👉 Data que voy a mandar a Create:', newConsultationWithDiagnosis);
+      console.log('👉 Data que voy a mandar a Create con diagnósticos:', newConsultationWithDiagnosis);
 
       operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
 
     } else {
-      // Otros roles: crear sin diagnósticos
+      // Crear sin diagnósticos (otros roles)
       const newConsultation: MedicalConsultationDTO = {
         ...baseData,
         idMedicalConsultation: 0
       };
+
       console.log('👉 Data que voy a mandar a Create:', newConsultation);
 
       operation = this._medicalConsultationUseCase.CreateMedicalConsultation(newConsultation);
@@ -529,6 +419,7 @@ export class CreateUpdateMedicalConsultationComponent {
     operation.subscribe({
       next: (response) => {
         if (response.isSuccess) {
+          console.log('✅ Consulta creada correctamente');
           this.backToList.emit();
         }
       },
@@ -538,6 +429,7 @@ export class CreateUpdateMedicalConsultationComponent {
     });
   }
 }
+
 
 
 
