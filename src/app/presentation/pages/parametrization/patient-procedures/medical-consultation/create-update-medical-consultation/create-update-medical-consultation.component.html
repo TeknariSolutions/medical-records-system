@@ -259,7 +259,7 @@
 
             <h5 class="mt-4">Diagnósticos</h5>
 
-            <div *ngFor="let diag of diagnosisArray.controls; let i = index" [formGroupName]="i"
+            <!-- <div *ngFor="let diag of diagnosisArray.controls; let i = index" [formGroupName]="i"
               class="border p-3 mb-3">
               <div class="row">
                 <div class="col-md-4">
@@ -286,7 +286,53 @@
                   <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
                 </div>
               </div>
+            </div> -->
+
+            <div *ngFor="let diag of diagnoses.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3">
+              <div class="row">
+                <div class="col-md-4 mb-2">
+                  <label>Código</label>
+                  <input type="text" formControlName="diagnosisCode" class="form-control" readonly />
+                </div>
+            
+                <div class="col-md-4 mb-2 position-relative">
+                  <label>Descripción</label>
+                  <input type="text" formControlName="diagnosisDescription" class="form-control" (input)="onDescriptionInput(i)"
+                    autocomplete="off" />
+            
+                  <!-- Lista de sugerencias -->
+                  <ul *ngIf="cie10Suggestions[i]?.length" class="list-group position-absolute w-100"
+                    style="z-index:10; max-height:200px; overflow-y:auto;">
+                    <li *ngFor="let item of cie10Suggestions[i]" class="list-group-item list-group-item-action"
+                      (click)="selectCie10Suggestion(item, i)">
+                      {{ removeHtmlTags(item.title) }}
+                    </li>
+                  </ul>
+                </div>
+            
+                <div class="col-md-4 mb-2">
+                  <label>Tipo</label>
+                  <select formControlName="diagnosisType" class="form-control">
+                    <option *ngFor="let type of diagnosisTypes" [value]="type">{{ type }}</option>
+                  </select>
+                </div>
+            
+                <div class="col-md-12 mt-2 mb-2">
+                  <label>Comentario (opcional)</label>
+                  <textarea formControlName="comment" class="form-control"></textarea>
+                </div>
+            
+                <div class="col-md-6 mt-2">
+                  <input type="checkbox" formControlName="isPrincipal" />
+                  <label class="ms-1">Principal</label>
+                </div>
+            
+                <div class="col-md-6 mt-2 text-end">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
+                </div>
+              </div>
             </div>
+
 
             <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button>
 

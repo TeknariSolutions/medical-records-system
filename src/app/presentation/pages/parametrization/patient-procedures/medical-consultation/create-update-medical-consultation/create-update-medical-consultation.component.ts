@@ -5,11 +5,12 @@ import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultati
 import { MedicalDiagnosisDTO } from 'src/app/core/DTOs/app/medical-diagnosis.dto';
 import { MedicalConsultationDiagnosisUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation-diagnosis.use-case';
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
-import { forkJoin } from 'rxjs';
+import { debounceTime, forkJoin, Observable, of, switchMap } from 'rxjs';
 import { Cie10Service } from 'src/app/infrastructure/services/common/CIE10/cie10.service';
 import { IcdAuthService } from 'src/app/infrastructure/services/common/ICD-Auth/icd-auth.service';
 import { CdkStepper, CdkStepperModule } from '@angular/cdk/stepper';
 import { NgStepperModule } from 'angular-ng-stepper';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-create-update-medical-consultation',
@@ -34,6 +35,14 @@ export class CreateUpdateMedicalConsultationComponent {
 
   idRol: number = 0; // agrega esta propiedad
 
+  // Lista quemada para diagnosisType
+  diagnosisTypes = ['Confirmado nuevo', 'Confirmado repetido'];
+
+  // Para guardar resultados de la búsqueda
+  cie10Results$: Observable<any[]>[] = [];
+
+  cie10Suggestions: any[][] = [];
+
 
   @ViewChild('cdkStepper') stepper!: CdkStepper;
 
@@ -42,7 +51,8 @@ export class CreateUpdateMedicalConsultationComponent {
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
     private _medicalConsultationDiagnosisUseCase: MedicalConsultationDiagnosisUseCase,
     private cie10Service: Cie10Service,
-    private _icdAuthService: IcdAuthService
+    private sanitizer: DomSanitizer
+    //private _icdAuthService: IcdAuthService
   ) {
 
     this.form = this.fb.group({
@@ -142,6 +152,58 @@ export class CreateUpdateMedicalConsultationComponent {
 
   }
 
+  onSelectCie10Option(selectedItem: any, index: number) {
+    const diagForm = this.diagnoses.at(index);
+    diagForm.patchValue({
+      diagnosisCode: selectedItem.theCode,
+      //diagnosisDescription: selectedItem.title
+      diagnosisDescription: this.removeHtmlTags(selectedItem.title || '')
+    });
+  }
+
+  onDescriptionInput(index: number) {
+  const control = this.diagnoses.at(index).get('diagnosisDescription');
+  if (control) {
+    const term = control.value;
+    if (term && term.length >= 3) {
+      this.cie10Service.searchCodes(term).subscribe(results => {
+        this.cie10Suggestions[index] = results;
+      });
+    } else {
+      this.cie10Suggestions[index] = [];
+    }
+  }
+}
+
+/* selectCie10Suggestion(item: any, index: number) {
+  const diagForm = this.diagnoses.at(index);
+  diagForm.patchValue({
+    diagnosisCode: item.theCode,
+    diagnosisDescription: item.title
+  });
+  this.cie10Suggestions[index] = []; // Ocultar sugerencias
+} */
+
+  selectCie10Suggestion(item: any, index: number) {
+  const diagForm = this.diagnoses.at(index);
+  diagForm.patchValue({
+    diagnosisCode: item.theCode,
+    diagnosisDescription: this.removeHtmlTags(item.title || '')
+  });
+  this.cie10Suggestions[index] = []; // Ocultar sugerencias
+}
+
+
+// Método para sanear:
+sanitize(html: string): SafeHtml {
+  return this.sanitizer.bypassSecurityTrustHtml(html);
+}
+
+removeHtmlTags(html: string): string {
+  return html.replace(/<[^>]+>/g, '');
+}
+
+
 
   ngOnChanges(changes: SimpleChanges): void {
   if (changes['consultationToEdit'] && this.consultationToEdit) {
@@ -170,11 +232,20 @@ export class CreateUpdateMedicalConsultationComponent {
           .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
             console.log('✅ Diagnósticos cargados:', diagnoses);
             if (diagnoses && diagnoses.length) {
-              diagnoses.forEach(d => {
+              /* diagnoses.forEach(d => {
                 const group = this.createDiagnosisGroup();
                 group.patchValue(d);
                 array.push(group);
+              }); */
+              diagnoses.forEach(d => {
+                const group = this.createDiagnosisGroup();
+                group.patchValue({
+                  ...d,
+                  diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription || '')
+                });
+                array.push(group);
               });
+
             } else {
               //this.addDiagnosis();
             }
@@ -255,30 +326,49 @@ export class CreateUpdateMedicalConsultationComponent {
     });
   }
 
-  addDiagnosis(): void {
+ /*  addDiagnosis(): void {
     this.diagnoses.push(this.createDiagnosisGroup());
   }
 
   removeDiagnosis(index: number): void {
     this.diagnoses.removeAt(index);
   }
+ */
 
-/*   updateBMI(): void {
-    const weight = this.form.get('weightKg')?.value;
-    const heightCm = this.form.get('heightCm')?.value;
+  addDiagnosis() {
+    const diagForm = this.fb.group({
+      diagnosisCode: [''],
+      diagnosisDescription: [''],
+      diagnosisType: [''],
+      comment: [''],
+      isPrincipal: [false]
+    });
+    this.diagnoses.push(diagForm);
+    this.setupCie10Autocomplete(this.diagnoses.length - 1);
+  }
 
-    const weightNumber = Number(weight);
-    const heightNumber = Number(heightCm);
+  removeDiagnosis(index: number) {
+    this.diagnoses.removeAt(index);
+    this.cie10Results$.splice(index, 1);  // Eliminar resultados asociados
+  }
 
-    if (weightNumber > 0 && heightNumber > 0) {
-      const heightInMeters = heightNumber / 100;
-      const bmi = weightNumber / (heightInMeters * heightInMeters);
-
-      this.form.get('bmi')?.setValue(parseFloat(bmi.toFixed(2)), { emitEvent: false });
-    } else {
-      this.form.get('bmi')?.setValue(0, { emitEvent: false });
+  private setupCie10Autocomplete(index: number) {
+    // Configura observable para cada item del FormArray
+    const control = this.diagnoses.at(index).get('diagnosisDescription');
+    if (control) {
+      const obs$ = control.valueChanges.pipe(
+        debounceTime(300),
+        switchMap(value => {
+          if (value && value.length >= 3) {
+            return this.cie10Service.searchCodes(value);
+          } else {
+            return of([]);
+          }
+        })
+      );
+      this.cie10Results$[index] = obs$;
     }
-  } */
+  }
 
   updateBMI() {
     const weight = this.form.get('physicalExam.weightKg')?.value;
