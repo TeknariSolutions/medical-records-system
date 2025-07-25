@@ -1,0 +1,131 @@
+<div class="modal-header">
+  <h5 class="modal-title">Nuevo Antecedente</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="form">
+
+    <!-- Primera fila: antecedentes -->
+    <div class="row">
+      <div class="col-md-6 mb-2">
+        <label>Patológicos</label>
+        <textarea class="form-control" formControlName="pathologicalHistory"></textarea>
+      </div>
+    
+      <div class="col-md-6 mb-2">
+        <label>Quirúrgicos</label>
+        <textarea class="form-control" formControlName="surgicalHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Alergias</label>
+        <textarea class="form-control" formControlName="allergicHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Farmacológicos</label>
+        <textarea class="form-control" formControlName="pharmacologicalHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Familiares</label>
+        <textarea class="form-control" formControlName="familyHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Gineco-Obstétricos</label>
+        <textarea class="form-control" formControlName="gynecoObstetricHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Ocupacionales</label>
+        <textarea class="form-control" formControlName="occupationalHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Psiquiátricos</label>
+        <textarea class="form-control" formControlName="psychiatricHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Traumáticos</label>
+        <textarea class="form-control" formControlName="traumaticHistory"></textarea>
+      </div>
+
+      <div class="col-md-6 mb-2">
+        <label>Inmunológicos</label>
+        <textarea class="form-control" formControlName="immunologicalHistory"></textarea>
+      </div>
+
+      <div class="col-12 mb-2">
+        <label>Observaciones</label>
+        <textarea class="form-control" formControlName="observations"></textarea>
+      </div>
+
+    </div>
+
+
+    <!-- Tabaquismo -->
+    <div class="row mx-1 mt-2">
+      <div class="col-md-4 mb-2 form-check">
+        <input type="checkbox" class="form-check-input" formControlName="smoker" id="smokerCheck">
+        <label class="form-check-label" for="smokerCheck">Fumador</label>
+      </div>
+
+      <div *ngIf="isSmoker" class="row">
+        <div class="col-md-4 mb-2">
+          <label>Años fumando</label>
+          <input type="number" class="form-control" formControlName="smokingYears">
+        </div>
+      
+        <div class="col-md-4 mb-2">
+          <label>Cigarrillos por día</label>
+          <input type="number" class="form-control" formControlName="cigarettesPerDay">
+        </div>
+      
+        <div class="col-md-4 mb-2">
+          <label>Índice de tabáquismo</label>
+          <input type="number" step="0.01" class="form-control" formControlName="smokingIndex">
+        </div>
+      
+      </div>
+    </div>
+
+
+    <!-- Alcohol -->
+    <div class="row mx-1 mt-2">
+      <div class="col-md-4 mb-2 form-check">
+        <input type="checkbox" class="form-check-input" formControlName="alcoholConsumer" id="alcoholCheck">
+        <label class="form-check-label" for="alcoholCheck">Consume alcohol</label>
+      </div>
+
+      <div *ngIf="isAlcoholConsumer" class="row">
+        <div class="col-md-8 mb-2">
+          <label>Frecuencia consumo de alcohol</label>
+          <input class="form-control" formControlName="alcoholFrequency">
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Drogas -->
+    <div class="row mx-1 mt-2">
+      <div class="col-md-4 mb-2 form-check">
+        <input type="checkbox" class="form-check-input" formControlName="drugUse" id="drugUseCheck">
+        <label class="form-check-label" for="drugUseCheck">Uso de drogas</label>
+      </div>
+
+      <div *ngIf="isDrugUser" class="row">
+        <div class="col-md-8 mb-2">
+          <label>Detalle drogas</label>
+          <input class="form-control" formControlName="drugDetails">
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="cancel()">Cancelar</button>
+  <button type="button" class="btn btn-primary" (click)="save()">Guardar</button>
+</div>

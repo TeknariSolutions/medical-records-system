@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ParametrizationRoutingModule } from './parametrization-routing.module';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
     ParametrizationRoutingModule

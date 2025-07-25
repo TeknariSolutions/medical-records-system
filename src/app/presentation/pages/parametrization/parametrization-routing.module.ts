@@ -5,6 +5,7 @@ import { PatientsComponent } from './patients/patients.component';
 import { CreateUpdatePatientComponent } from './patients/create-update-patient/create-update-patient.component';
 import { PatientProceduresComponent } from './patient-procedures/patient-procedures.component';
 import { MedicalConsultationComponent } from './patient-procedures/medical-consultation/medical-consultation.component';
+import { MedicalHistoriesComponent } from './patient-procedures/medical-histories/medical-histories.component';
 
 const routes: Routes = [
     {
@@ -26,6 +27,10 @@ const routes: Routes = [
     {
         path: 'medical-consultation-list',
         component: MedicalConsultationComponent
+    },
+    {
+        path: 'medical-history-list/:id',
+        component: MedicalHistoriesComponent
     }
 ];
 

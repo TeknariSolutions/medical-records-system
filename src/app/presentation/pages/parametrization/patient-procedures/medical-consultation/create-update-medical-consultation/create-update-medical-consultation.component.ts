@@ -7,10 +7,13 @@ import { MedicalConsultationDiagnosisUseCase } from 'src/app/infrastructure/use-
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
 import { debounceTime, forkJoin, Observable, of, switchMap } from 'rxjs';
 import { Cie10Service } from 'src/app/infrastructure/services/common/CIE10/cie10.service';
-import { IcdAuthService } from 'src/app/infrastructure/services/common/ICD-Auth/icd-auth.service';
 import { CdkStepper, CdkStepperModule } from '@angular/cdk/stepper';
 import { NgStepperModule } from 'angular-ng-stepper';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medical-history.use-case';
+import { MedicalHistoryDTO } from 'src/app/core/DTOs/app/medical-history.dto';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { CreateUpdateMedicalHistoryComponent } from '../../medical-histories/create-update-medical-history/create-update-medical-history.component';
 
 @Component({
   selector: 'app-create-update-medical-consultation',
@@ -43,16 +46,23 @@ export class CreateUpdateMedicalConsultationComponent {
 
   cie10Suggestions: any[][] = [];
 
+  lastMedicalHistory?: MedicalHistoryDTO;
+
+  modalRef?: BsModalRef;
+
+  idUser: number = Number(localStorage.getItem('IdUser'));
+
 
   @ViewChild('cdkStepper') stepper!: CdkStepper;
 
   constructor(
     private fb: FormBuilder,
+    private modalService: BsModalService,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
     private _medicalConsultationDiagnosisUseCase: MedicalConsultationDiagnosisUseCase,
+    private _medicalHistoryUseCase: MedicalHistoryUseCase,
     private cie10Service: Cie10Service,
     private sanitizer: DomSanitizer
-    //private _icdAuthService: IcdAuthService
   ) {
 
     this.form = this.fb.group({
@@ -123,29 +133,15 @@ export class CreateUpdateMedicalConsultationComponent {
 
     // Si es auxiliar (rolId 2): forzar status a false y deshabilitar
     if (idRol === 2) {
-      /* this.form.get('status')?.setValue(false);
-      this.form.get('status')?.disable(); */
-
       this.form.get('basicInfo.status')?.setValue(false);
       this.form.get('basicInfo.status')?.disable();
     }
 
-  /*   this.cie10Service.searchCodes('asma').subscribe(data => {
-      console.log('Resultados:', data);
-    }); */
+    this.loadLastMedicalHistory();
   }
 
  onSearchCie10(term: string) {
     if (term.length < 3) return;
-
-    /*  this.cie10Service.searchCodes(term).subscribe({
-       next: (res) => {
-         this.cie10Results = res.destinations || [];
-       },
-       error: (err) => {
-         console.error('Error al buscar CIE-10:', err);
-       }
-     }); */
     this.cie10Service.searchCodes('asma').subscribe(data => {
       console.log('Resultados:', data);
     });
@@ -175,23 +171,15 @@ export class CreateUpdateMedicalConsultationComponent {
   }
 }
 
-/* selectCie10Suggestion(item: any, index: number) {
-  const diagForm = this.diagnoses.at(index);
-  diagForm.patchValue({
-    diagnosisCode: item.theCode,
-    diagnosisDescription: item.title
-  });
-  this.cie10Suggestions[index] = []; // Ocultar sugerencias
-} */
 
   selectCie10Suggestion(item: any, index: number) {
-  const diagForm = this.diagnoses.at(index);
-  diagForm.patchValue({
-    diagnosisCode: item.theCode,
-    diagnosisDescription: this.removeHtmlTags(item.title || '')
-  });
-  this.cie10Suggestions[index] = []; // Ocultar sugerencias
-}
+    const diagForm = this.diagnoses.at(index);
+    diagForm.patchValue({
+      diagnosisCode: item.theCode,
+      diagnosisDescription: this.removeHtmlTags(item.title || '')
+    });
+    this.cie10Suggestions[index] = []; // Ocultar sugerencias
+  }
 
 
 // Método para sanear:
@@ -257,10 +245,7 @@ removeHtmlTags(html: string): string {
     }
   }
 }
-/* 
-  get diagnoses(): FormArray {
-    return this.form.get('diagnoses') as FormArray;
-  } */
+
 
   get diagnoses(): FormArray {
     return this.form.get('diagnoses') as FormArray;
@@ -326,14 +311,6 @@ removeHtmlTags(html: string): string {
     });
   }
 
- /*  addDiagnosis(): void {
-    this.diagnoses.push(this.createDiagnosisGroup());
-  }
-
-  removeDiagnosis(index: number): void {
-    this.diagnoses.removeAt(index);
-  }
- */
 
   addDiagnosis() {
     const diagForm = this.fb.group({
@@ -403,7 +380,7 @@ submit() {
 
   const formValues = this.form.value;
 
-  // 🎯 Construir el objeto base que coincide con el payload que me diste del swagger
+  // Construir el objeto base que coincide con el payload que me diste del swagger
   const baseData: MedicalConsultationDTO = {
     idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
     idPatient: this.idPatient,
@@ -566,4 +543,43 @@ private saveDiagnosesForExistingConsultation() {
   back() {
     this.backToList.emit();
   }
+
+  // Medical History
+
+ /*  loadLastMedicalHistory(): void {
+    this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
+      .subscribe((data) => {
+        this.lastMedicalHistory = data?.results || [];
+      });
+  } */
+
+  loadLastMedicalHistory(): void {
+    this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
+      .subscribe((data) => {
+        this.lastMedicalHistory = data; // asignas el objeto directamente
+
+        console.log(this.lastMedicalHistory)
+      });
+  }
+
+
+ openCreateMedicalHistoryModal(): void {
+  const initialState = {
+    lastMedicalHistory: this.lastMedicalHistory,  // pasa solo el primero
+    idPatient: this.idPatient,
+    idUser: this.idUser,
+    isEditMode: false
+  };
+  this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
+    initialState,
+    class: 'modal-lg'
+  });
+
+  this.modalRef.onHidden?.subscribe(() => {
+    this.loadLastMedicalHistory();
+  });
+}
+
+
+
 }

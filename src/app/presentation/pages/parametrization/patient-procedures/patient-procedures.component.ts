@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
@@ -31,7 +31,8 @@ export class PatientProceduresComponent implements OnInit {
 
   constructor(
     private _dataTransferService: DataTransferService,
-    private _epsService: EpsColombiaService
+    private _epsService: EpsColombiaService,
+    private _router: Router
   ) { }
 
 /*   ngOnInit(): void {
@@ -89,6 +90,16 @@ export class PatientProceduresComponent implements OnInit {
     }
     return age;
   }
+
+ navigateToMedicalHistoryList(): void {
+  if (this.patientData?.idPatient) {
+    this._router.navigate(['parametrization/medical-history-list', this.patientData.idPatient]);
+  } else {
+    console.error('No se encontró patientData.idPatient');
+  }
+}
+
+
 
 
 
