@@ -9,6 +9,10 @@ import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
 import { CreateUpdateMedicalConsultationComponent } from './create-update-medical-consultation/create-update-medical-consultation.component';
 import { PaginationComponent } from 'src/app/presentation/common/pagination/pagination.component';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { DetailsConsultationComponent } from './details-consultation/details-consultation.component';
+import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
+import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 
 @Component({
   selector: 'app-medical-consultation',
@@ -27,6 +31,8 @@ export class MedicalConsultationComponent implements OnInit {
   @Input() idPatient!: number;
   @Output() createNewConsultation = new EventEmitter<void>();
 
+  @Input() patientData!: PatientDTO;
+
   consults: MedicalConsultationDTO[] = [];
   isLoading: boolean = false;
 
@@ -37,10 +43,14 @@ export class MedicalConsultationComponent implements OnInit {
 
   showForm: boolean = false;
 
+  modalRef?: BsModalRef;
+
   constructor(
     private router: Router,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
-    private _notificationService: NotificationsService
+    private _notificationService: NotificationsService,
+    private modalService: BsModalService,
+    private _dataTransferService: DataTransferService
   ) { }
 
   ngOnInit(): void {
@@ -98,5 +108,40 @@ export class MedicalConsultationComponent implements OnInit {
     this.currentPage = 1; // reinicia a la primera página
     this.loadConsults();
   }
+
+
+  viewDetailsMedicalConsultation(data: MedicalConsultationDTO): void {
+    const initialState = {
+      idPatient: data.idPatient,
+      idMedicalConsultation: data.idMedicalConsultation,
+      patientData: this.patientData // 👈 le pasas la info completa del paciente
+    };
+
+    this.modalRef = this.modalService.show(DetailsConsultationComponent, {
+      class: 'modal-lg',
+      initialState
+    });
+  }
+
+
+  viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
+    // Guardar la consulta
+    this._dataTransferService.setData(consultation);
+    sessionStorage.setItem('consultationData', JSON.stringify(consultation));
+
+    // Guardar también el paciente
+    if (this.patientData) {
+      sessionStorage.setItem('patientData', JSON.stringify(this.patientData));
+    }
+
+    // ✅ Guardar flag para que al volver se abran las consultas
+    sessionStorage.setItem('pp_showConsultations', 'true');
+
+    this.router.navigate(['parametrization/consultation-procedures']);
+  }
+
+
+
+
 
 }

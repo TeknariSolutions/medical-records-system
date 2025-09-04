@@ -6,6 +6,7 @@ import { PaginatorDTO } from "src/app/core/DTOs/common/paginator/paginator.dto";
 import { TableResultDTO } from "src/app/core/DTOs/common/table-result/table-result.dto";
 import { MedicalConsultationService } from "../../services/app/medical-consultation.service";
 import { MedicalConsultationDTO } from "src/app/core/DTOs/app/medical-consultation.dto";
+import { MedicalConsultationByIdDTO } from "src/app/core/DTOs/app/medical-consultation-by-id.dto";
 
 @Injectable({
     providedIn: "root",
@@ -15,19 +16,6 @@ export class MedicalConsultationUseCase {
     constructor(private _medicalConsultationService: MedicalConsultationService,
         private _notificationService: NotificationsService
     ) { }
-
-    /* CreateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<boolean> {
-        return this._medicalConsultationService.CreateMedicalConsultation(medicalConsultation).pipe(
-            map((response: ResponseDTO) => {
-                if (!response.isSuccess) {
-                    this._notificationService.showToastErrorMessage(response.message!);
-                } else {
-                    this._notificationService.showToastSuccessMessage(response.message!);
-                }
-                return response.data;
-            })
-        );
-    } */
 
     CreateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<ResponseDTO> {
         return this._medicalConsultationService.CreateMedicalConsultation(medicalConsultation).pipe(
@@ -41,19 +29,6 @@ export class MedicalConsultationUseCase {
             })
         );
     }
-
-    /* UpdateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<boolean> {
-        return this._medicalConsultationService.UpdateMedicalConsultation(medicalConsultation).pipe(
-            map((response: ResponseDTO) => {
-                if (!response.isSuccess) {
-                    this._notificationService.showToastErrorMessage(response.message!);
-                } else {
-                    this._notificationService.showToastSuccessMessage(response.message!);
-                }
-                return response.data;
-            })
-        );
-    } */
 
     UpdateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<ResponseDTO> {
         return this._medicalConsultationService.UpdateMedicalConsultation(medicalConsultation).pipe(
@@ -89,6 +64,28 @@ export class MedicalConsultationUseCase {
                     this._notificationService.showToastErrorMessage(response.message || 'Ocurrió un error al crear la consulta');
                 }
                 return response; // retornas el objeto completo
+            })
+        );
+    }
+
+  /*    GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<TableResultDTO> {
+        return this._medicalConsultationService.GetMedicalConsultationById(IdMedicalConsultation).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    } */
+
+    GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<MedicalConsultationByIdDTO> {
+        return this._medicalConsultationService.GetMedicalConsultationById(IdMedicalConsultation).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                }
+                return response.data as MedicalConsultationByIdDTO;
             })
         );
     }

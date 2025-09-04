@@ -1,0 +1,70 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ orderToEdit ? 'Editar Orden Médica' : 'Crear Orden Médica' }}</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="orderForm">
+    <!-- Observaciones -->
+    <div class="mb-3">
+      <label for="generalObservations" class="form-label">Observaciones Generales</label>
+      <textarea id="generalObservations" formControlName="generalObservations"
+        class="form-control" rows="3"></textarea>
+    </div>
+
+    <hr>
+    <h6>Detalles de la Orden</h6>
+
+    <div formArrayName="details">
+      <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="border rounded p-2 mb-3">
+
+        <!-- Autocomplete de CUPS -->
+        <div class="mb-2 position-relative">
+          <label>Código CUPS</label>
+          <input type="text" class="form-control" formControlName="cupsName"
+            (input)="onCupsInput($event.target.value, i)"
+            (focus)="onCupsInput(detail.get('cupsName')?.value, i)">
+
+          <!-- Sugerencias -->
+          <ul class="list-group position-absolute w-100" *ngIf="showCupsDropdown[i]">
+            <li class="list-group-item" *ngFor="let c of cupsSuggestions[i]" (click)="selectCups(c, i)">
+              {{ c.code }} - {{ c.name }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="mb-2">
+          <label>Descripción del Procedimiento</label>
+          <input type="text" class="form-control" formControlName="procedureDescription">
+        </div>
+
+        <div class="row g-2">
+          <div class="col">
+            <label>Cantidad</label>
+            <input type="number" class="form-control" formControlName="quantity">
+          </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-12">
+                <label>Instrucciones</label>
+                <textarea class="form-control" formControlName="instructions"></textarea>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-danger btn-sm mt-2" (click)="removeDetail(i)" *ngIf="details.length > 1">
+          Quitar
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-secondary mt-2" (click)="addDetail()">Agregar Detalle</button>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="close()">Cancelar</button>
+  <button type="button" class="btn btn-primary" (click)="onSubmit()">
+    {{ orderToEdit ? 'Actualizar Orden' : 'Guardar Orden' }}
+  </button>
+</div>

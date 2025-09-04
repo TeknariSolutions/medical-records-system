@@ -6,6 +6,8 @@ import { CreateUpdatePatientComponent } from './patients/create-update-patient/c
 import { PatientProceduresComponent } from './patient-procedures/patient-procedures.component';
 import { MedicalConsultationComponent } from './patient-procedures/medical-consultation/medical-consultation.component';
 import { MedicalHistoriesComponent } from './patient-procedures/medical-histories/medical-histories.component';
+import { ConsultationProceduresComponent } from './consultation-procedures/consultation-procedures.component';
+import { OrdersComponent } from './consultation-procedures/orders/orders.component';
 
 const routes: Routes = [
     {
@@ -31,7 +33,15 @@ const routes: Routes = [
     {
         path: 'medical-history-list/:id',
         component: MedicalHistoriesComponent
-    }
+    },
+    {
+        path: 'consultation-procedures',
+        component: ConsultationProceduresComponent
+    },
+    {
+        path: 'orders-procedures',
+        component: OrdersComponent
+    },
 ];
 
 @NgModule({

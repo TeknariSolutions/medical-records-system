@@ -15,10 +15,10 @@ export class AuthService {
     private _router: Router) { }
 
 
-  login(email: string, password: string): Observable<ResponseDTO> {
+  login(userName: string, password: string): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {
-        const body = { email, password };
+        const body = { userName, password };
         return this._httpService.post(url, "Auth", null, body);
       })
     );

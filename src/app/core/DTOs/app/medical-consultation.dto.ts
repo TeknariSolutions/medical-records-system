@@ -4,7 +4,7 @@ export interface MedicalConsultationDTO {
   idMedicalConsultation: number;
   idPatient: number;
   idUser: number;
-  consultationDate: Date;
+  consultationDate: string;
   consultationReason: string;
   vitalSigns_BP: string;
   vitalSigns_HR: number;
@@ -28,15 +28,17 @@ export interface MedicalConsultationDTO {
   diagnoses?: MedicalDiagnosisDTO[];
 
   updateBy: number;
-  //updatedAt: number,
+  updateAt: string;
 
   glasgowScore: number;
   consciousnessStatus: string;
   hydrationStatus: string;
-  moodStatus: string;
   respiratoryStatus: string;
   generalStatus: string;
   weightKg: number;
   heightCm: string;
   bmi: number;
+
+  currentIllness: string;
+  paraClinicalTest : string;
 }

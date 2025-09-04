@@ -12,6 +12,7 @@ import { NotificationsService } from "../../services/common/notifications/notifi
   providedIn: "root",
 })
 export class UsersUseCase {
+  
   constructor(private _userService: UsersService,
     private _notificationService: NotificationsService
   ) {}
@@ -55,8 +56,8 @@ export class UsersUseCase {
     );
   }
 
-  GetListUsers(paginator: PaginatorDTO, Email: string): Observable<TableResultDTO> {
-    return this._userService.GetListUsers(paginator, Email).pipe(
+  GetListUsers(paginator: PaginatorDTO, Email: string, idCompany): Observable<TableResultDTO> {
+    return this._userService.GetListUsers(paginator, Email, idCompany).pipe(
       map((response: ResponseDTO) => {
         if (!response.isSuccess) {
           this._notificationService.showToastErrorMessage(response.message!);

@@ -36,21 +36,6 @@ export class PatientProceduresComponent implements OnInit {
   ) { }
 
 /*   ngOnInit(): void {
-
-    this._dataTransferService.getData$()
-          .pipe(take(1))
-          .subscribe(patient => {
-            if (patient) {
-              this.patientData = patient;
-    
-              console.log(this.patientData);
-
-            }
-      });
-
-  } */
-
-  ngOnInit(): void {
      this.loadEPS();
 
     this._dataTransferService.getData$()
@@ -68,7 +53,52 @@ export class PatientProceduresComponent implements OnInit {
         }
         console.log(this.patientData);
       });
+  } */
+
+  ngOnInit(): void {
+    this.loadEPS();
+
+    this._dataTransferService.getData$()
+      .pipe(take(1))
+      .subscribe((data: any) => {
+        // Heurística mínima para distinguir PatientDTO de una consulta
+        const looksLikePatient =
+          data &&
+          (typeof data.firstName === 'string' || typeof data.idEps !== 'undefined' || typeof data.idDocument !== 'undefined');
+
+        if (looksLikePatient) {
+          this.patientData = data as PatientDTO;
+          // ✅ Guarda/actualiza copia estable
+          sessionStorage.setItem('patientData', JSON.stringify(this.patientData));
+        } else {
+          // ✅ Fallback confiable
+          const saved = sessionStorage.getItem('patientData');
+          if (saved) {
+            this.patientData = JSON.parse(saved) as PatientDTO;
+          } else {
+            // Si aún así no hay nada, intenta que el DataTransferService cargue de storage
+            this._dataTransferService.loadFromStorage();
+            const saved2 = sessionStorage.getItem('patientData');
+            if (saved2) {
+              this.patientData = JSON.parse(saved2) as PatientDTO;
+            }
+          }
+        }
+
+        console.log('patientData en PatientProcedures:', this.patientData);
+
+        // ✅ Revisa el flag
+        const flag = sessionStorage.getItem('pp_showConsultations');
+        if (flag === 'true') {
+          this.showConsultations = true;
+
+          // (Opcional) Limpia el flag para que no quede pegado
+          sessionStorage.removeItem('pp_showConsultations');
+        }
+
+      });
   }
+
 
   loadEPS(): void {
   this._epsService.getEpsList().subscribe(data => {

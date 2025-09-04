@@ -1,6 +1,6 @@
 <!-- Loading State -->
 @if(isLoading) {
-<app-loading message="Cargando Pacientes"></app-loading>
+  <app-loading message="Cargando Pacientes"></app-loading>
 }
 
 <div class="container-fluid">
@@ -107,7 +107,7 @@
                                 <td>{{ data.documentType }}</td>
                                 <td>{{ data.idDocument }}</td>
                                 <td>{{ data.phoneNumber }}</td>
-                                <td>{{ data.idEps }}</td>
+                                <td>{{ data.epsName }}</td>
                                
                                 <!-- Actions -->
                                 <!-- <td class="d-flex justify-content-end">
@@ -159,7 +159,7 @@
 
                                     <li data-bs-toggle="tooltip" data-bs-placement="top" title="Historia Clinica">
                                       <button class="btn btn-sm btn-soft-success" (click)="viewPatientProcedures(data)">
-                                        <i class="mdi mdi-account-circle"></i>
+                                        <i class="ri-chat-heart-line"></i>
                                       </button>
                                     </li>
                                   </ul>

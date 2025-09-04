@@ -11,8 +11,8 @@ export class AuthUseCase {
 
   constructor(private _auth: AuthService) {}
 
-  login(user: string, password: string): Observable<boolean> {
-    return this._auth.login(user, password).pipe(
+  login(userName: string, password: string): Observable<boolean> {
+    return this._auth.login(userName, password).pipe(
       switchMap((response: ResponseDTO) => {
         if (response.isSuccess) {
           const authToken = response.data;

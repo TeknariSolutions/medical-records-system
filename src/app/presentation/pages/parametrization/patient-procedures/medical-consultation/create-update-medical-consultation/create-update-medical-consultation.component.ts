@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
 import { MedicalDiagnosisDTO } from 'src/app/core/DTOs/app/medical-diagnosis.dto';
 import { MedicalConsultationDiagnosisUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation-diagnosis.use-case';
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
-import { debounceTime, forkJoin, Observable, of, switchMap } from 'rxjs';
+import { debounceTime, forkJoin, Observable, of, Subject, switchMap } from 'rxjs';
 import { Cie10Service } from 'src/app/infrastructure/services/common/CIE10/cie10.service';
 import { CdkStepper, CdkStepperModule } from '@angular/cdk/stepper';
 import { NgStepperModule } from 'angular-ng-stepper';
@@ -14,6 +14,10 @@ import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medi
 import { MedicalHistoryDTO } from 'src/app/core/DTOs/app/medical-history.dto';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { CreateUpdateMedicalHistoryComponent } from '../../medical-histories/create-update-medical-history/create-update-medical-history.component';
+import { Cie10UseCase } from 'src/app/infrastructure/use-cases/common/cie10.use-case';
+import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
+import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
+import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 
 @Component({
   selector: 'app-create-update-medical-consultation',
@@ -43,14 +47,37 @@ export class CreateUpdateMedicalConsultationComponent {
 
   // Para guardar resultados de la búsqueda
   cie10Results$: Observable<any[]>[] = [];
-
   cie10Suggestions: any[][] = [];
+  searchTerms = new Subject<string>();
 
   lastMedicalHistory?: MedicalHistoryDTO;
 
   modalRef?: BsModalRef;
 
   idUser: number = Number(localStorage.getItem('IdUser'));
+
+  currentPage: number = 1;
+  pageSize: number = 10; 
+  pageSizeOptions = [5, 10, 25, 100]; 
+  totalRecords: number = 0;
+
+
+
+  code = '';
+  description = '';
+  suggestions: any[] = [];
+
+  
+  showDropdown = false;
+
+  codeSuggestions: any[] = [];
+  descriptionSuggestions: any[] = [];
+
+  showDescriptionDropdown: boolean[] = [];
+  showCodeDropdown: boolean[] = [];
+
+  paginator: PaginatorDTO = { pageIndex: 1, pageSize: 1000 };
+
 
 
   @ViewChild('cdkStepper') stepper!: CdkStepper;
@@ -61,17 +88,22 @@ export class CreateUpdateMedicalConsultationComponent {
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
     private _medicalConsultationDiagnosisUseCase: MedicalConsultationDiagnosisUseCase,
     private _medicalHistoryUseCase: MedicalHistoryUseCase,
-    private cie10Service: Cie10Service,
-    private sanitizer: DomSanitizer
+    private cie10UseCase: Cie10UseCase,
+    //private cie10Service: Cie10Service,
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef,
+    private _notificationService: NotificationsService
   ) {
 
     this.form = this.fb.group({
       basicInfo: this.fb.group({
         consultationReason: ['', Validators.required],
-        consultationDate: [new Date().toISOString()],
+        //consultationDate: [new Date().toISOString()],
+        consultationDate: this.getLocalDateTime(),
         //consultationDate: [new Date()],
         isFirstTime: [true],
-        status: [false]
+        status: [false],
+        currentIllness: ['']
       }),
       clinicalStates: this.fb.group({
         moodStatus: [''],
@@ -87,11 +119,11 @@ export class CreateUpdateMedicalConsultationComponent {
         vitalSigns_RR: [null],
         vitalSigns_Temp: [null],
         vitalSigns_SPO2: [null],
-      }),
-      physicalExam: this.fb.group({
         weightKg: [0],
         heightCm: [''],
         bmi: [0],
+      }),
+      physicalExam: this.fb.group({
         physicalExam_HeadNeck: [''],
         physicalExam_Chest: [''],
         physicalExam_Heart: [''],
@@ -102,13 +134,16 @@ export class CreateUpdateMedicalConsultationComponent {
         physicalExam_Skin: [''],
         observations: [''],
       }),
+      paraClinicals: this.fb.group({
+        paraClinicalTest: ['']
+      }),
      
       diagnoses: this.fb.array([]) // solo admin
     });
 
     // Escuchar cambios para recalcular BMI
-    this.form.get('physicalExam.weightKg')?.valueChanges.subscribe(() => this.updateBMI());
-    this.form.get('physicalExam.heightCm')?.valueChanges.subscribe(() => this.updateBMI());
+    this.form.get('vitalSigns.weightKg')?.valueChanges.subscribe(() => this.updateBMI());
+    this.form.get('vitalSigns.heightCm')?.valueChanges.subscribe(() => this.updateBMI());
   
   }
 
@@ -138,48 +173,83 @@ export class CreateUpdateMedicalConsultationComponent {
     }
 
     this.loadLastMedicalHistory();
-  }
-
- onSearchCie10(term: string) {
-    if (term.length < 3) return;
-    this.cie10Service.searchCodes('asma').subscribe(data => {
-      console.log('Resultados:', data);
-    });
 
   }
 
-  onSelectCie10Option(selectedItem: any, index: number) {
-    const diagForm = this.diagnoses.at(index);
-    diagForm.patchValue({
-      diagnosisCode: selectedItem.theCode,
-      //diagnosisDescription: selectedItem.title
-      diagnosisDescription: this.removeHtmlTags(selectedItem.title || '')
-    });
-  }
 
-  onDescriptionInput(index: number) {
-  const control = this.diagnoses.at(index).get('diagnosisDescription');
-  if (control) {
-    const term = control.value;
-    if (term && term.length >= 3) {
-      this.cie10Service.searchCodes(term).subscribe(results => {
-        this.cie10Suggestions[index] = results;
-      });
-    } else {
-      this.cie10Suggestions[index] = [];
-    }
-  }
+// helper getter para el FormArray
+get diagnoses(): FormArray {
+  return this.form.get('diagnoses') as FormArray;
 }
 
 
-  selectCie10Suggestion(item: any, index: number) {
-    const diagForm = this.diagnoses.at(index);
-    diagForm.patchValue({
-      diagnosisCode: item.theCode,
-      diagnosisDescription: this.removeHtmlTags(item.title || '')
-    });
-    this.cie10Suggestions[index] = []; // Ocultar sugerencias
+onCodeInput(value: string, index: number) {
+  this.diagnoses.at(index).patchValue({ diagnosisDescription: '' });
+
+  if (value && value.length >= 2) {
+    this.searchCIE10({ code: value }, index);
+  } else {
+    this.codeSuggestions[index] = [];
+    this.descriptionSuggestions[index] = [];
+    this.showCodeDropdown[index] = false;
+    this.showDescriptionDropdown[index] = false;
   }
+}
+
+onDescriptionInput(value: string, index: number) {
+  this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
+
+  if (value && value.length >= 3) {
+    this.searchCIE10({ name: value }, index);
+  } else {
+    this.codeSuggestions[index] = [];
+    this.descriptionSuggestions[index] = [];
+    this.showCodeDropdown[index] = false;
+    this.showDescriptionDropdown[index] = false;
+  }
+}
+
+searchCIE10(
+  filters: { code?: string; name?: string },
+  index: number
+) {
+  this.cie10UseCase
+    .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
+    .subscribe({
+      next: (data: TableResultDTO) => {
+        const results = data?.results || [];
+
+        // llenar ambas listas
+        this.codeSuggestions[index] = results;
+        this.descriptionSuggestions[index] = results;
+
+        // mostrar ambos dropdowns
+        this.showCodeDropdown[index] = this.codeSuggestions[index].length > 0;
+        this.showDescriptionDropdown[index] = this.descriptionSuggestions[index].length > 0;
+
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.codeSuggestions[index] = [];
+        this.descriptionSuggestions[index] = [];
+        this.showCodeDropdown[index] = false;
+        this.showDescriptionDropdown[index] = false;
+      },
+    });
+}
+
+
+selectSuggestion(item: any, index: number) {
+  const diagnosisGroup = this.diagnoses.at(index) as FormGroup;
+
+  // Rellenar ambos campos
+  diagnosisGroup.get('diagnosisCode')?.setValue(item.codigo);
+  diagnosisGroup.get('diagnosisDescription')?.setValue(item.nombre);
+
+  // Limpiar sugerencias
+  this.codeSuggestions[index] = [];
+  this.descriptionSuggestions[index] = [];
+}
 
 
 // Método para sanear:
@@ -190,7 +260,6 @@ sanitize(html: string): SafeHtml {
 removeHtmlTags(html: string): string {
   return html.replace(/<[^>]+>/g, '');
 }
-
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -220,11 +289,6 @@ removeHtmlTags(html: string): string {
           .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
             console.log('✅ Diagnósticos cargados:', diagnoses);
             if (diagnoses && diagnoses.length) {
-              /* diagnoses.forEach(d => {
-                const group = this.createDiagnosisGroup();
-                group.patchValue(d);
-                array.push(group);
-              }); */
               diagnoses.forEach(d => {
                 const group = this.createDiagnosisGroup();
                 group.patchValue({
@@ -245,12 +309,6 @@ removeHtmlTags(html: string): string {
     }
   }
 }
-
-
-  get diagnoses(): FormArray {
-    return this.form.get('diagnoses') as FormArray;
-  }
-
   goToNextStep() {
     this.stepper.next();
   }
@@ -261,10 +319,10 @@ removeHtmlTags(html: string): string {
         consultationReason: c.consultationReason ?? '',
         consultationDate: c.consultationDate ? new Date(c.consultationDate) : new Date(),
         isFirstTime: c.isFirstTime ?? true,
-        status: c.status ?? false
+        status: c.status ?? false,
+        currentIllness: c.currentIllness ?? ''
       },
       clinicalStates: {
-        moodStatus: c.moodStatus ?? '',
         hydrationStatus: c.hydrationStatus ?? '',
         glasgowScore: c.glasgowScore != null ? Number(c.glasgowScore) : 0,
         consciousnessStatus: c.consciousnessStatus ?? '',
@@ -277,11 +335,11 @@ removeHtmlTags(html: string): string {
         vitalSigns_RR: c.vitalSigns_RR != null ? Number(c.vitalSigns_RR) : 0,
         vitalSigns_Temp: c.vitalSigns_Temp != null ? Number(c.vitalSigns_Temp) : 0,
         vitalSigns_SPO2: c.vitalSigns_SPO2 != null ? Number(c.vitalSigns_SPO2) : 0,
-      },
-      physicalExam: {
         weightKg: c.weightKg != null ? Number(c.weightKg) : 0,
         heightCm: c.heightCm ?? '',
         bmi: c.bmi != null ? Number(c.bmi) : 0,
+      },
+      physicalExam: {
         physicalExam_HeadNeck: c.physicalExam_HeadNeck ?? '',
         physicalExam_Chest: c.physicalExam_Chest ?? '',
         physicalExam_Heart: c.physicalExam_Heart ?? '',
@@ -291,6 +349,9 @@ removeHtmlTags(html: string): string {
         physicalExam_Neuro: c.physicalExam_Neuro ?? '',
         physicalExam_Skin: c.physicalExam_Skin ?? '',
         observations: c.observations ?? ''
+      },
+      paraClinicals: {
+        paraClinicalTest: c.paraClinicalTest ?? ''
       }
     };
   }
@@ -307,7 +368,8 @@ removeHtmlTags(html: string): string {
       updatedBy: [0],
       updatedAt: [''],
       createdBy: [0],
-      createdAt: ['']
+      createdAt: [''],
+      updateAt: ['']
     });
   }
 
@@ -321,49 +383,43 @@ removeHtmlTags(html: string): string {
       isPrincipal: [false]
     });
     this.diagnoses.push(diagForm);
-    this.setupCie10Autocomplete(this.diagnoses.length - 1);
   }
 
   removeDiagnosis(index: number) {
     this.diagnoses.removeAt(index);
-    this.cie10Results$.splice(index, 1);  // Eliminar resultados asociados
-  }
-
-  private setupCie10Autocomplete(index: number) {
-    // Configura observable para cada item del FormArray
-    const control = this.diagnoses.at(index).get('diagnosisDescription');
-    if (control) {
-      const obs$ = control.valueChanges.pipe(
-        debounceTime(300),
-        switchMap(value => {
-          if (value && value.length >= 3) {
-            return this.cie10Service.searchCodes(value);
-          } else {
-            return of([]);
-          }
-        })
-      );
-      this.cie10Results$[index] = obs$;
-    }
+    this.cie10Results$.splice(index, 1); 
   }
 
   updateBMI() {
-    const weight = this.form.get('physicalExam.weightKg')?.value;
-    const height = this.form.get('physicalExam.heightCm')?.value;
+    const weight = this.form.get('vitalSigns.weightKg')?.value;
+    const height = this.form.get('vitalSigns.heightCm')?.value;
     const weightNumber = Number(weight);
     const heightNumber = Number(height);
 
     if (weightNumber > 0 && heightNumber > 0) {
       const heightInMeters = heightNumber / 100;
       const bmi = weightNumber / (heightInMeters * heightInMeters);
-      this.form.get('physicalExam.bmi')?.setValue(parseFloat(bmi.toFixed(2)), { emitEvent: false });
+      this.form.get('vitalSigns.bmi')?.setValue(parseFloat(bmi.toFixed(2)), { emitEvent: false });
     } else {
-      this.form.get('physicalExam.bmi')?.setValue(0, { emitEvent: false });
+      this.form.get('vitalSigns.bmi')?.setValue(0, { emitEvent: false });
     }
   }
 
+  getLocalDateTime(): string {
+    const now = new Date();
 
-submit() {
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // enero = 0
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  }
+
+
+/* submit() {
   if (this.form.invalid) {
     this.form.markAllAsTouched();
     return;
@@ -390,9 +446,9 @@ submit() {
     consultationDate: formValues.basicInfo.consultationDate,
     isFirstTime: formValues.basicInfo.isFirstTime,
     status: formValues.basicInfo.status,
+    currentIllness: formValues.basicInfo.currentIllness,
 
     // clinicalStates
-    moodStatus: formValues.clinicalStates.moodStatus,
     hydrationStatus: formValues.clinicalStates.hydrationStatus,
     glasgowScore: Number(formValues.clinicalStates.glasgowScore) || 0,
     consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
@@ -405,11 +461,12 @@ submit() {
     vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR) || 0,
     vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp) || 0,
     vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2) || 0,
+    weightKg: Number(formValues.vitalSigns.weightKg) || 0,
+    heightCm: formValues.vitalSigns.heightCm,
+    bmi: Number(formValues.vitalSigns.bmi) || 0,
 
     // physicalExam
-    weightKg: Number(formValues.physicalExam.weightKg) || 0,
-    heightCm: formValues.physicalExam.heightCm,
-    bmi: Number(formValues.physicalExam.bmi) || 0,
+    
     physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
     physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
     physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
@@ -420,10 +477,15 @@ submit() {
     physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
     observations: formValues.physicalExam.observations,
 
+    // ParaClinicals
+
+    paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
+
     // Campos de auditoría
     createdBy: isEdit ? this.consultationToEdit!.createdBy : idUser,
-    createdAt: isEdit ? this.consultationToEdit!.createdAt : now,
-    updateBy: idUser, // siempre el que edita
+    createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(),
+    updateBy: idUser, // siempre el que edita,
+    updateAt: this.getLocalDateTime()
   };
 
   console.log('👉 Data preparada para enviar:', baseData);
@@ -457,9 +519,9 @@ submit() {
         ...d,
         idMedicalConsultationDiagnosis: 0,
         createdBy: idUser,
-        createdAt: now,
+        createdAt: this.getLocalDateTime(),
         updatedBy: idUser,
-        updatedAt: now,
+        updatedAt: this.getLocalDateTime(),
       }));
 
       const newConsultationWithDiagnosis: MedicalConsultationDTO = {
@@ -495,12 +557,241 @@ submit() {
       }
     });
   }
-}
+} */
 
 
+ /*  submit(): void {
+  if (this.form.invalid) {
+    this._notificationService.showInfoMessage('Completa todos los campos requeridos antes de guardar');
+    return;
+  }
+
+  const idUser = Number(localStorage.getItem('IdUser'));
+  const idRol = Number(localStorage.getItem('IdRol'));
+
+  const formValues = this.form.value;
+  const isEdit = !!this.consultationToEdit;
+
+  // 🟢 Datos base
+  const baseData: MedicalConsultationDTO = {
+    idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
+    idPatient: this.idPatient,
+    idUser: idUser,
+
+    consultationReason: formValues.basicInfo.consultationReason,
+    consultationDate: isEdit
+      ? this.consultationToEdit!.consultationDate // ✅ mantener original en edición
+      : this.getLocalDateTime(), // ✅ nueva consulta usa localDateTime
+    isFirstTime: formValues.basicInfo.isFirstTime,
+    status: formValues.basicInfo.status,
+    currentIllness: formValues.basicInfo.currentIllness,
+
+    hydrationStatus: formValues.clinicalStates.hydrationStatus,
+    glasgowScore: Number(formValues.clinicalStates.glasgowScore),
+    consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
+    respiratoryStatus: formValues.clinicalStates.respiratoryStatus,
+    generalStatus: formValues.clinicalStates.generalStatus,
+
+    vitalSigns_BP: formValues.vitalSigns.vitalSigns_BP,
+    vitalSigns_HR: Number(formValues.vitalSigns.vitalSigns_HR),
+    vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR),
+    vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp),
+    vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2),
+    weightKg: Number(formValues.vitalSigns.weightKg),
+    heightCm: formValues.vitalSigns.heightCm,
+    bmi: Number(formValues.vitalSigns.bmi),
+
+    physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
+    physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
+    physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
+    physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
+    physicalExam_GU: formValues.physicalExam.physicalExam_GU,
+    physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
+    physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
+    physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
+    observations: formValues.physicalExam.observations,
+
+    paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
+
+    createdBy: isEdit ? this.consultationToEdit!.createdBy : idUser,
+    createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
+    updateBy: idUser,
+    updateAt: this.getLocalDateTime()
+  };
+
+  let operation: Observable<any>;
+
+  if (isEdit) {
+    // 🟢 Editar
+    operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
+
+  } else {
+    // 🟢 Crear
+    if (idRol === 1 && this.diagnoses.length > 0) {
+      // ✅ Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
+      const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
+        ...d,
+        idMedicalConsultationDiagnosis: 0,
+        createdBy: idUser,
+        createdAt: this.getLocalDateTime(),
+        updatedBy: idUser,
+        updatedAt: this.getLocalDateTime()
+      }));
+
+      const newConsultationWithDiagnosis: MedicalConsultationDTO = {
+        ...baseData,
+        diagnoses: preparedDiagnoses
+      };
+
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
+
+    } else {
+      // ✅ Admin sin diagnósticos o Auxiliar → usar CreateMedicalConsultation
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultation(baseData);
+    }
+  }
+
+  // 🟢 Ejecutar operación
+  operation.subscribe({
+    next: () => {
+      this._notificationService.showInfoMessage(
+        isEdit ? 'Consulta actualizada correctamente' : 'Consulta creada correctamente');
+        this.backToList.emit();
+    },
+    error: (err) => {
+      this._notificationService.showInfoMessage('Error al guardar la consulta');
+      console.error(err);
+    }
+  });
+} */
 
 
-private saveDiagnosesForExistingConsultation() {
+  submit(): void {
+    if (this.form.invalid) {
+      this._notificationService.showInfoMessage('Completa todos los campos requeridos antes de guardar');
+      return;
+    }
+
+    const idUser = Number(localStorage.getItem('IdUser'));
+    const idRol = Number(localStorage.getItem('IdRol'));
+
+    const formValues = this.form.value;
+    const isEdit = !!this.consultationToEdit;
+
+    // 🟢 Datos base
+    const baseData: MedicalConsultationDTO = {
+      idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
+      idPatient: this.idPatient,
+      idUser: idUser,
+
+      consultationReason: formValues.basicInfo.consultationReason,
+      consultationDate: isEdit
+        ? this.consultationToEdit!.consultationDate // ✅ mantener original en edición
+        : this.getLocalDateTime(), // ✅ nueva consulta usa localDateTime
+      isFirstTime: formValues.basicInfo.isFirstTime,
+      status: formValues.basicInfo.status,
+      currentIllness: formValues.basicInfo.currentIllness,
+
+      hydrationStatus: formValues.clinicalStates.hydrationStatus,
+      glasgowScore: Number(formValues.clinicalStates.glasgowScore),
+      consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
+      respiratoryStatus: formValues.clinicalStates.respiratoryStatus,
+      generalStatus: formValues.clinicalStates.generalStatus,
+
+      vitalSigns_BP: formValues.vitalSigns.vitalSigns_BP,
+      vitalSigns_HR: Number(formValues.vitalSigns.vitalSigns_HR),
+      vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR),
+      vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp),
+      vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2),
+      weightKg: Number(formValues.vitalSigns.weightKg),
+      heightCm: formValues.vitalSigns.heightCm,
+      bmi: Number(formValues.vitalSigns.bmi),
+
+      physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
+      physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
+      physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
+      physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
+      physicalExam_GU: formValues.physicalExam.physicalExam_GU,
+      physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
+      physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
+      physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
+      observations: formValues.physicalExam.observations,
+
+      paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
+
+      createdBy: isEdit ? this.consultationToEdit!.createdBy : idUser,
+      createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
+      updateBy: idUser,
+      updateAt: this.getLocalDateTime()
+    };
+
+    let operation: Observable<any>;
+
+    if (isEdit) {
+      // 🟢 Editar
+      operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
+
+      operation.subscribe({
+        next: (res) => {
+          if (res.isSuccess) {
+            // 👉 Guardar diagnósticos después de actualizar la consulta
+            this.saveDiagnosesForExistingConsultation();
+            this._notificationService.showInfoMessage('Consulta actualizada correctamente');
+          } else {
+            this._notificationService.showInfoMessage('Error al actualizar la consulta');
+          }
+        },
+        error: (err) => {
+          this._notificationService.showInfoMessage('Error al actualizar la consulta');
+          console.error(err);
+        }
+      });
+
+      return; // 👈 importante: salimos aquí para no ejecutar el bloque común de abajo
+    }
+
+    // 🟢 Crear
+    if (idRol === 1 && this.diagnoses.length > 0) {
+      // ✅ Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
+      const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
+        ...d,
+        idMedicalConsultationDiagnosis: 0,
+        createdBy: idUser,
+        createdAt: this.getLocalDateTime(),
+        updatedBy: idUser,
+        updatedAt: this.getLocalDateTime()
+      }));
+
+      const newConsultationWithDiagnosis: MedicalConsultationDTO = {
+        ...baseData,
+        diagnoses: preparedDiagnoses
+      };
+
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
+
+    } else {
+      // ✅ Admin sin diagnósticos o Auxiliar → usar CreateMedicalConsultation
+      operation = this._medicalConsultationUseCase.CreateMedicalConsultation(baseData);
+    }
+
+    // 🟢 Ejecutar operación (solo creación)
+    operation.subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          this._notificationService.showInfoMessage('Consulta creada correctamente');
+          this.backToList.emit();
+        } else {
+          this._notificationService.showInfoMessage('Error al crear la consulta');
+        }
+      },
+      error: (err) => {
+        this._notificationService.showInfoMessage('Error al guardar la consulta');
+        console.error(err);
+      }
+    });
+  }
+
+  private saveDiagnosesForExistingConsultation() {
   const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
   const now = new Date().toISOString();
 
@@ -509,7 +800,7 @@ private saveDiagnosesForExistingConsultation() {
       ...control.value,
       idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
       updatedBy: idUser,
-      updatedAt: now,
+      updatedAt: this.getLocalDateTime(),
     };
 
     if (diag.idMedicalConsultationDiagnosis > 0) {
@@ -518,7 +809,7 @@ private saveDiagnosesForExistingConsultation() {
     } else {
       // nuevo → crear
       diag.createdBy = idUser;
-      diag.createdAt = now;
+      diag.createdAt = this.getLocalDateTime();
       return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
     }
   });
@@ -546,13 +837,6 @@ private saveDiagnosesForExistingConsultation() {
 
   // Medical History
 
- /*  loadLastMedicalHistory(): void {
-    this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
-      .subscribe((data) => {
-        this.lastMedicalHistory = data?.results || [];
-      });
-  } */
-
   loadLastMedicalHistory(): void {
     this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
       .subscribe((data) => {
@@ -579,7 +863,6 @@ private saveDiagnosesForExistingConsultation() {
     this.loadLastMedicalHistory();
   });
 }
-
 
 
 }

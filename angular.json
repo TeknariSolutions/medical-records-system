@@ -61,7 +61,8 @@
               "./node_modules/ngx-toastr/toastr-old.css",
               "node_modules/slick-carousel/slick/slick.scss",
               "node_modules/slick-carousel/slick/slick-theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/remixicon/fonts/remixicon.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

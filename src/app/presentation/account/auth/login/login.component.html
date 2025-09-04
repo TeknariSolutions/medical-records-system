@@ -25,15 +25,12 @@
 
                                     <!-- Email -->
                                     <div class="mb-3">
-                                        <label for="email">Correo</label>
-                                        <input type="email" class="form-control" id="email" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" placeholder="Ingresa tu email">
-                                        @if(submitted && f.password.errors){
+                                        <label for="userName">Usuario</label>
+                                        <input type="userName" class="form-control" id="text" formControlName="userName" [ngClass]="{ 'is-invalid': submitted && f.userName.errors }" placeholder="Ingresa tu usuario">
+                                        @if(submitted && f.userName.errors){
                                         <div class="invalid-feedback">
-                                            @if(f.email.errors?.required){
+                                            @if(f.userName.errors?.required){
                                             <div>Este campo es obligatorio.</div>
-                                            }
-                                            @if(f.email.errors?.email){
-                                            <div>Ingresa un correo válido</div>
                                             }
                                         </div>}
                                     </div>

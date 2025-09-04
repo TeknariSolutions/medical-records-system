@@ -1,0 +1,71 @@
+<div class="modal-header">
+  <h5 class="modal-title">Nueva Prescripción</h5>
+  <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()">
+
+    <!-- 🔹 Prescripción -->
+    <div class="mb-3">
+      <label>Observaciones Generales</label>
+      <textarea formControlName="generalObservations" class="form-control"></textarea>
+    </div>
+
+    <!-- 🔹 Detalles -->
+    <div formArrayName="details">
+      <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="border p-2 mb-2 rounded">
+    
+        <!-- Autocomplete de medicamentos -->
+        <div class="mb-2 position-relative">
+          <label>Medicamento</label>
+          <input type="text" class="form-control" [formControlName]="'medicineName'"
+            (input)="onMedicineInput($event.target.value, i)"
+            (focus)="onMedicineInput(detail.get('medicineName')?.value, i)">
+    
+          <!-- Sugerencias -->
+          <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
+            <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">
+              {{ med.commercialName }} - {{ med.activeIngredient }}
+            </li>
+          </ul>
+        </div>
+    
+        <div class="row g-2">
+          <div class="col-12 col-md-4">
+            <label>Dosis</label>
+            <input type="text" formControlName="dosage" class="form-control">
+          </div>
+          <div class="col">
+            <label>Frecuencia</label>
+            <input type="text" formControlName="frequency" class="form-control">
+          </div>
+          <div class="col">
+            <label>Duración</label>
+            <input type="text" formControlName="duration" class="form-control">
+          </div>
+          <div class="col">
+            <label>Cantidad</label>
+            <input type="number" formControlName="prescribedQuantity" class="form-control">
+          </div>
+        </div>
+    
+        <div class="mt-2">
+          <label>Instrucciones</label>
+          <textarea formControlName="instructions" class="form-control"></textarea>
+        </div>
+    
+        <button type="button" class="btn btn-danger btn-sm mt-2" (click)="removeDetail(i)" *ngIf="details.length > 1">
+          Quitar
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-secondary mt-2" (click)="addDetail()">Agregar Detalle</button>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="submit" class="btn btn-primary" [disabled]="prescriptionForm.invalid" (click)="onSubmit()">Guardar</button>
+</div>

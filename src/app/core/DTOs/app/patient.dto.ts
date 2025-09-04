@@ -15,6 +15,7 @@ export interface PatientDTO {
   phoneNumber2: string;
   email: string;
   idEps: number;
+  epsName?: string;
   ethnic: string;
   stratum: string;
   regime: string;
@@ -36,6 +37,7 @@ export interface PatientDTO {
   addressOfGuardian: string;
   phoneNumberOfGuardian: string;
   emailOfGuardian: string;
+  registerDate?: string;
 }
 
 

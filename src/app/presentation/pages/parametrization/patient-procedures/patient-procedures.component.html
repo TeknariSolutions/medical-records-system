@@ -19,98 +19,98 @@
     </div>
 
     <!-- Patient Info -->
-    <div class="card">
+    <div class="card info-title">
         <div class="card-body">
-            <h4 class="card-title mb-2 text-center title-custom">
-                Historia Clinica
+            <h4 class="card-title mb-3 title-custom">
+                HISTORIA CLINICA
             </h4>
 
-            <h6 class="mb-1">{{patientData.firstName}} {{patientData.secondName}} 
-                {{patientData.firstLastName}} {{patientData.secondLastName}}
-            </h6>
+            <p class="mb-1 title-patient"><strong>PACIENTE:</strong> {{patientData?.firstName}}
+                {{patientData?.secondName}}
+                {{patientData?.firstLastName}} {{patientData?.secondLastName}}
+            </p>
 
-            <p>{{patientData.documentType}}: {{patientData.idDocument}}</p>
-    
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="info-group">
-                        <div class="info-row">
-                            <span class="info-label">Estado civil:</span>
-                            <span class="info-value">{{patientData.maritalStatus}}</span>
-                        </div>
+            <p class="title-patient"><strong>{{patientData?.documentType}}:</strong> {{patientData?.idDocument}}</p>
 
-                        <div class="info-row">
-                            <span class="info-label">Ocupación:</span>
-                            <span class="info-value">{{patientData.job}}</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="table-responsive w-100 mt-3">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <!-- Estado civil -->
+                            <td style="width: 97px; font-weight: 500;">Estado civil:</td>
+                            <td colspan="1">{{patientData?.maritalStatus}}</td>
 
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="info-group">
-                        <div class="info-row">
-                            <span class="info-label">Teléfono:</span>
-                            <span class="info-value">{{patientData.phoneNumber}}</span>
-                        </div>
+                            <!-- Edad -->
+                            <td style="width: 97px; font-weight: 500;">Edad:</td>
+                            <td colspan="2">
+                                {{patientData?.birthDay ? getAgeFromBirthDay(patientData?.birthDay) + ' años' : 'N/A'}}
+                            </td>
 
-                        <div class="info-row">
-                            <span class="info-label">Ciudad:</span>
-                            <span class="info-value">{{patientData.city}}</span>
-                        </div>
-                    </div>
-                </div>
-    
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="info-group">
-                         <div class="info-row">
-                            <span class="info-label">EPS:</span>
-                            <span class="info-value">
-                                {{ getEpsName(patientData.idEps) }}
-                            </span>
-                        </div>
+                            <!-- Ciudad -->
+                            <td style="width: 97px; font-weight: 500;">Ciudad:</td>
+                            <td colspan="2">
+                                {{patientData?.city}}
+                            </td>
+                        </tr>
 
-                        <div class="info-row">
-                            <span class="info-label">Edad:</span>
-                            <span class="info-value">
-                                {{
-                                patientData.birthDay ? getAgeFromBirthDay(patientData.birthDay) + ' años' : 'N/A'
-                                }}
-                            </span>
+                        <tr>
+                            <!-- Ocupación -->
+                            <td style="width: 97px; font-weight: 500;">Ocupación:</td>
+                            <td colspan="1">{{patientData?.job}}</td>
 
-                        </div>
-                        
-                    </div>
-                </div>
+                            <!-- Teléfono -->
+                            <td style="width: 97px; font-weight: 500;">Teléfono:</td>
+                            <td colspan="2">{{patientData?.phoneNumber}}</td>
+
+                            <!-- EPS -->
+                            <td style="width: 97px; font-weight: 500;">EPS:</td>
+                            <td colspan="2">
+                                {{ patientData.epsName}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-<!-- Cards de navegación -->
-<div class="row" *ngIf="!showConsultations">
-    <div class="col-12 col-md-6 col-lg-4">
-        <div class="card justify-content-center custom-card text-center p-3" (click)="showConsultations = true">
-            <i class="mdi mdi-charity"></i>
-            <h4 class="card-title mt-2">Consultas</h4>
+    <!-- Cards de navegación -->
+    <div class="row" *ngIf="!showConsultations">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card justify-content-center custom-card text-center p-3" (click)="showConsultations = true">
+                <i class="mdi mdi-charity"></i>
+                <h4 class="card-title mt-2">Consultas</h4>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card justify-content-center custom-card text-center p-3"
+                (click)="navigateToMedicalHistoryList()">
+                
+                <i class="ri-history-line"></i>
+                <h4 class="card-title mt-2">Antecedentes</h4>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card justify-content-center custom-card text-center p-3"
+                (click)="navigateToMedicalHistoryList()">
+                <!-- <i class="ri-contract-line"></i> -->
+                <i class="mdi mdi-clipboard-edit-outline"></i>
+                <h4 class="card-title mt-2">Examenes Paraclinicos</h4>
+            </div>
         </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-4">
-        <div class="card justify-content-center custom-card text-center p-3" (click)="navigateToMedicalHistoryList()">
-            <i class="mdi mdi-clipboard-edit-outline"></i>
-            <h4 class="card-title mt-2">Antecedentes</h4>
-        </div>
+    <!-- Componente MedicalConsultation -->
+    <div *ngIf="showConsultations">
+        <button class="btn btn-outline-secondary mb-3 button-back" (click)="showConsultations = false">
+            <i class="mdi mdi-chevron-left"></i>
+            Volver al inicio
+        </button>
+
+        <app-medical-consultation [idPatient]="patientData?.idPatient"
+            [patientData]="patientData"></app-medical-consultation>
     </div>
-</div>
-
-<!-- Componente MedicalConsultation -->
-<div *ngIf="showConsultations">
-    <button class="btn btn-outline-secondary mb-3 button-back" (click)="showConsultations = false">
-        <i class="mdi mdi-chevron-left"></i>
-        Volver al inicio
-    </button>
-
-    <app-medical-consultation [idPatient]="patientData?.idPatient"></app-medical-consultation>
-</div>
 
 </div>
-

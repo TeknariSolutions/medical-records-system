@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
 
   private initForm(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      userName: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
   }
@@ -60,9 +60,9 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.loading = true;
 
-      const { email, password } = this.loginForm.value;
+      const { userName, password } = this.loginForm.value;
 
-      this._authUseCase.login(email, password).subscribe({
+      this._authUseCase.login(userName, password).subscribe({
         next: (response: any) => {
           this.loading = false;
 

@@ -1,0 +1,95 @@
+.card-title {
+    font-size: 15px;
+}
+
+.info-title {
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* .title-custom {
+  color: #1AAE9F;;
+} */
+
+h6 {
+  font-size: 13px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+  font-size: 12px;
+}
+
+.info-label {
+  font-weight: 500;
+  //min-width: 120px; /* Puedes ajustar este ancho según tu diseño */
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.info-value {
+  flex: 1;
+}
+
+ $primary: #1AAE9F;
+
+ .custom-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  cursor: pointer;
+
+  i {
+    font-size: 2rem;
+    color: $primary;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: $primary;
+
+    i {
+      transform: scale(1.1);
+      color: darken($primary, 10%);
+    }
+  }
+}
+
+.button-back {
+    width: fit-content;
+    border: none;
+
+    padding: 3px 6px;
+    color: #1AAE9F;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+        background-color: white !important;
+        //transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(41, 197, 158, 0.245);
+        border: 1px solid #1AAE9F;
+    }
+
+    i {
+        font-size: 20px;
+    }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+   

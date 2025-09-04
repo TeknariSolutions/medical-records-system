@@ -1,0 +1,10 @@
+.dropdown-menu {
+    position: absolute;
+    inset: 0px 0px auto auto;
+    margin: 0px;
+    transform: translate(0px, 31.25px);
+}
+
+.dropdown-menu i {
+    cursor: pointer;
+}

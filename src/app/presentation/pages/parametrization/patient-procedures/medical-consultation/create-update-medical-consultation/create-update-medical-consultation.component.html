@@ -31,6 +31,12 @@
               </textarea>
             </div>
 
+            <div class="col-12 mb-3">
+              <label>Enfermedad Actual</label>
+              <textarea class="form-control mb-2" formControlName="currentIllness">
+              </textarea>
+            </div>
+
 
             <div class="row mt-4">
               <div class="col-12 col-lg-6">
@@ -54,289 +60,7 @@
           <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
         </cdk-step>
 
-        <!-- Paso 2: Estados clínicos -->
-        <cdk-step [stepControl]="form.get('clinicalStates')" [optional]="false">
-          <ng-template cdkStepLabel>
-            <span class="number">2</span> Estados
-          </ng-template>
-
-          <div formGroupName="clinicalStates">
-            <div class="row mt-4">
-              <div class="col-12 col-md-4 col-lg-4 mb-3">
-                <label>E/A (Estado de Animo)</label>
-                <input class="form-control" formControlName="moodStatus" />
-              </div>
-
-              <div class="col-12 col-md-4 col-lg-4 mb-3">
-                <label>Estado de Hidratación</label>
-                <input class="form-control" formControlName="hydrationStatus" />
-              </div>
-
-              <div class="col-12 col-md-4 col-lg-4 mb-3">
-                <label>Nivel de Glasgow</label>
-                <select id="glasgowScore" name="glasgowScore" class="form-control" formControlName="glasgowScore"
-                  placeholder="Selecciona una opción">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-                  <option value="13">13</option>
-                  <option value="14">14</option>
-                  <option value="15">15</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row mt-4">
-              <div class="col-12 col-md-4 col-lg-4 mb-3">
-                <label>Estado de Conciencia</label>
-
-                <select id="consciousnessStatus" name="consciousnessStatus" class="form-control"
-                  formControlName="consciousnessStatus" placeholder="Selecciona una opción">
-                  <option value="Alerta">Alerta</option>
-                  <option value="Letargo">Letargo</option>
-                  <option value="Obnubilación">Obnubilación</option>
-                  <option value="Estupor">Estupor</option>
-                  <option value="Coma">Coma</option>
-                </select>
-              </div>
-
-              <div class="col-12 col-md-4 col-lg-4 mb-3">
-                <label>Estado de Respiración</label>
-                <input class="form-control" type="text" formControlName="respiratoryStatus" />
-              </div>
-
-              <div class="col-12 col-md-4 col-lg-4 mb-3">
-                <label>Estado General</label>
-                <input class="form-control" type="text" formControlName="generalStatus" />
-              </div>
-            </div>
-          </div>
-
-          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
-        </cdk-step>
-
-        <!-- Paso 3: Signos vitales -->
-        <cdk-step [stepControl]="form.get('vitalSigns')" [optional]="false">
-          <ng-template cdkStepLabel>
-            <span class="number">3</span> Signos
-          </ng-template>
-
-          <div formGroupName="vitalSigns">
-            <div class="row mt'4">
-              <div class="col-md-4 mb-3">
-                <label>Presión Arterial</label>
-                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
-              </div>
-
-              <div class="col-md-4 mb-3">
-                <label>Frecuencia Cardíaca</label>
-                <input formControlName="vitalSigns_HR" type="number" class="form-control" />
-              </div>
-
-              <div class="col-md-4 mb-3">
-                <label>Frecuencia Respiratoria</label>
-                <input formControlName="vitalSigns_RR" type="number" class="form-control" />
-              </div>
-
-              <div class="col-12 col-lg-6 mb-3">
-                <label>Temperatura</label>
-                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
-              </div>
-
-              <div class="col-12 col-lg-6 mb-3">
-                <label>Saturación de Oxígeno SpO2</label>
-                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
-              </div>
-            </div>
-          </div>
-
-          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
-        </cdk-step>
-
-        <!-- Paso 4: Examen físico -->
-        <cdk-step [stepControl]="form.get('physicalExam')" [optional]="false">
-          <ng-template cdkStepLabel>
-            <span class="number">4</span> Exámen Fisico
-          </ng-template>
-
-          <div formGroupName="physicalExam">
-            <div class="row">
-
-              <div class="col-md-4 mb-3">
-                <label>Peso (Kg)</label>
-                <input class="form-control" type="number" formControlName="weightKg" />
-              </div>
-
-              <div class="col-md-4 mb-3">
-                <label>Talla (cms)</label>
-                <input class="form-control" type="text" formControlName="heightCm" />
-              </div>
-
-              <div class="col-md-4 mb-3">
-                <label>IMC</label>
-                <input class="form-control" type="number" formControlName="bmi" readonly />
-              </div>
-
-
-              <div class="col-md-6 mb-3">
-                <label>Cabeza y Cuello</label>
-                <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Tórax</label>
-                <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Corazón</label>
-                <textarea formControlName="physicalExam_Heart" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Abdomen</label>
-                <textarea formControlName="physicalExam_Abdomen" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Genitourinario GU</label>
-                <textarea formControlName="physicalExam_GU" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Musculoesquelético</label>
-                <textarea formControlName="physicalExam_Musculoskeletal" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Neurológico</label>
-                <textarea formControlName="physicalExam_Neuro" type="text" class="form-control"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Piel</label>
-                <textarea formControlName="physicalExam_Skin" type="text" class="form-control"></textarea>
-              </div>
-            </div>
-
-            <!-- Observaciones -->
-            <div class="mb-3">
-              <label>Observaciones</label>
-              <textarea formControlName="observations" type="text" class="form-control" rows="3"></textarea>
-            </div>
-          </div>
-
-          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
-        </cdk-step>
-
-
-        <!-- Paso 5: Diagnósticos (solo admin) -->
-        <cdk-step *ngIf="idRol !== 2" [optional]="false">
-          <ng-template cdkStepLabel>
-            <span class="number">5</span>
-            Diagnósticos
-          </ng-template>
-
-          <div formArrayName="diagnoses" *ngIf="form.get('diagnoses') as diagnosisArray">
-            <!-- <div *ngFor="let diag of diagnoses.controls; let i = index" [formGroupName]="i" class="border mb-2 p-2">
-          <input formControlName="diagnosisCode" class="form-control mb-2" placeholder="Código" />
-          <input formControlName="diagnosisDescription" class="form-control mb-2" placeholder="Descripción" />
-        </div> -->
-
-            <!-- Diagnosticos -->
-
-            <h5 class="mt-4">Diagnósticos</h5>
-
-            <!-- <div *ngFor="let diag of diagnosisArray.controls; let i = index" [formGroupName]="i"
-              class="border p-3 mb-3">
-              <div class="row">
-                <div class="col-md-4">
-                  <label>Código</label>
-                  <input type="text" formControlName="diagnosisCode" class="form-control" />
-                </div>
-                <div class="col-md-4">
-                  <label>Descripción</label>
-                  <input type="text" formControlName="diagnosisDescription" class="form-control" />
-                </div>
-                <div class="col-md-4">
-                  <label>Tipo</label>
-                  <input type="text" formControlName="diagnosisType" class="form-control" />
-                </div>
-                <div class="col-md-12 mt-2">
-                  <label>Comentario</label>
-                  <textarea formControlName="comment" class="form-control"></textarea>
-                </div>
-                <div class="col-md-6 mt-2">
-                  <input type="checkbox" formControlName="isPrincipal" />
-                  <label class="ms-1">Principal</label>
-                </div>
-                <div class="col-md-6 mt-2 text-end">
-                  <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
-                </div>
-              </div>
-            </div> -->
-
-            <div *ngFor="let diag of diagnoses.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3">
-              <div class="row">
-                <div class="col-md-4 mb-2">
-                  <label>Código</label>
-                  <input type="text" formControlName="diagnosisCode" class="form-control" readonly />
-                </div>
-            
-                <div class="col-md-4 mb-2 position-relative">
-                  <label>Descripción</label>
-                  <input type="text" formControlName="diagnosisDescription" class="form-control" (input)="onDescriptionInput(i)"
-                    autocomplete="off" />
-            
-                  <!-- Lista de sugerencias -->
-                  <ul *ngIf="cie10Suggestions[i]?.length" class="list-group position-absolute w-100"
-                    style="z-index:10; max-height:200px; overflow-y:auto;">
-                    <li *ngFor="let item of cie10Suggestions[i]" class="list-group-item list-group-item-action"
-                      (click)="selectCie10Suggestion(item, i)">
-                      {{ removeHtmlTags(item.title) }}
-                    </li>
-                  </ul>
-                </div>
-            
-                <div class="col-md-4 mb-2">
-                  <label>Tipo</label>
-                  <select formControlName="diagnosisType" class="form-control">
-                    <option *ngFor="let type of diagnosisTypes" [value]="type">{{ type }}</option>
-                  </select>
-                </div>
-            
-                <div class="col-md-12 mt-2 mb-2">
-                  <label>Comentario (opcional)</label>
-                  <textarea formControlName="comment" class="form-control"></textarea>
-                </div>
-            
-                <div class="col-md-6 mt-2">
-                  <input type="checkbox" formControlName="isPrincipal" />
-                  <label class="ms-1">Principal</label>
-                </div>
-            
-                <div class="col-md-6 mt-2 text-end">
-                  <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
-                </div>
-              </div>
-            </div>
-
-
-            <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button>
-
-
-
-          </div>
-
-          <!-- <button class="btn btn-success mt-2" type="button" (click)="addDiagnosis()">Agregar diagnóstico</button> -->
-
-          <!-- <button class="btn btn-primary mt-2 ms-2" type="button" (click)="submit()">Finalizar</button> -->
-
-        </cdk-step>
-
-          <!-- Paso 6: Antecedentes (solo admin) -->
+         <!-- Paso 6: Antecedentes (solo admin) -->
         <cdk-step *ngIf="idRol !== 2" [optional]="false">
           <ng-template cdkStepLabel>
             <span class="number">5</span> Antecedentes
@@ -418,6 +142,285 @@
         
         </cdk-step>
 
+        <!-- Paso 2: Estados clínicos -->
+        <cdk-step [stepControl]="form.get('clinicalStates')" [optional]="false">
+          <ng-template cdkStepLabel>
+            <span class="number">2</span> Estados
+          </ng-template>
+
+          <div formGroupName="clinicalStates">
+            <div class="row mt-4">
+              
+              <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label>Estado de Hidratación</label>
+              
+                <select id="hydrationStatus" name="hydrationStatus" class="form-control" formControlName="hydrationStatus"
+                  placeholder="Selecciona una opción">
+                  <option value="Hidratado">Hidratado</option>
+                  <option value="Deshidratado">Deshidratado</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label>Nivel de Glasgow</label>
+                <select id="glasgowScore" name="glasgowScore" class="form-control" formControlName="glasgowScore"
+                  placeholder="Selecciona una opción">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label>Estado de Conciencia</label>
+
+                <select id="consciousnessStatus" name="consciousnessStatus" class="form-control"
+                  formControlName="consciousnessStatus" placeholder="Selecciona una opción">
+                  <option value="Alerta">Alerta</option>
+                  <option value="Letargo">Letargo</option>
+                  <option value="Obnubilación">Obnubilación</option>
+                  <option value="Estupor">Estupor</option>
+                  <option value="Coma">Coma</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label>Estado de Respiración</label>
+                <input class="form-control" type="text" formControlName="respiratoryStatus" />
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-4 mb-3">
+                <label>Estado General</label>
+                <input class="form-control" type="text" formControlName="generalStatus" />
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
+        </cdk-step>
+
+        <!-- Paso 3: Signos vitales -->
+        <cdk-step [stepControl]="form.get('vitalSigns')" [optional]="false">
+          <ng-template cdkStepLabel>
+            <span class="number">3</span> Signos
+          </ng-template>
+
+          <div formGroupName="vitalSigns">
+            <div class="row mt-4">
+              <div class="col-md-4 mb-3">
+                <label>Presión Arterial</label>
+                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Frecuencia Cardíaca</label>
+                <input formControlName="vitalSigns_HR" type="number" class="form-control" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Frecuencia Respiratoria</label>
+                <input formControlName="vitalSigns_RR" type="number" class="form-control" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label>Temperatura</label>
+                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label>Saturación de Oxígeno SpO2</label>
+                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
+              </div>
+
+               <div class="col-md-4 mb-3">
+                <label>Peso (Kg)</label>
+                <input class="form-control" type="number" formControlName="weightKg" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Talla (cms)</label>
+                <input class="form-control" type="text" formControlName="heightCm" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>IMC</label>
+                <input class="form-control" type="number" formControlName="bmi" readonly />
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
+        </cdk-step>
+
+        <!-- Paso 4: Examen físico -->
+        <cdk-step [stepControl]="form.get('physicalExam')" [optional]="false">
+          <ng-template cdkStepLabel>
+            <span class="number">4</span> Ex Fisico
+          </ng-template>
+
+          <div formGroupName="physicalExam">
+            <div class="row">
+
+              <div class="col-md-6 mb-3">
+                <label>Cabeza y Cuello</label>
+                <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Tórax</label>
+                <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Corazón</label>
+                <textarea formControlName="physicalExam_Heart" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Abdomen</label>
+                <textarea formControlName="physicalExam_Abdomen" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Genitourinario GU</label>
+                <textarea formControlName="physicalExam_GU" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Musculoesquelético</label>
+                <textarea formControlName="physicalExam_Musculoskeletal" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Neurológico</label>
+                <textarea formControlName="physicalExam_Neuro" type="text" class="form-control"></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Piel</label>
+                <textarea formControlName="physicalExam_Skin" type="text" class="form-control"></textarea>
+              </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="mb-3">
+              <label>Observaciones</label>
+              <textarea formControlName="observations" type="text" class="form-control" rows="3"></textarea>
+            </div>
+          </div>
+
+          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
+        </cdk-step>
+
+          <!-- Paso 4: Paraclinicos -->
+        <cdk-step [stepControl]="form.get('paraClinicals')" [optional]="false">
+          <ng-template cdkStepLabel>
+            <span class="number">4</span> Paraclinicos
+          </ng-template>
+        
+          <div formGroupName="paraClinicals">
+        
+            <div class="col-12">
+              <label>Paraclinicos</label>
+              <textarea class="form-control mb-2" formControlName="paraClinicalTest">
+                      </textarea>
+            </div>
+          </div>
+        
+          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
+        </cdk-step>
+
+
+        <!-- Paso 5: Diagnósticos (solo admin) -->
+        <cdk-step *ngIf="idRol !== 2" [optional]="false">
+          <ng-template cdkStepLabel>
+            <span class="number">5</span>
+            Diagnósticos
+          </ng-template>
+
+          <div formArrayName="diagnoses" *ngIf="form.get('diagnoses') as diagnosisArray">
+         
+            <!-- Diagnosticos -->
+
+            <h5 class="mt-4">Diagnósticos</h5>
+
+            <div *ngFor="let diag of diagnoses.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3">
+              <div class="row">
+                <!-- CÓDIGO -->
+                <div class="col-md-4 mb-2 position-relative">
+                  <label class="form-label">Código</label>
+                  <input type="text" formControlName="diagnosisCode" class="form-control" (input)="onCodeInput($event.target.value, i)"
+                    autocomplete="off" />
+
+                  <ul class="list-group position-absolute w-100"
+                    style="z-index:10; max-height:200px; overflow-y:auto;">
+                    <li *ngFor="let item of codeSuggestions[i]" class="list-group-item list-group-item-action"
+                      (mousedown)="selectSuggestion(item, i)">
+                      {{ item.codigo }}
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- DESCRIPCIÓN -->
+                <div class="col-md-8 mb-2 position-relative">
+                  <label class="form-label">Nombre</label>
+                  <input type="text" formControlName="diagnosisDescription" class="form-control"
+                    (input)="onDescriptionInput($event.target.value, i)" autocomplete="off" />
+
+                  <ul class="list-group position-absolute w-100"
+                    style="z-index:10; max-height:200px; overflow-y:auto;">
+                    <li *ngFor="let item of descriptionSuggestions[i]" class="list-group-item list-group-item-action"
+                      (mousedown)="selectSuggestion(item, i)">
+                      {{ item.nombre }}
+                    </li>
+                  </ul>
+                </div>
+
+
+                <div class="col-12 mb-2">
+                  <label>Tipo</label>
+                  <select formControlName="diagnosisType" class="form-control">
+                    <option *ngFor="let type of diagnosisTypes" [value]="type">{{ type }}</option>
+                  </select>
+                </div>
+            
+                <div class="col-md-12 mt-2 mb-2">
+                  <label>Comentario (opcional)</label>
+                  <textarea formControlName="comment" class="form-control"></textarea>
+                </div>
+            
+                <div class="col-md-6 mt-2">
+                  <input type="checkbox" formControlName="isPrincipal" />
+                  <label class="ms-1">Principal</label>
+                </div>
+            
+                <div class="col-md-6 mt-2 text-end">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
+                </div>
+              </div>
+            </div>
+
+
+            <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button>
+
+
+
+          </div>
+
+          <!-- <button class="btn btn-success mt-2" type="button" (click)="addDiagnosis()">Agregar diagnóstico</button> -->
+
+          <!-- <button class="btn btn-primary mt-2 ms-2" type="button" (click)="submit()">Finalizar</button> -->
+
+        </cdk-step>
+
+       
       </ng-stepper>
 
       <!-- Guardar Datos -->

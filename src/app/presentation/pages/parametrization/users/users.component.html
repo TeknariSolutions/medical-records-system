@@ -136,6 +136,11 @@
             </table>
           </div>
           }
+
+          <!-- Pagination -->
+          <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalRecords]="totalRecords"
+            [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)">
+          </app-pagination>
         </div>
       </div>
     </div>

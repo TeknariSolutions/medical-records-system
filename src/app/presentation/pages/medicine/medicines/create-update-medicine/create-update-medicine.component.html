@@ -1,0 +1,112 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    {{ isEditMode ? 'Actualizar' : 'Crear' }} Medicamento
+  </h4>
+  <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="medicineForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- Nombre comercial -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre comercial</label>
+                    <input type="text" class="form-control" formControlName="commercialName"
+                        [ngClass]="{'is-invalid': submitted && medicineForm.get('commercialName')?.invalid}">
+                    <div *ngIf="submitted && medicineForm.get('commercialName')?.invalid" class="invalid-feedback">
+                        El nombre comercial es requerido.
+                    </div>
+                </div>
+
+                <!-- Ingrediente activo -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Ingrediente activo</label>
+                    <input type="text" class="form-control" formControlName="activeIngredient"
+                        [ngClass]="{'is-invalid': submitted && medicineForm.get('activeIngredient')?.invalid}">
+                    <div *ngIf="submitted && medicineForm.get('activeIngredient')?.invalid" class="invalid-feedback">
+                        El ingrediente activo es requerido.
+                    </div>
+                </div>
+
+                <!-- Forma farmacéutica -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Forma farmacéutica</label>
+                    <input type="text" class="form-control" formControlName="pharmaceuticalForm">
+                </div>
+
+                <!-- Concentración -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Concentración</label>
+                    <input type="text" class="form-control" formControlName="concentration">
+                </div>
+
+                <!-- Presentación -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Presentación</label>
+                    <input type="text" class="form-control" formControlName="presentation">
+                </div>
+
+                <!-- Unidad de medida -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Unidad de medida</label>
+                    <input type="text" class="form-control" formControlName="unitOfMeasure">
+                </div>
+
+                <!-- Stock actual -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Stock actual</label>
+                    <input type="number" class="form-control" formControlName="currentStock" min="0">
+                </div>
+
+                <!-- Stock mínimo -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Stock mínimo</label>
+                    <input type="number" class="form-control" formControlName="minimumStock" min="0">
+                </div>
+
+                <!-- Precio unitario -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Precio unitario</label>
+                    <input type="number" class="form-control" formControlName="unitPrice" min="0" step="0.01">
+                </div>
+
+                <!-- Lote -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Lote</label>
+                    <input type="text" class="form-control" formControlName="batch">
+                </div>
+
+                <!-- Fecha de expiración -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fecha de expiración</label>
+                    <input type="date" class="form-control" formControlName="expirationDate">
+                </div>
+
+                <!-- Proveedor -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Proveedor</label>
+                    <input type="text" class="form-control" formControlName="supplier">
+                </div>
+
+                <!-- Activo -->
+                <div class="col-md-6 mb-3 d-flex align-items-center">
+                    <div class="form-check mt-4">
+                        <input type="checkbox" class="form-check-input" formControlName="isActive" id="isActive">
+                        <label class="form-check-label" for="isActive">Activo</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </form>
+
+</div>

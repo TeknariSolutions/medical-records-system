@@ -7,16 +7,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.55);
+  //background-color: rgba(255, 255, 255, 0.862);
+  background-color: rgb(255 255 255 / 89%);
   z-index: 100000 !important;
 }
 
 .logo {
-  max-width: 120px;
-  height: auto;
+  height: 120px;
 }
 
 .spinner-grow  {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }

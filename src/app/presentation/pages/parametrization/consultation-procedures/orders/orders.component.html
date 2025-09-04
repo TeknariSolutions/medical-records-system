@@ -1,0 +1,77 @@
+<!-- Loading State -->
+@if(isLoading) {
+<app-loading message="Cargando Ordenes Medicas"></app-loading>
+}
+
+<div class="container-fluid">
+    <!-- Container Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <h5 class="mb-0 flex-grow-1">Listado de Ordenes Medicas</h5>
+                        <div class="flex-shrink-0 d-flex gap-1">
+                            <button type="button" class="btn btn-primary" (click)="openOrderModal()">
+                                <i class="mdi mdi-plus mr-1"></i>
+                                Nueva Orden
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- No Data -->
+                    @if(!isLoading && orders.length === 0) {
+                    <div class="no-data-container d-flex justify-content-center">
+                        <p>No hay datos disponibles</p>
+                    </div>
+                    }
+
+                    <!-- Table with data -->
+                    @if(!isLoading && orders.length > 0) {
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Fecha</th>
+                                    <th scope="col">Descripcion</th>
+                                    <th scope="col" class="align-middle text-center" style="width: 10%">
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for(data of orders; track $index){
+                                <tr>
+                                    <td>{{ data.orderDate }}</td>
+                                    <td>{{ data.generalObservations }}</td>
+
+                                    <!-- Actions -->
+                                    <td class="d-flex justify-content-end">
+
+                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="Ver Prescripción">
+                                                <button class="btn btn-sm btn-success-info">
+                                                    <i class="mdi mdi-eye-outline"></i>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

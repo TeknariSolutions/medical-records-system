@@ -8,4 +8,5 @@ export interface IMedicalConsultationService {
     UpdateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<ResponseDTO>;
     GetListMedicalConsultationByIdPatient(paginator: PaginatorDTO, idPatient?: number): Observable<ResponseDTO>;
     CreateMedicalConsultationWithMedicalDiagnosis(medicalDiagnosis: MedicalConsultationDTO): Observable<ResponseDTO>;
+    GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<ResponseDTO>;
 }

@@ -9,13 +9,15 @@ import { CreateUpdateUserComponent } from './create-update-user/create-update-us
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 import { NgClass } from '@angular/common';
+import { PaginationComponent } from 'src/app/presentation/common/pagination/pagination.component';
 
 
 @Component({
   standalone: true,
   imports: [
     NgClass,
-    LoadingComponent
+    LoadingComponent,
+    PaginationComponent
   ],
   selector: 'app-users',
   templateUrl: './users.component.html',
@@ -26,6 +28,13 @@ export class UsersComponent implements OnInit {
   users: UserDTO[] = [];
   isLoading: boolean = false;
   modalRef?: BsModalRef;
+
+  IdCompany: number = Number(localStorage.getItem('IdCompany'));
+
+  currentPage: number = 1;
+  pageSize: number = 10;
+  pageSizeOptions = [5, 10, 25, 100];
+  totalRecords: number = 0;
 
   constructor(
     private router: Router,
@@ -46,9 +55,10 @@ export class UsersComponent implements OnInit {
       pageSize: 1000
     };
 
-    this._userUseCase.GetListUsers(paginator, '').subscribe({
+    this._userUseCase.GetListUsers(paginator, '', this.IdCompany).subscribe({
       next: (data: TableResultDTO) => {
         this.users = data.results;
+        this.totalRecords = data.totalRecords;
         this.isLoading = false;
       }
     });
@@ -96,5 +106,17 @@ export class UsersComponent implements OnInit {
       }
     });
   }
+
+  onPageChange(newPage: number): void {
+    this.currentPage = newPage;
+    this.loadUsers();
+  }
+
+  onPageSizeChange(newSize: number): void {
+    this.pageSize = newSize;
+    this.currentPage = 1;
+    this.loadUsers();
+  }
+
 
 }

@@ -44,13 +44,14 @@ export class UsersService implements IUserService {
     );
   }
 
-  GetListUsers(paginator: PaginatorDTO, Email?: string): Observable<ResponseDTO> {
+  GetListUsers(paginator: PaginatorDTO, Email?: string, idCompany?: number): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {
         let params: any = {
           PageIndex: paginator.pageIndex,
           PageSize: paginator.pageSize,
-          Email
+          Email,
+          idCompany
         };
         return this._httpService.get<ResponseDTO>(url, "api/User/GetListUsers", params);
       })

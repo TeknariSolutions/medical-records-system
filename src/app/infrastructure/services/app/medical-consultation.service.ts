@@ -53,4 +53,17 @@ export class MedicalConsultationService implements IMedicalConsultationService {
       })
     );
   }
+
+  
+  GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          IdMedicalConsultation
+        };
+        return this._httpService.get<ResponseDTO>(url, "GetMedicalConsultationById", params);
+      })
+    );
+  }
+
 }
