@@ -58,7 +58,7 @@ export class PrescriptionsComponent {
   }
 
 
-  openPrescriptionModal() {
+ /*  openPrescriptionModal() {
     this.modalRef = this.modalService.show(CreateUpdatePrescriptionComponent, {
       class: 'modal-lg',
       initialState: {
@@ -71,7 +71,25 @@ export class PrescriptionsComponent {
         this.loadPrescriptions();
       }
     };
+  } */
+
+
+  openPrescriptionModal() {
+    this.modalRef = this.modalService.show(CreateUpdatePrescriptionComponent, {
+      class: 'modal-lg',
+      initialState: {
+        consultationData: this.consultationData
+      }
+    });
+
+    // 🔹 Ahora sí me suscribo al EventEmitter
+    this.modalRef.content.onClose.subscribe((result: any) => {
+      if (result === 'refresh') {
+        this.loadPrescriptions();
+      }
+    });
   }
+
 
 
 }

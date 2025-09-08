@@ -60,11 +60,13 @@ export class OrdersComponent {
       }
     }); 
 
-    this.modalRef.content.onClose = (result: any) => {
-      if (result === 'refresh') {
-        this.loadOrders();
-      }
-    };
+     // 🔹 Ahora sí me suscribo al EventEmitter
+      this.modalRef.content.onClose.subscribe((result: any) => {
+        if (result === 'refresh') {
+          this.loadOrders();
+        }
+      });
   }
+
 
 }

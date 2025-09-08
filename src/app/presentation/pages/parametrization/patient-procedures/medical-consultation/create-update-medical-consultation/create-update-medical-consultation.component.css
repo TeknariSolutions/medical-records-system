@@ -4,3 +4,10 @@
     justify-content: flex-end;
     align-items: center;
 }
+
+.readonly-form input,
+.readonly-form textarea,
+.readonly-form select {
+    background-color: #f8f9fa;
+    pointer-events: none;
+}

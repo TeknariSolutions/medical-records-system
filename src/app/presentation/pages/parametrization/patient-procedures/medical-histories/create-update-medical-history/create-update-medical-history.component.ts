@@ -41,7 +41,7 @@ export class CreateUpdateMedicalHistoryComponent {
     console.log(this.idUser)
 
 
-    this.form = this.fb.group({
+    /* this.form = this.fb.group({
       pathologicalHistory: [this.lastMedicalHistory?.pathologicalHistory || ''],
       surgicalHistory: [this.lastMedicalHistory?.surgicalHistory || ''],
       allergicHistory: [this.lastMedicalHistory?.allergicHistory || ''],
@@ -61,7 +61,31 @@ export class CreateUpdateMedicalHistoryComponent {
       alcoholFrequency: [this.lastMedicalHistory?.alcoholFrequency || ''],
       drugUse: [this.lastMedicalHistory?.drugUse || false],
       drugDetails: [this.lastMedicalHistory?.drugDetails || '']
+    }); */
+
+    this.form = this.fb.group({
+      pathologicalHistory: [this.lastMedicalHistory?.pathologicalHistory || ''],
+      surgicalHistory: [this.lastMedicalHistory?.surgicalHistory || ''],
+      allergicHistory: [this.lastMedicalHistory?.allergicHistory || ''],
+      pharmacologicalHistory: [this.lastMedicalHistory?.pharmacologicalHistory || ''],
+      familyHistory: [this.lastMedicalHistory?.familyHistory || ''],
+      gynecoObstetricHistory: [this.lastMedicalHistory?.gynecoObstetricHistory || ''],
+      occupationalHistory: [this.lastMedicalHistory?.occupationalHistory || ''],
+      psychiatricHistory: [this.lastMedicalHistory?.psychiatricHistory || ''],
+      traumaticHistory: [this.lastMedicalHistory?.traumaticHistory || ''],
+      immunologicalHistory: [this.lastMedicalHistory?.immunologicalHistory || ''],
+      observations: [this.lastMedicalHistory?.observations || ''],
+      smoker: [this.lastMedicalHistory?.smoker || false],
+      smokingYears: [this.lastMedicalHistory?.smokingYears || 0],
+      cigarettesPerDay: [this.lastMedicalHistory?.cigarettesPerDay || 0],
+      smokingIndex: [this.lastMedicalHistory?.smokingIndex || 0],
+      //smokingDevice: [this.lastMedicalHistory?.smokingDevice || ''], // 🆕 nuevo campo
+      alcoholConsumer: [this.lastMedicalHistory?.alcoholConsumer || false],
+      alcoholFrequency: [this.lastMedicalHistory?.alcoholFrequency || ''],
+      drugUse: [this.lastMedicalHistory?.drugUse || false],
+      drugDetails: [this.lastMedicalHistory?.drugDetails || '']
     });
+
 
     // Flags iniciales
     this.isSmoker = this.form.get('smoker')?.value;
@@ -80,6 +104,31 @@ export class CreateUpdateMedicalHistoryComponent {
     this.form.get('drugUse')?.valueChanges.subscribe(value => {
       this.isDrugUser = value;
     });
+
+    // Suscripción para calcular IPA
+    this.form.get('smokingYears')?.valueChanges.subscribe(() => this.calculateSmokingIndex());
+    this.form.get('cigarettesPerDay')?.valueChanges.subscribe(() => this.calculateSmokingIndex());
+
+    // Suscripción fumador -> mostrar campos adicionales
+    this.form.get('smoker')?.valueChanges.subscribe(value => {
+      this.isSmoker = value;
+      if (!value) {
+        this.form.patchValue({
+          smokingYears: 0,
+          cigarettesPerDay: 0,
+          smokingIndex: 0,
+          smokingDevice: ''   // limpiamos el campo nuevo
+        });
+      }
+    });
+  }
+
+  private calculateSmokingIndex(): void {
+    const years = this.form.get('smokingYears')?.value || 0;
+    const perDay = this.form.get('cigarettesPerDay')?.value || 0;
+
+    const ipa = (perDay * years) / 20;
+    this.form.get('smokingIndex')?.setValue(ipa, { emitEvent: false });
   }
 
   save(): void {

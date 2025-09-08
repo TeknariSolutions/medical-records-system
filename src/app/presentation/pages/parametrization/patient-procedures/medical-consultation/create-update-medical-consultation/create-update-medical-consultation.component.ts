@@ -174,6 +174,27 @@ export class CreateUpdateMedicalConsultationComponent {
 
     this.loadLastMedicalHistory();
 
+
+    this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
+      if (value) {
+        const confirmed = await this._notificationService.confirm(
+          'Advertencia',
+          'Si marca la consulta como CERRADA y la guarda ya no podrá editarla después.',
+          'warning'
+        );
+
+        if (!confirmed) {
+          this.form.get('basicInfo.status')?.setValue(false, { emitEvent: false });
+        }
+      }
+    });
+
+    // 🔒 Si la consulta ya está cerrada, bloqueamos edición
+    if (this.consultationToEdit?.status) {
+      this.form.disable();
+    }
+
+
   }
 
 
@@ -417,253 +438,6 @@ removeHtmlTags(html: string): string {
 
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   }
-
-
-/* submit() {
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
-  }
-
-  console.log('👉 submit llamado');
-  console.log(this.form.value);
-  console.log('🧪 consultationToEdit:', this.consultationToEdit);
-
-  const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
-  const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-  const isEdit = !!this.consultationToEdit?.idMedicalConsultation;
-  const now = new Date().toISOString();
-
-  const formValues = this.form.value;
-
-  // Construir el objeto base que coincide con el payload que me diste del swagger
-  const baseData: MedicalConsultationDTO = {
-    idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
-    idPatient: this.idPatient,
-    idUser: idUser,
-
-    consultationReason: formValues.basicInfo.consultationReason,
-    consultationDate: formValues.basicInfo.consultationDate,
-    isFirstTime: formValues.basicInfo.isFirstTime,
-    status: formValues.basicInfo.status,
-    currentIllness: formValues.basicInfo.currentIllness,
-
-    // clinicalStates
-    hydrationStatus: formValues.clinicalStates.hydrationStatus,
-    glasgowScore: Number(formValues.clinicalStates.glasgowScore) || 0,
-    consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
-    respiratoryStatus: formValues.clinicalStates.respiratoryStatus,
-    generalStatus: formValues.clinicalStates.generalStatus,
-
-    // vitalSigns
-    vitalSigns_BP: formValues.vitalSigns.vitalSigns_BP,
-    vitalSigns_HR: Number(formValues.vitalSigns.vitalSigns_HR) || 0,
-    vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR) || 0,
-    vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp) || 0,
-    vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2) || 0,
-    weightKg: Number(formValues.vitalSigns.weightKg) || 0,
-    heightCm: formValues.vitalSigns.heightCm,
-    bmi: Number(formValues.vitalSigns.bmi) || 0,
-
-    // physicalExam
-    
-    physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
-    physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
-    physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
-    physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
-    physicalExam_GU: formValues.physicalExam.physicalExam_GU,
-    physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
-    physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
-    physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
-    observations: formValues.physicalExam.observations,
-
-    // ParaClinicals
-
-    paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
-
-    // Campos de auditoría
-    createdBy: isEdit ? this.consultationToEdit!.createdBy : idUser,
-    createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(),
-    updateBy: idUser, // siempre el que edita,
-    updateAt: this.getLocalDateTime()
-  };
-
-  console.log('👉 Data preparada para enviar:', baseData);
-
-  if (isEdit) {
-    // ✅ Modo edición
-    this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData).subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          console.log('✅ Consulta actualizada correctamente');
-          // Si eres admin y tienes diagnósticos, guárdalos
-          if (idRol === 1 && this.diagnoses.length > 0) {
-            this.saveDiagnosesForExistingConsultation();
-          } else {
-            this.backToList.emit();
-          }
-        }
-      },
-      error: (err) => {
-        console.error('❌ Error al actualizar la consulta:', err);
-      }
-    });
-
-  } else {
-    // ✅ Modo crear
-    let operation;
-
-    if (idRol === 1) {
-      // Crear con diagnósticos (admin)
-      const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
-        ...d,
-        idMedicalConsultationDiagnosis: 0,
-        createdBy: idUser,
-        createdAt: this.getLocalDateTime(),
-        updatedBy: idUser,
-        updatedAt: this.getLocalDateTime(),
-      }));
-
-      const newConsultationWithDiagnosis: MedicalConsultationDTO = {
-        ...baseData,
-        diagnoses: preparedDiagnoses
-      };
-
-      console.log('👉 Data que voy a mandar a Create con diagnósticos:', newConsultationWithDiagnosis);
-
-      operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
-
-    } else {
-      // Crear sin diagnósticos (otros roles)
-      const newConsultation: MedicalConsultationDTO = {
-        ...baseData,
-        idMedicalConsultation: 0
-      };
-
-      console.log('👉 Data que voy a mandar a Create:', newConsultation);
-
-      operation = this._medicalConsultationUseCase.CreateMedicalConsultation(newConsultation);
-    }
-
-    operation.subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          console.log('✅ Consulta creada correctamente');
-          this.backToList.emit();
-        }
-      },
-      error: (err) => {
-        console.error('❌ Error al crear la consulta:', err);
-      }
-    });
-  }
-} */
-
-
- /*  submit(): void {
-  if (this.form.invalid) {
-    this._notificationService.showInfoMessage('Completa todos los campos requeridos antes de guardar');
-    return;
-  }
-
-  const idUser = Number(localStorage.getItem('IdUser'));
-  const idRol = Number(localStorage.getItem('IdRol'));
-
-  const formValues = this.form.value;
-  const isEdit = !!this.consultationToEdit;
-
-  // 🟢 Datos base
-  const baseData: MedicalConsultationDTO = {
-    idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
-    idPatient: this.idPatient,
-    idUser: idUser,
-
-    consultationReason: formValues.basicInfo.consultationReason,
-    consultationDate: isEdit
-      ? this.consultationToEdit!.consultationDate // ✅ mantener original en edición
-      : this.getLocalDateTime(), // ✅ nueva consulta usa localDateTime
-    isFirstTime: formValues.basicInfo.isFirstTime,
-    status: formValues.basicInfo.status,
-    currentIllness: formValues.basicInfo.currentIllness,
-
-    hydrationStatus: formValues.clinicalStates.hydrationStatus,
-    glasgowScore: Number(formValues.clinicalStates.glasgowScore),
-    consciousnessStatus: formValues.clinicalStates.consciousnessStatus,
-    respiratoryStatus: formValues.clinicalStates.respiratoryStatus,
-    generalStatus: formValues.clinicalStates.generalStatus,
-
-    vitalSigns_BP: formValues.vitalSigns.vitalSigns_BP,
-    vitalSigns_HR: Number(formValues.vitalSigns.vitalSigns_HR),
-    vitalSigns_RR: Number(formValues.vitalSigns.vitalSigns_RR),
-    vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp),
-    vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2),
-    weightKg: Number(formValues.vitalSigns.weightKg),
-    heightCm: formValues.vitalSigns.heightCm,
-    bmi: Number(formValues.vitalSigns.bmi),
-
-    physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
-    physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
-    physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
-    physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
-    physicalExam_GU: formValues.physicalExam.physicalExam_GU,
-    physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
-    physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
-    physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
-    observations: formValues.physicalExam.observations,
-
-    paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
-
-    createdBy: isEdit ? this.consultationToEdit!.createdBy : idUser,
-    createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
-    updateBy: idUser,
-    updateAt: this.getLocalDateTime()
-  };
-
-  let operation: Observable<any>;
-
-  if (isEdit) {
-    // 🟢 Editar
-    operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
-
-  } else {
-    // 🟢 Crear
-    if (idRol === 1 && this.diagnoses.length > 0) {
-      // ✅ Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
-      const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
-        ...d,
-        idMedicalConsultationDiagnosis: 0,
-        createdBy: idUser,
-        createdAt: this.getLocalDateTime(),
-        updatedBy: idUser,
-        updatedAt: this.getLocalDateTime()
-      }));
-
-      const newConsultationWithDiagnosis: MedicalConsultationDTO = {
-        ...baseData,
-        diagnoses: preparedDiagnoses
-      };
-
-      operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
-
-    } else {
-      // ✅ Admin sin diagnósticos o Auxiliar → usar CreateMedicalConsultation
-      operation = this._medicalConsultationUseCase.CreateMedicalConsultation(baseData);
-    }
-  }
-
-  // 🟢 Ejecutar operación
-  operation.subscribe({
-    next: () => {
-      this._notificationService.showInfoMessage(
-        isEdit ? 'Consulta actualizada correctamente' : 'Consulta creada correctamente');
-        this.backToList.emit();
-    },
-    error: (err) => {
-      this._notificationService.showInfoMessage('Error al guardar la consulta');
-      console.error(err);
-    }
-  });
-} */
 
 
   submit(): void {
