@@ -179,7 +179,7 @@
                                                     <div class="col-12 col-lg-6 col-md-6">
                                                         <div class="mb-2">
                                                             <label for="sex" class="form-label">
-                                                                Orientación Sexual
+                                                                Sexo
                                                                 <span class="text-danger">*</span>
                                                             </label>
                                                             <div class="input-group">
@@ -187,7 +187,7 @@
                                                                     [ngClass]="{ 'is-invalid': submitted && patientForm.get('personalInfo.sex')?.invalid }">
                                                                     <option value="M">Masculino</option>
                                                                     <option value="F">Femenino</option>
-                                                                    <option value="O">Otro</option>
+                                                                    <option value="I">Indeterminado</option>
                                                                 </select>
                                                                 @if(submitted && patientForm.get('personalInfo.sex')?.errors) {
                                                                 <div class="invalid-feedback">
@@ -249,7 +249,7 @@
                                         <section>
                                             <div class="row mb-3">
                                                 <!--Dirección-->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="col-12 col-lg-6 col-md-6">
                                                     <div class="mb-2">
                                                         <label for="address" class="form-label">
                                                             Dirección
@@ -268,9 +268,143 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                
+
+
+                                                <!--Correo-->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="email" class="form-label">
+                                                            Correo
+                                                            <span class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <input type="email" class="form-control" id="email" formControlName="email"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.email')?.invalid }" />
+                                                            @if(submitted && patientForm.get('contactInfo.email')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.email')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <!--Pais-->
+                                                 <!-- <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="countryId" class="form-label">
+                                                            Pais 
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="residenceDepartment" class="form-control" formControlName="residenceDepartment"
+                                                                (change)="onDepartmentChange($event.target.value)"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.residenceDepartment')?.invalid }">
+                                                                <option value="">Selecciona un departamento</option>
+                                                                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+                                                            </select>
+                                                
+                                                            @if(submitted && patientForm.get('contactInfo.residenceDepartment')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.residenceDepartment')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                                 -->
+
+
+                                                <!-- País -->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="countryId" class="form-label">
+                                                            País <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="countryId" class="form-control" formControlName="countryId"
+                                                                (change)="onCountryChange($event.target.value)"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.countryId')?.invalid }">
+                                                                <option value="">Selecciona un país</option>
+                                                                <option *ngFor="let country of countries" [value]="country.idCountry">
+                                                                    {{ country.countryName }}
+                                                                </option>
+                                                            </select>
+                                                
+                                                            @if(submitted && patientForm.get('contactInfo.countryId')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.countryId')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
                                                 <!-- Departamento -->
                                                 <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="countryId" class="form-label">
+                                                            Departamento <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="countryId" class="form-control" formControlName="departmentId"
+                                                                (change)="onDepartmentChange($event.target.value)"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.departmentId')?.invalid }">
+                                                                <option value="">Selecciona un Departamento</option>
+                                                                <option *ngFor="let departament of departments" [value]="departament.idDepartment">
+                                                                    {{ departament.name }}
+                                                                </option>
+                                                            </select>
+                                                
+                                                            @if(submitted && patientForm.get('contactInfo.departmentId')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.departmentId')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Ciudad -->
+                                                 <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="municipalityId" class="form-label">
+                                                            Ciudad 
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="city" class="form-control" formControlName="municipalityId" [disabled]="!cities.length"
+                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.municipalityId')?.invalid }">
+                                                                <option value="">Selecciona una ciudad</option>
+                                                                <option *ngFor="let city of cities" [value]="city.idMunicipality">{{ city.name }}</option>
+                                                            </select>
+                                                
+                                                            @if(submitted && patientForm.get('contactInfo.municipalityId')?.errors) {
+                                                            <div class="invalid-feedback">
+                                                                @if(patientForm.get('contactInfo.municipalityId')?.errors['required']) {
+                                                                <span>Este campo es obligatorio.</span>
+                                                                }
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <!-- Departamento -->
+                                               <!--  <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="residenceDepartment" class="form-label">
                                                             Departamento 
@@ -293,37 +427,17 @@
                                                             }
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 
-                                                <!-- Ciudad -->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="city" class="form-label">
-                                                            Ciudad 
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <select id="city" class="form-control" formControlName="city" [disabled]="!cities.length"
-                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.city')?.invalid }">
-                                                                <option value="">Selecciona una ciudad</option>
-                                                                <option *ngFor="let city of cities" [value]="city.name">{{ city.name }}</option>
-                                                            </select>
                                                 
-                                                            @if(submitted && patientForm.get('contactInfo.city')?.errors) {
-                                                            <div class="invalid-feedback">
-                                                                @if(patientForm.get('contactInfo.city')?.errors['required']) {
-                                                                <span>Este campo es obligatorio.</span>
-                                                                }
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                               
+ 
+
                                             </div>
                                     
                                             <div class="row mb-3">
                                                 <!--Teléfono-->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="col-12 col-lg-6 col-md-6">
                                                     <div class="mb-2">
                                                         <label for="phoneNumber" class="form-label">
                                                             Teléfono
@@ -344,7 +458,7 @@
                                                 </div>
                                     
                                                 <!--Teléfono Alternativo-->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="col-12 col-lg-6 col-md-6">
                                                     <div class="mb-2">
                                                         <label for="phoneNumber2" class="form-label">
                                                             Teléfono Alternativo
@@ -363,25 +477,7 @@
                                                     </div>
                                                 </div>
                                     
-                                                <!--Correo-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="email" class="form-label">
-                                                            Correo
-                                                            <span class="text-danger">*</span></label>
-                                                            <div class="input-group">
-                                                                <input type="email" class="form-control" id="email" formControlName="email"
-                                                                    [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.email')?.invalid }" />
-                                                                @if(submitted && patientForm.get('contactInfo.email')?.errors) {
-                                                                <div class="invalid-feedback">
-                                                                    @if(patientForm.get('contactInfo.email')?.errors['required']) {
-                                                                    <span>Este campo es obligatorio.</span>
-                                                                    }
-                                                                </div>
-                                                                }
-                                                            </div>
-                                                    </div>
-                                                </div>
+                                             
                                             </div>
 
                                             <!--Datos del acudiente-->
@@ -619,7 +715,7 @@
                                                 </div>
 
                                                 <!--Régimen-->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                               <!--  <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="regime" class="form-label">
                                                             Régimen
@@ -641,7 +737,33 @@
                                                             }
                                                         </div>
                                                     </div>
+                                                </div> -->
+
+                                                <!-- Régimen -->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="regime" class="form-label">
+                                                            Régimen <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="regime" class="form-control" (change)="onRegimeChange($event)" 
+                                                            [ngClass]="{'is-invalid': submitted &&(patientForm.get('medicalInfo.regime')?.invalid || patientForm.get('medicalInfo.codRegimen')?.invalid)}">
+                                                                <option value="">Selecciona una opción</option>
+                                                                <option *ngFor="let r of regimes" [value]="r.code">
+                                                                    {{ r.description }}
+                                                                </option>
+                                                            </select>
+
+                                                            @if(submitted && (patientForm.get('medicalInfo.regime')?.errors ||
+                                                            patientForm.get('medicalInfo.codRegimen')?.errors)) {
+                                                            <div class="invalid-feedback">
+                                                                <span>Este campo es obligatorio.</span>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
                                                 </div>
+
                                             </div>
 
                                             <ul class="list-inline wizard d-flex justify-content-end mb-0">

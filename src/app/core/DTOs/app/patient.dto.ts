@@ -20,8 +20,12 @@ export interface PatientDTO {
   stratum: string;
   regime: string;
   idCompany: number;
-  residenceDepartment: string;
-  city: string;
+  countryId: number;
+  departmentId: number;
+  municipalityId: number;
+  codRegimen: number;
+  //residenceDepartment: string;
+  city?: string;
   job: string;
   bloodType: string;
   maritalStatus: string;

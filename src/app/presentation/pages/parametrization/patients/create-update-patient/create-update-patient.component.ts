@@ -12,6 +12,7 @@ import { DataTransferService } from 'src/app/infrastructure/services/common/data
 import { take } from 'rxjs';
 import { LocationService } from 'src/app/infrastructure/services/common/location/location.service';
 import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS-Colombia/eps-colombia.service';
+import { CountriesUseCase } from 'src/app/infrastructure/use-cases/app/countries.use-case';
 
 @Component({
   standalone: true,
@@ -36,6 +37,7 @@ export class CreateUpdatePatientComponent implements OnInit {
   isEditMode: boolean = false;
   submitted = false;
 
+  countries: any[] = [];
   departments: any[] = [];
   cities: any[] = [];
 
@@ -44,16 +46,25 @@ export class CreateUpdatePatientComponent implements OnInit {
 
   // Tipos de documento
   documentTypes = [
-    { value: 'CC', label: 'Cédula de Ciudadanía' },
-    { value: 'TI', label: 'Tarjeta de Identidad' },
-    { value: 'CE', label: 'Cédula de Extranjería' },
+    { value: 'CC', label: 'Cédula de ciudadanía' },
+    { value: 'CE', label: 'Cédula de extranjería' },
+    { value: 'CD', label: 'Carné diplomático' },
+    { value: 'PA', label: 'Pasaporte' },
+    { value: 'SC', label: 'Salvoconducto' },
+    { value: 'PE', label: 'Permiso especial de permanencia' },
+    { value: 'DE', label: 'Documento extranjero' },
+    { value: 'TI', label: 'Tarjeta de identidad' },
+    { value: 'RC', label: 'Registro civil' },
+    { value: 'CN', label: 'Certificado de nacido vivo (hasta 20 caracteres)' },
+    { value: 'AS', label: 'Adulto sin identificar' },
+    { value: 'MS', label: 'Menor sin identificar' }
   ];
 
   // Generos
   genres = [
     { value: 'M', label: 'Masculino' },
     { value: 'F', label: 'Femenino' },
-    { value: 'O', label: 'Otro' },
+    { value: 'I', label: 'Indeterminado' },
   ];
 
   // Tipos de Sangre
@@ -77,6 +88,15 @@ export class CreateUpdatePatientComponent implements OnInit {
     { value: 'OTRO', label: 'Otro' }
   ];
 
+  regimes = [
+    { code: 1, description: 'Régimen contributivo' },
+    { code: 2, description: 'Régimen subsidiado' },
+    { code: 3, description: 'Vinculado' },
+    { code: 4, description: 'Particular' },
+    { code: 5, description: 'Otros (planes voluntarios, regímenes especiales, ARL, SOAT)' }
+  ];
+
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -85,7 +105,8 @@ export class CreateUpdatePatientComponent implements OnInit {
     public bsModalRef: BsModalRef,
     private _dataTransferService: DataTransferService,
     private locationService: LocationService,
-    private _epsService: EpsColombiaService
+    private _epsService: EpsColombiaService,
+    private _countriesUseCase: CountriesUseCase
   ) {}
 
   ngOnInit(): void {
@@ -93,7 +114,9 @@ export class CreateUpdatePatientComponent implements OnInit {
     
     this.loadEPS();
 
-    this.loadDepartments();
+    //this.loadDepartments();
+
+    this.loadCountries();
 
     this._dataTransferService.getData$()
       .pipe(take(1)) // solo una vez, evita acumulación
@@ -151,10 +174,12 @@ export class CreateUpdatePatientComponent implements OnInit {
         }
 
         // Ya se tiene el valor de residenceDepartment en el formulario
-        const deptId = patient.residenceDepartment;
+       /*  const deptId = patient.residenceDepartment;
         if (deptId) {
           this.onDepartmentChange(deptId);
-        }
+        } */
+
+
       });
   }
 
@@ -178,8 +203,12 @@ export class CreateUpdatePatientComponent implements OnInit {
 
       contactInfo: this.formBuilder.group({
         address: ['', Validators.required],
-        residenceDepartment: ['', Validators.required],
-        city: ['', Validators.required],
+        //residenceDepartment: ['', Validators.required],
+        //city: ['', Validators.required],
+        countryId: [null],
+        departmentId: [null],
+        municipalityId: [null],
+        codRegimen: [null],
         phoneNumber: ['', Validators.required],
         phoneNumber2: [''],
         email: ['', [Validators.email]],
@@ -248,9 +277,136 @@ export class CreateUpdatePatientComponent implements OnInit {
     });
   }
 
+  
+
+/*  loadCountries() {
+  this._countriesUseCase
+    .GetListCountries({ pageIndex: 1, pageSize: 300 }) // 👈 solo pasas el paginador
+    .subscribe({
+      next: (res) => {
+        this.countries = res.results; // TableResultDTO.results
+        console.log(this.countries);
+      },
+      error: (err) => {
+        console.error('Error cargando países', err);
+      }
+    });
+}
+
+  onCountryChange(IdCountry: number) {
+    this.departments = [];
+    this.cities = [];
+    this.patientForm.get('contactInfo.departmentId')?.setValue('');
+    this.patientForm.get('contactInfo.municipalityId')?.setValue('');
+
+    this._countriesUseCase
+      .GetListDepartments({ pageIndex: 1, pageSize: 300 }, '', IdCountry)
+      .subscribe({
+        next: (res) => {
+          this.departments = res.results;
+          console.log(this.departments)
+        },
+        error: (err) => {
+          console.error('Error cargando departamentos', err);
+        }
+      });
+  }
+
+  onDepartmentChange(IdDepartment: number) {
+    this.cities = [];
+    this.patientForm.get('contactInfo.municipalityId')?.setValue('');
+
+    this._countriesUseCase
+      .GetListMunicipalities({ pageIndex: 1, pageSize: 200 }, '', '', IdDepartment)
+      .subscribe({
+        next: (res) => {
+          this.cities = res.results;
+          console.log(this.cities)
+          if (this.isEditMode && this.patientData?.municipalityId) {
+            this.patientForm.get('contactInfo.municipalityId')?.setValue(this.patientData.municipalityId);
+          }
+        },
+        error: (err) => {
+          console.error('Error cargando ciudades', err);
+        }
+      });
+  } */
 
 
-  loadDepartments() {
+
+  // Cargar países (primer paso)
+  loadCountries() {
+    this._countriesUseCase
+      .GetListCountries({ pageIndex: 1, pageSize: 300 })
+      .subscribe({
+        next: (res) => {
+          this.countries = res.results;
+
+          // Si estoy en edición y ya tengo countryId
+          if (this.isEditMode && this.patientData?.countryId) {
+            this.patientForm.get('contactInfo.countryId')?.setValue(this.patientData.countryId);
+
+            // Llamo al siguiente paso (cargar departamentos)
+            this.onCountryChange(this.patientData.countryId);
+          }
+        },
+        error: (err) => {
+          console.error('Error cargando países', err);
+        }
+      });
+  }
+
+  // Cargar departamentos al seleccionar país
+  onCountryChange(IdCountry: number) {
+    this.departments = [];
+    this.cities = [];
+    this.patientForm.get('contactInfo.departmentId')?.setValue('');
+    this.patientForm.get('contactInfo.municipalityId')?.setValue('');
+
+    this._countriesUseCase
+      .GetListDepartments({ pageIndex: 1, pageSize: 300 }, '', IdCountry)
+      .subscribe({
+        next: (res) => {
+          this.departments = res.results;
+
+          // Si estoy en edición y ya tengo departmentId
+          if (this.isEditMode && this.patientData?.departmentId) {
+            this.patientForm.get('contactInfo.departmentId')?.setValue(this.patientData.departmentId);
+
+            // Llamo al siguiente paso (cargar ciudades)
+            this.onDepartmentChange(this.patientData.departmentId);
+          }
+        },
+        error: (err) => {
+          console.error('Error cargando departamentos', err);
+        }
+      });
+  }
+
+  // Cargar ciudades al seleccionar departamento
+  onDepartmentChange(IdDepartment: number) {
+    this.cities = [];
+    this.patientForm.get('contactInfo.municipalityId')?.setValue('');
+
+    this._countriesUseCase
+      .GetListMunicipalities({ pageIndex: 1, pageSize: 200 }, '', '', IdDepartment)
+      .subscribe({
+        next: (res) => {
+          this.cities = res.results;
+
+          // Si estoy en edición y ya tengo municipalityId
+          if (this.isEditMode && this.patientData?.municipalityId) {
+            this.patientForm.get('contactInfo.municipalityId')?.setValue(this.patientData.municipalityId);
+          }
+        },
+        error: (err) => {
+          console.error('Error cargando municipios', err);
+        }
+      });
+  }
+
+
+/*   loadDepartments() {
     this.locationService.getDepartments().subscribe({
       next: (res) => {
         this.departments = res;
@@ -259,9 +415,9 @@ export class CreateUpdatePatientComponent implements OnInit {
         console.error('Error cargando departamentos', err);
       }
     });
-  }
+  } */
 
-  onDepartmentChange(departmentId: string) {
+  /* onDepartmentChange(departmentId: string) {
     if (!departmentId) {
       this.cities = [];
       this.patientForm.get('contactInfo.city')?.setValue('');
@@ -282,7 +438,7 @@ export class CreateUpdatePatientComponent implements OnInit {
         this.cities = [];
       }
     });
-  }
+  } */
 
   onSubmit(): void {
     this.submitted = true;
@@ -305,8 +461,11 @@ export class CreateUpdatePatientComponent implements OnInit {
         sex: formValue.personalInfo.sex,
         maritalStatus: formValue.personalInfo.maritalStatus,
         address: formValue.contactInfo.address,
-        residenceDepartment: formValue.contactInfo.residenceDepartment,
-        city: formValue.contactInfo.city,
+        countryId: formValue.contactInfo.countryId,
+        departmentId: formValue.contactInfo.departmentId,
+        municipalityId: formValue.contactInfo.municipalityId,
+        //residenceDepartment: formValue.contactInfo.residenceDepartment,
+        //city: formValue.contactInfo.city,
         phoneNumber: String(formValue.contactInfo.phoneNumber),
         phoneNumber2: String(formValue.contactInfo.phoneNumber2 || ''),
         email: formValue.contactInfo.email,
@@ -316,6 +475,7 @@ export class CreateUpdatePatientComponent implements OnInit {
         idEps: Number(formValue.medicalInfo.idEps),
         stratum: formValue.medicalInfo.stratum,
         regime: formValue.medicalInfo.regime,
+        codRegimen: formValue.medicalInfo.codRegimen,
         job: formValue.aditionalInfo.job,
         ethnic: formValue.aditionalInfo.ethnic,
         idCompany: Number(IdCompany),
@@ -355,5 +515,25 @@ export class CreateUpdatePatientComponent implements OnInit {
   onCancel(): void {
     this.bsModalRef.hide();
   }
+
+  // Actualizar Regimen
+
+  onRegimeChange(event: Event) {
+    const selectedCode = +(event.target as HTMLSelectElement).value;
+    const selected = this.regimes.find(r => r.code === selectedCode);
+
+    if (selected) {
+      this.patientForm.get('medicalInfo')?.patchValue({
+        codRegimen: selected.code,
+        regime: selected.description
+      });
+    } else {
+      this.patientForm.get('medicalInfo')?.patchValue({
+        codRegimen: null,
+        regime: ''
+      });
+    }
+  }
+
   
 }
