@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
       return true; // ✅ usuario autenticado
     } else {
       // 🔒 redirige al login si no hay sesión
-      return this.router.createUrlTree(['/auth/login']);
+      return this.router.createUrlTree(['/cermi/auth/login']);
     }
   }
 }
