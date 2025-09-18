@@ -123,7 +123,15 @@ export class CreateUpdatePatientComponent implements OnInit {
       .subscribe(patient => {
         if (patient) {
           this.isEditMode = true;
-          this.patientData = patient;
+          //this.patientData = patient;
+
+          // 🔄 transformar propiedades para que coincidan con tu DTO
+          this.patientData = {
+            ...patient,
+            countryId: patient.idCountry ?? patient.countryId,
+            departmentId: patient.idDepartment ?? patient.departmentId,
+            municipalityId: patient.idMunicipality ?? patient.municipalityId,
+          };
 
           console.log(this.patientData);
 
@@ -144,8 +152,19 @@ export class CreateUpdatePatientComponent implements OnInit {
             },
             contactInfo: {
               address: patient.address,
-              residenceDepartment: patient.residenceDepartment,
-              city: patient.city,
+              //residenceDepartment: patient.residenceDepartment,
+              //city: patient.city,
+
+
+              /* countryId: patient.countryId,
+              departmentId: patient.departmentId,
+              municipalityId: patient.municipalityId, */
+
+              countryId: patient.idCountry,        // 👈 corregido
+              departmentId: patient.idDepartment,  // 👈 corregido
+              municipalityId: patient.idMunicipality, 
+
+
               phoneNumber: patient.phoneNumber,
               phoneNumber2: patient.phoneNumber2,
               email: patient.email,
@@ -164,6 +183,8 @@ export class CreateUpdatePatientComponent implements OnInit {
               bloodType: patient.bloodType?.trim() || null,
               idEps: patient.idEps,
               stratum: patient.stratum,
+              //codRegimen: patient.codRegimen,
+              codRegimen: patient.codRegimen ? Number(patient.codRegimen.toString().trim()) : null,
               regime: patient.regime,
             },
             aditionalInfo: {
@@ -174,10 +195,10 @@ export class CreateUpdatePatientComponent implements OnInit {
         }
 
         // Ya se tiene el valor de residenceDepartment en el formulario
-       /*  const deptId = patient.residenceDepartment;
-        if (deptId) {
-          this.onDepartmentChange(deptId);
-        } */
+        const countryId = patient.countryId;
+        if (countryId) {
+          this.onCountryChange(countryId);
+        } 
 
 
       });
@@ -229,6 +250,7 @@ export class CreateUpdatePatientComponent implements OnInit {
         idEps: [null, Validators.required],
         stratum: ['', Validators.required],
         regime: ['', Validators.required],
+        codRegimen: [null, Validators.required],
       }),
 
       aditionalInfo: this.formBuilder.group({
@@ -461,9 +483,9 @@ export class CreateUpdatePatientComponent implements OnInit {
         sex: formValue.personalInfo.sex,
         maritalStatus: formValue.personalInfo.maritalStatus,
         address: formValue.contactInfo.address,
-        countryId: formValue.contactInfo.countryId,
-        departmentId: formValue.contactInfo.departmentId,
-        municipalityId: formValue.contactInfo.municipalityId,
+        countryId: Number(formValue.contactInfo.countryId),
+        departmentId: Number(formValue.contactInfo.departmentId),
+        municipalityId: Number(formValue.contactInfo.municipalityId),
         //residenceDepartment: formValue.contactInfo.residenceDepartment,
         //city: formValue.contactInfo.city,
         phoneNumber: String(formValue.contactInfo.phoneNumber),

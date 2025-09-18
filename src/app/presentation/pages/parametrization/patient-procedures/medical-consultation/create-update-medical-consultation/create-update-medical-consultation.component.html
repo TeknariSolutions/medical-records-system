@@ -319,7 +319,7 @@
           <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
         </cdk-step>
 
-          <!-- Paso 4: Paraclinicos -->
+        <!-- Paso 4: Paraclinicos -->
         <cdk-step [stepControl]="form.get('paraClinicals')" [optional]="false">
           <ng-template cdkStepLabel>
             <span class="number">4</span> Paraclinicos
@@ -384,12 +384,32 @@
                 </div>
 
 
-                <div class="col-12 mb-2">
+                <!-- <div class="col-12 mb-2">
                   <label>Tipo</label>
                   <select formControlName="diagnosisType" class="form-control">
                     <option *ngFor="let type of diagnosisTypes" [value]="type">{{ type }}</option>
                   </select>
+                </div> -->
+
+                <!-- <div class="col-12 mb-2">
+                  <label>Tipo</label>
+                  <select formControlName="diagnosisType" class="form-control">
+                    <option *ngFor="let type of diagnosisTypes" [ngValue]="type">
+                      {{ type.diagnosisType }}
+                    </option>
+                  </select>
+                </div> -->
+
+                <!-- Tipo -->
+                <div class="col-12 mb-2">
+                  <label>Tipo</label>
+                  <select formControlName="diagnosisType" class="form-control">
+                    <option *ngFor="let type of diagnosisTypes" [ngValue]="type.diagnosisType">
+                      {{ type.diagnosisType }}
+                    </option>
+                  </select>
                 </div>
+
             
                 <div class="col-md-12 mt-2 mb-2">
                   <label>Comentario (opcional)</label>
@@ -420,8 +440,105 @@
 
         </cdk-step>
 
+         <!-- Paso 6: Cierre de Consulta -->
+        <cdk-step [stepControl]="form.get('closeConsultation')" [optional]="false">
+          <ng-template cdkStepLabel>
+            <span class="number">4</span> Cierre
+          </ng-template>
+        
+          <div formGroupName="closeConsultation">
+
+            <div class="row">
+               <!-- Condición de Salida  -->
+              <div class="col-12 col-lg-4 col-md-4">
+                <div class="mb-2">
+                  <label for="idExitCondition" class="form-label">
+                    Condición de Salida
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <select id="idExitCondition" class="form-control" formControlName="idExitCondition">
+                      <option value="">Selecciona una condición de salida </option>
+                      <option *ngFor="let index of exitConditions" [value]="index.idExitCondition">
+                        {{ index.exitConditionName }}
+                      </option>
+                    </select>
+              
+                    @if(submitted && form.get('closeConsultation.idExitCondition')?.errors) {
+                    <div class="invalid-feedback">
+                      @if(patientForm.get('closeConsultation.idExitCondition')?.errors['required']) {
+                      <span>Este campo es obligatorio.</span>
+                      }
+                    </div>
+                    }
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- Causa Externa  -->
+              <div class="col-12 col-lg-4 col-md-4">
+                <div class="mb-2">
+                  <label for="idExternalCauseCode" class="form-label">
+                    Causa Externa
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <select id="idExternalCauseCode" class="form-control" formControlName="idExternalCauseCode">
+                      <option value="">Selecciona una condición de salida </option>
+                      <option *ngFor="let index of externalCauses" [value]="index.idExternalCauseCode">
+                        {{ index.externalCauseName }}
+                      </option>
+                    </select>
+              
+                    @if(submitted && form.get('closeConsultation.idExternalCauseCode')?.errors) {
+                    <div class="invalid-feedback">
+                      @if(patientForm.get('closeConsultation.idExternalCauseCode')?.errors['required']) {
+                      <span>Este campo es obligatorio.</span>
+                      }
+                    </div>
+                    }
+                  </div>
+                </div>
+              </div>
+
+        
+              <!-- Finalidad de Consulta  -->
+              <div class="col-12 col-lg-4 col-md-4">
+                <div class="mb-2">
+                  <label for="idConsultationFinality" class="form-label">
+                    Finalidad de Consulta 
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <select id="idConsultationFinality" class="form-control" formControlName="idConsultationFinality">
+                      <option value="">Selecciona una finalidad de consulta </option>
+                      <option *ngFor="let index of consultationFinalities" [value]="index.idConsultationFinality">
+                        {{ index.consultationFinalityName }}
+                      </option>
+                    </select>
+              
+                    @if(submitted && form.get('closeConsultation.idConsultationFinality')?.errors) {
+                    <div class="invalid-feedback">
+                      @if(patientForm.get('closeConsultation.idConsultationFinality')?.errors['required']) {
+                      <span>Este campo es obligatorio.</span>
+                      }
+                    </div>
+                    }
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        
+          <button class="btn btn-primary mt-2" (click)="goToNextStep()">Siguiente</button>
+        </cdk-step>
+
        
       </ng-stepper>
+      
 
       <!-- Guardar Datos -->
       <div class="mt-4 text-end gap-3">

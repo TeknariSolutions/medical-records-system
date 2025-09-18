@@ -24,8 +24,6 @@ export interface PatientDTO {
   departmentId: number;
   municipalityId: number;
   codRegimen: number;
-  //residenceDepartment: string;
-  city?: string;
   job: string;
   bloodType: string;
   maritalStatus: string;
@@ -42,6 +40,8 @@ export interface PatientDTO {
   phoneNumberOfGuardian: string;
   emailOfGuardian: string;
   registerDate?: string;
+  municipalityName?: string;
+  countryName?: string;
 }
 
 

@@ -79,7 +79,7 @@ export class CreateUpdateMedicalHistoryComponent {
       smokingYears: [this.lastMedicalHistory?.smokingYears || 0],
       cigarettesPerDay: [this.lastMedicalHistory?.cigarettesPerDay || 0],
       smokingIndex: [this.lastMedicalHistory?.smokingIndex || 0],
-      //smokingDevice: [this.lastMedicalHistory?.smokingDevice || ''], // 🆕 nuevo campo
+      smokingDevice: [this.lastMedicalHistory?.smokigDevice || ''], // 🆕 nuevo campo
       alcoholConsumer: [this.lastMedicalHistory?.alcoholConsumer || false],
       alcoholFrequency: [this.lastMedicalHistory?.alcoholFrequency || ''],
       drugUse: [this.lastMedicalHistory?.drugUse || false],

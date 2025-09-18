@@ -49,7 +49,7 @@
                             <!-- Ciudad -->
                             <td style="width: 97px; font-weight: 500;">Ciudad:</td>
                             <td colspan="2">
-                                {{patientData?.city}}
+                                {{patientData?.municipalityName}}
                             </td>
                         </tr>
 
@@ -76,29 +76,38 @@
 
     <!-- Cards de navegación -->
     <div class="row" *ngIf="!showConsultations">
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card justify-content-center custom-card text-center p-3" (click)="showConsultations = true">
-                <i class="mdi mdi-charity"></i>
-                <h4 class="card-title mt-2">Consultas</h4>
+
+        <button class="btn btn-outline-secondary mb-3 button-back" (click)="goBackToPatients()">
+            <i class="mdi mdi-chevron-left"></i>
+            Listado de Pacientes
+        </button>
+
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card justify-content-center custom-card text-center p-3" (click)="showConsultations = true">
+                    <i class="mdi mdi-charity"></i>
+                    <h4 class="card-title mt-2">Consultas</h4>
+                </div>
             </div>
+        
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card justify-content-center custom-card text-center p-3" (click)="navigateToMedicalHistoryList()">
+        
+                    <i class="ri-history-line"></i>
+                    <h4 class="card-title mt-2">Antecedentes</h4>
+                </div>
+            </div>
+        
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card justify-content-center custom-card text-center p-3">
+                    <!-- <i class="ri-contract-line"></i> -->
+                    <i class="mdi mdi-clipboard-edit-outline"></i>
+                    <h4 class="card-title mt-2">Examenes Paraclinicos</h4>
+                </div>
+            </div>
+        
         </div>
 
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card justify-content-center custom-card text-center p-3"
-                (click)="navigateToMedicalHistoryList()">
-                
-                <i class="ri-history-line"></i>
-                <h4 class="card-title mt-2">Antecedentes</h4>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card justify-content-center custom-card text-center p-3">
-                <!-- <i class="ri-contract-line"></i> -->
-                <i class="mdi mdi-clipboard-edit-outline"></i>
-                <h4 class="card-title mt-2">Examenes Paraclinicos</h4>
-            </div>
-        </div>
     </div>
 
     <!-- Componente MedicalConsultation -->

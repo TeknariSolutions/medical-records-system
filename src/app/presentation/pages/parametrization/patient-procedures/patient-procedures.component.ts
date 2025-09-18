@@ -129,12 +129,9 @@ export class PatientProceduresComponent implements OnInit {
   }
 }
 
-
-
-
-
-
-
+goBackToPatients(): void {
+  this._router.navigate(['/parametrization/patients']);
+}
 
 
 }

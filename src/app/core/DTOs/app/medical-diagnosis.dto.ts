@@ -4,6 +4,7 @@ export interface MedicalDiagnosisDTO {
   diagnosisCode: string;
   diagnosisDescription: string;
   diagnosisType: string;
+  codeDiagnosisType: string;
   isPrincipal: boolean;
   comment: string;
   updatedBy: number;

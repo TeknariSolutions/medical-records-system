@@ -41,4 +41,8 @@ export interface MedicalConsultationDTO {
 
   currentIllness: string;
   paraClinicalTest : string;
+  idConsultationFinality: number;
+  idExitCondition: number;
+  idExternalCauseCode: number;
+  externalCauseName?: string;
 }

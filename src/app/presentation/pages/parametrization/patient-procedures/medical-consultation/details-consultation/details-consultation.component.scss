@@ -14,7 +14,7 @@ table {
 }
 
 th, td {
-  padding: 8px;
+  padding: 2px 8px;
   border: 1px solid #ccc;
 }
 
@@ -105,6 +105,20 @@ th, td {
     color: white;
   }
  
+}
+
+
+.section-info, table, tr, td, th, h6, h5, p {
+  page-break-inside: avoid !important;
+}
+
+h6, h5 {
+  page-break-after: avoid !important;
+}
+
+/* Forzar salto */
+.page-break {
+  page-break-before: always !important;
 }
 
 

@@ -24,4 +24,5 @@ export interface MedicalHistoryDTO {
   createdBy: number;
   updatedAt: Date;    // o Date si quieres tiparlo como Date
   updatedBy: number;
+  smokigDevice: string;
 }

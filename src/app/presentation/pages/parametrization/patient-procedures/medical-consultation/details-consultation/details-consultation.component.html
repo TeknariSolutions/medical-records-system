@@ -2,12 +2,16 @@
 <div id="consultation-content">
   <div class="row">
   <div class="col-lg-12">
-    <img src="assets/images/HEADER-HISTORIA.png" class="header"/>
+    <img src="assets/images/HEADER-HISTORIA2.png" class="header"/>
     <div class="card">
       <div class="card-body">
 
         <div class="info-consultation">
-          <h5 class="text-center mb-5">HISTORIA CLINICA</h5>
+          <h5 class="text-center mb-2">HISTORIA CLINICA</h5>
+          <span class="text-center mb-5">
+            <strong>Fecha de Ingreso:</strong>
+            {{ patientData.registerDate }}
+          </span>
 
           <div class="date-actual">
             <p>
@@ -21,7 +25,7 @@
         </div>
 
         <!-- Informacion del paciente -->
-        <div class="row section-info">
+       <!--  <div class="row section-info">
         <h6 class="title-section mb-4">INFORMACION DEL PACIENTE</h6>
           <div class="col-6">
             <p><strong>Paciente:</strong>  {{ patientData.firstName }} {{ patientData.secondName }} {{ patientData.firstLastName }} {{
@@ -46,6 +50,70 @@
           </div>
 
         </div>
+ -->
+
+        <!-- Información del paciente -->
+        <div class="row section-info">
+          <h6 class="title-section mb-4">INFORMACION DEL PACIENTE</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered patient-info-table">
+              <tbody>
+                <tr>
+                  <td><strong>Paciente:</strong></td>
+                  <td colspan="3">{{ patientData.firstName }} {{ patientData.secondName }} {{ patientData.firstLastName }} {{ patientData.secondLastName }}</td>
+                </tr>
+                
+                <tr>
+                  <td><strong>{{ patientData.documentType }}:</strong></td>
+                  <td colspan="3">{{ patientData.idDocument }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Fecha de Nacimiento:</strong></td>
+                  <td>{{ patientData.birthDay }}</td>
+                  <td><strong>Edad:</strong></td>
+                  <td>65 años</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Estado civil:</strong></td>
+                  <td>{{ patientData.maritalStatus }}</td>
+                  <td><strong>Sexo:</strong></td>
+                  <td>{{ patientData.sex }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Dirección:</strong></td>
+                  <td>{{ patientData.address }}</td>
+                  <td><strong>Teléfono:</strong></td>
+                  <td>{{ patientData.phoneNumber }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Ciudad:</strong></td>
+                  <td>{{ patientData.municipalityName }}</td>
+                  <td><strong>Estrato:</strong></td>
+                  <td>{{ patientData.stratum }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>EPS:</strong></td>
+                  <td>{{ patientData.idEps }}</td>
+                  <td><strong>Grupo Étnico:</strong></td>
+                  <td>{{ patientData.ethnic }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Régimen:</strong></td>
+                  <td>{{ patientData.regime }}</td>
+                  <td><strong>Discapacidad:</strong></td>
+                  <td>{{ patientData.disAbilityDescription }}</td>
+                </tr>
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
 
 
         <!-- Motivo de Consulta -->
@@ -56,11 +124,11 @@
           </div>
         </div>
 
-        <div class="v-divider">
-        </div>
+       <!--  <div class="v-divider">
+        </div> -->
 
         <!-- Estado General -->
-        <div class="row section-info mt-4 mb-4">
+        <!-- <div class="row section-info mt-4 mb-4">
           <h6 class="title-section mb-4">ESTADO GENERAL</h6>
           <div class="col-12">
             <p><strong>Estado de Hidratación:</strong> {{ dataConsultation.hydrationStatus}}</p>
@@ -69,10 +137,49 @@
             <p><strong>Estado de Respiración:</strong> {{ dataConsultation.respiratoryStatus }}</p>
             <p><strong>Estado General:</strong> {{ dataConsultation.generalStatus }}</p>
           </div>
-        </div>
+        </div> -->
 
-        <div class="v-divider">
+        <!-- Estado General -->
+        <div class="row section-info mt-4 mb-4">
+          <h6 class="title-section mb-4">ESTADO GENERAL</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <colgroup>
+                <col style="width: 30%;">
+                <col style="width: 70%;">
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td><strong>Estado de Hidratación:</strong></td>
+                  <td>{{ dataConsultation.hydrationStatus }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Nivel de Glasgow:</strong></td>
+                  <td>{{ dataConsultation.glasgowScore }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Estado de Conciencia:</strong></td>
+                  <td>{{ dataConsultation.consciousnessStatus }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Estado de Conciencia:</strong></td>
+                  <td>{{ dataConsultation.consciousnessStatus }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Estado General:</strong></td>
+                  <td>{{ dataConsultation.generalStatus }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+<!-- 
+        <div class="v-divider">
+        </div> -->
 
         <div class="html2pdf__page-break">
         </div>
@@ -84,7 +191,6 @@
 
 <div class="row">
   <div class="col-lg-12">
-    <!-- <img src="assets/images/HEADER-HISTORIA.png" class="header"/> -->
     <div class="card">
       <div class="card-body">
 

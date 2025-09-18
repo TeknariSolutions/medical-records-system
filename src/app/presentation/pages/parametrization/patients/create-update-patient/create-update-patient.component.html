@@ -746,13 +746,22 @@
                                                             Régimen <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="input-group">
-                                                            <select id="regime" class="form-control" (change)="onRegimeChange($event)" 
+                                                            <!-- <select id="regime" class="form-control" (change)="onRegimeChange($event)" 
                                                             [ngClass]="{'is-invalid': submitted &&(patientForm.get('medicalInfo.regime')?.invalid || patientForm.get('medicalInfo.codRegimen')?.invalid)}">
                                                                 <option value="">Selecciona una opción</option>
                                                                 <option *ngFor="let r of regimes" [value]="r.code">
                                                                     {{ r.description }}
                                                                 </option>
+                                                            </select> -->
+
+                                                            <select id="regime" class="form-control" formControlName="codRegimen" (change)="onRegimeChange($event)"
+                                                                [ngClass]="{'is-invalid': submitted && patientForm.get('medicalInfo.codRegimen')?.invalid}">
+                                                                <option value="">Selecciona una opción</option>
+                                                                <option *ngFor="let r of regimes" [value]="r.code">
+                                                                    {{ r.description }}
+                                                                </option>
                                                             </select>
+
 
                                                             @if(submitted && (patientForm.get('medicalInfo.regime')?.errors ||
                                                             patientForm.get('medicalInfo.codRegimen')?.errors)) {

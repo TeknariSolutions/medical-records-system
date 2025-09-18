@@ -93,12 +93,12 @@ export class MedicalConsultationComponent implements OnInit {
 
   selectedConsultation?: MedicalConsultationDTO;
 
- /*  onEditConsultation(consultation: MedicalConsultationDTO) {
+  onEditConsultation(consultation: MedicalConsultationDTO) {
     this.selectedConsultation = consultation;
     this.showForm = true;
-  } */
+  } 
 
-  onEditConsultation(consultation: MedicalConsultationDTO) {
+/*   onEditConsultation(consultation: MedicalConsultationDTO) {
     if (consultation.status === true) {
       this._notificationService.showErrorMessage(
         'No es posible editar una consulta cerrada.'
@@ -110,7 +110,7 @@ export class MedicalConsultationComponent implements OnInit {
     this.selectedConsultation = consultation;
     this.showForm = true;
   }
-
+ */
 
   onPageChange(newPage: number): void {
     this.currentPage = newPage;

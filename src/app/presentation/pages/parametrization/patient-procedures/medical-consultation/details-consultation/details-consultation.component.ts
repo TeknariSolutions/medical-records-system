@@ -57,7 +57,8 @@ export class DetailsConsultationComponent {
     if (!element) return;
 
     const opt = {
-      margin: 0,
+      //margin: 0,
+      margin: [20, 15, 20, 15], // arriba, derecha, abajo, izquierda
       filename: 'historia-clinica.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, scrollY: 0 },

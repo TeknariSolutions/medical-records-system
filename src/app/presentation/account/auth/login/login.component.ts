@@ -42,6 +42,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      this.router.navigate(['/parametrization/patients']); // lo manda a la página principal
+    }
   }
 
   private initForm(): void {
