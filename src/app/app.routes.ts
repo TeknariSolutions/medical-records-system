@@ -7,10 +7,10 @@ import { AuthGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
      {
         path: "",
-        redirectTo: "cermi/auth/login",
+        redirectTo: "auth/login",
         pathMatch: "full"
     }, 
-    { path: 'cermi/auth/login', component: LoginComponent},
+    { path: 'auth/login', component: LoginComponent},
 
   /*   {
         path: "auth",

@@ -44,13 +44,15 @@ export class PatientsService implements IPatientService {
     );
   }
 
-  GetListPatients(paginator: PaginatorDTO, Filter?: string): Observable<ResponseDTO> {
+  GetListPatients(paginator: PaginatorDTO, IdDocument?: string, FirstName?: string, FirstLastName?: string): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {
         let params: any = {
           PageIndex: paginator.pageIndex,
           PageSize: paginator.pageSize,
-          Filter
+          IdDocument,
+          FirstName,
+          FirstLastName
         };
         return this._httpService.get<ResponseDTO>(url, "GetListPatients", params);
       })

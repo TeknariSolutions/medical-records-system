@@ -36,6 +36,10 @@ export class PatientsComponent implements OnInit {
   pageSizeOptions = [5, 10, 25, 100]; 
   totalRecords: number = 0;
 
+  filterIdDocument: string = '';
+  filterFirstName: string = '';
+  filterFirstLastName: string = '';
+
   constructor(
     private router: Router,
     private _patientsUseCase: PatientsUseCase,
@@ -47,7 +51,7 @@ export class PatientsComponent implements OnInit {
     this.loadPatients();
   }
 
-  loadPatients() {
+  /* loadPatients(filterIdDocument: string = '') {
     this.isLoading = true;
 
     const paginatorDTO: PaginatorDTO = {
@@ -55,13 +59,47 @@ export class PatientsComponent implements OnInit {
       pageSize: this.pageSize,
     };
 
-    this._patientsUseCase.GetListPatients(paginatorDTO, '').subscribe({
+    this._patientsUseCase.GetListPatients(paginatorDTO, filterIdDocument, '', '').subscribe({
       next: (data: TableResultDTO) => {
         this.patients = data.results;
         this.totalRecords = data.totalRecords;
         this.isLoading = false;
       }
     });
+  } */
+
+    loadPatients(): void {
+  this.isLoading = true;
+
+  const paginatorDTO: PaginatorDTO = {
+    pageIndex: this.currentPage,
+    pageSize: this.pageSize,
+  };
+
+  this._patientsUseCase.GetListPatients(
+    paginatorDTO,
+    this.filterIdDocument,
+    this.filterFirstName,
+    this.filterFirstLastName
+  ).subscribe({
+    next: (data: TableResultDTO) => {
+      this.patients = data.results;
+      this.totalRecords = data.totalRecords;
+      this.isLoading = false;
+    }
+  });
+}
+
+  applyFilter(): void {
+    this.currentPage = 1; // reset paginación al aplicar filtro
+    this.loadPatients();
+  }
+
+  clearFilter(): void {
+    this.filterIdDocument = '';
+    this.filterFirstName = '';
+    this.filterFirstLastName = '';
+    this.loadPatients();
   }
 
   createPatient() {

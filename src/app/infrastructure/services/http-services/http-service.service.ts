@@ -33,7 +33,7 @@ export class HttpService implements IHttpService {
       const currentTime = Date.now() / 1000;
       if (decoded.exp < currentTime) {
         localStorage.clear();
-        this._router.navigate(["cermi/auth/login"]);
+        this._router.navigate(["auth/login"]);
       }
 
       return new HttpHeaders({

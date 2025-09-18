@@ -20,7 +20,7 @@ export class Page404Component implements OnInit {
   }
 
   backLogin() {
-    this.router.navigate(['cermi/auth/login']);
+    this.router.navigate(['auth/login']);
   }
 
 }

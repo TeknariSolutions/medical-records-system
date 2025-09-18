@@ -94,7 +94,7 @@ export class TopbarComponent implements OnInit {
   // Cerrar Sesión
   logout() {
     this._authService.logout().subscribe(() => {
-      this.router.navigate(['/cermi/auth/login']);
+      this.router.navigate(['/auth/login']);
     });
   }
 

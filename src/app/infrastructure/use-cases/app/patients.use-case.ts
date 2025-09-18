@@ -55,8 +55,8 @@ export class PatientsUseCase {
     );
   }
 
-  GetListPatients(paginator: PaginatorDTO, Filter?: string): Observable<TableResultDTO> {
-    return this._patientsService.GetListPatients(paginator, Filter).pipe(
+  GetListPatients(paginator: PaginatorDTO, IdDocument?: string, FirstName?: string, FirstLastName?: string): Observable<TableResultDTO> {
+    return this._patientsService.GetListPatients(paginator, IdDocument, FirstName, FirstLastName).pipe(
       map((response: ResponseDTO) => {
         if (!response.isSuccess) {
           this._notificationService.showToastErrorMessage(response.message!);
