@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+
+h5 {
+    font: 400 calc(20px * .83) / 20px Roboto, sans-serif !important;
+    margin: 0 0 12px;
+}
+
+
+.custom-stepper .mat-step-header:hover {
+  background-color: #e3f2fd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.custom-stepper .mat-step-header.mat-active {
+  background-color: #1976d2;
+  color: white;
+  border-radius: 6px;
+}
+
+.custom-stepper .mat-step-header.mat-active .mat-step-label {
+  color: white;
+  font-weight: bold;
+}
+
+.custom-stepper .mat-step-header.mat-active:hover {
+  background-color: #1565c0;
+}

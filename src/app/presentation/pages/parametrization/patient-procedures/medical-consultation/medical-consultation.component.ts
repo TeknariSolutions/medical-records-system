@@ -98,20 +98,6 @@ export class MedicalConsultationComponent implements OnInit {
     this.showForm = true;
   } 
 
-/*   onEditConsultation(consultation: MedicalConsultationDTO) {
-    if (consultation.status === true) {
-      this._notificationService.showErrorMessage(
-        'No es posible editar una consulta cerrada.'
-      );
-      return;
-    }
-
-    // ✅ Si está abierta, permitir edición
-    this.selectedConsultation = consultation;
-    this.showForm = true;
-  }
- */
-
   onPageChange(newPage: number): void {
     this.currentPage = newPage;
     this.loadConsults();

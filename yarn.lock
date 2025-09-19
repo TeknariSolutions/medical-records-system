@@ -312,6 +312,13 @@
     fast-glob "3.3.2"
     yargs "^17.2.1"
 
+"@angular/material@^18.2.14":
+  version "18.2.14"
+  resolved "https://registry.npmjs.org/@angular/material/-/material-18.2.14.tgz"
+  integrity sha512-28pxzJP49Mymt664WnCtPkKeg7kXUsQKTKGf/Kl95rNTEdTJLbnlcc8wV0rT0yQNR7kXgpfBnG7h0ETLv/iu5Q==
+  dependencies:
+    tslib "^2.3.0"
+
 "@angular/platform-browser-dynamic@18.2.11":
   version "18.2.11"
   resolved "https://registry.npmjs.org/@angular/platform-browser-dynamic/-/platform-browser-dynamic-18.2.11.tgz"

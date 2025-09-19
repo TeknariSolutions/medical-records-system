@@ -6,6 +6,29 @@
                     <h4 class="mb-5">{{userData ? 'Actualizar Usuario' : 'Crear Usuario'}}</h4>
                     <form class="mt-4" [formGroup]="userForm" (ngSubmit)="onSubmit()">
                         <div class="row mb-3">
+
+
+                            <!-- Nombre de Usuario -->
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="userName" class="form-label">
+                                        Nombre de Usuario
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="userName" formControlName="userName"
+                                            [ngClass]="{ 'is-invalid': submitted && userForm.get('userName')?.invalid }" />
+                                        <div class="invalid-feedback" *ngIf="submitted && userForm.get('userName')?.errors">
+                                            @if(userForm.get('userName')?.errors['required']) {
+                                            <span>Este campo es obligatorio.</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
                             <!-- Correo-->
                             <div class="col-12">
                                 <div class="mb-3">

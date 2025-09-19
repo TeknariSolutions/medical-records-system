@@ -9,9 +9,7 @@ import { Router } from '@angular/router';
   imports: [],
 })
 
-/**
- * PAges-404 component
- */
+
 export class Page404Component implements OnInit {
 
   constructor(private router: Router) { }

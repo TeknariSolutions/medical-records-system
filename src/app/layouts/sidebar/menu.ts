@@ -8,12 +8,7 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 2,
-        label: 'Parametrización',
-        isTitle: true
-    },
-    {
-        id: 2,
-        label: 'Parametrización',
+        label: 'Gestión Historia Clinica',
         icon: 'bx-cog',
         subItems: [
             {
@@ -32,11 +27,6 @@ export const MENU: MenuItem[] = [
         ]
     },
     {
-        id: 3,
-        label: 'Medicamentos',
-        isTitle: true
-    },
-    {
         id: 2,
         label: 'Medicamentos',
         icon: 'bx-band-aid',
@@ -51,19 +41,15 @@ export const MENU: MenuItem[] = [
         ]
 
     },
-      {
-        id: 3,
-        label: 'Codigos',
-        isTitle: true
-    },
+    
      {
         id: 2,
-        label: 'CIE10',
+        label: 'Codigos CIE10',
         icon: 'bx bx-book-content',
         subItems: [
             {
                 id: 3,
-                label: 'Códigos CIE10',
+                label: 'Listado de Códigos',
                 link: '/codes/list-CIE10',
                 parentId: 2,
                 roleAuthenticated: [1]

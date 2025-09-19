@@ -49,6 +49,7 @@ export class CreateUpdateUserComponent implements OnInit {
     if (this.userData) {
       this.isEditMode = true;
       this.userForm.patchValue({
+        userName: this.userData.userName,
         email: this.userData.email,
         idRol: this.userData.idRol,
         name: this.userData.name,
@@ -64,6 +65,7 @@ export class CreateUpdateUserComponent implements OnInit {
 
    private initForm(): void {
     this.userForm = this.formBuilder.group({
+      userName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: [this.userData ? '' : '', this.userData ? [] : [Validators.required]],
       idCompany: 1,
@@ -79,6 +81,7 @@ export class CreateUpdateUserComponent implements OnInit {
   onSubmit(): void {
     this.submitted = true;
     if (this.userForm.valid) {
+      const userName = this.userForm.value.userName;
       const email = this.userForm.value.email;
       const password = this.userForm.value.password;
       const idCompany = this.userForm.value.idCompany;
@@ -91,6 +94,7 @@ export class CreateUpdateUserComponent implements OnInit {
       
       const userData: UserDTO = {
         idUser: this.isEditMode ? this.userData!.idUser : 0,
+        userName,
         email,
         password: this.isEditMode ? this.userData!.password : password,
         idCompany,
