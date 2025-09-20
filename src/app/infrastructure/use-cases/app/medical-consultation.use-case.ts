@@ -44,8 +44,8 @@ export class MedicalConsultationUseCase {
         );
     }
 
-    GetListMedicalConsultationByIdPatient(paginator: PaginatorDTO, idPatient?: number): Observable<TableResultDTO> {
-        return this._medicalConsultationService.GetListMedicalConsultationByIdPatient(paginator, idPatient).pipe(
+    GetListMedicalConsultationByIdPatient(paginator: PaginatorDTO, idPatient?: number, Status?: boolean, ConsultationDate?: string): Observable<TableResultDTO> {
+        return this._medicalConsultationService.GetListMedicalConsultationByIdPatient(paginator, idPatient, Status, ConsultationDate).pipe(
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {
                     this._notificationService.showToastErrorMessage(response.message!);
@@ -67,17 +67,6 @@ export class MedicalConsultationUseCase {
             })
         );
     }
-
-  /*    GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<TableResultDTO> {
-        return this._medicalConsultationService.GetMedicalConsultationById(IdMedicalConsultation).pipe(
-            map((response: ResponseDTO) => {
-                if (!response.isSuccess) {
-                    this._notificationService.showToastErrorMessage(response.message!);
-                }
-                return response.data;
-            })
-        );
-    } */
 
     GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<MedicalConsultationByIdDTO> {
         return this._medicalConsultationService.GetMedicalConsultationById(IdMedicalConsultation).pipe(

@@ -40,15 +40,4 @@ export class PrescriptionsUseCase {
         );
     }
 
-    /*   GetListUsers(paginatorDTO:PaginatorDTO, email?:string): Observable<TableResultDTO> {
-      return this._userService.GetListUsers(paginatorDTO,email).pipe(
-        map((response: ResponseDto) => {
-          if (!response.isSuccess) {
-              this._notificationService.showToastErrorMessage(response.message!);
-          }
-          return response.data;
-        })
-      );
-    } */
-
 }

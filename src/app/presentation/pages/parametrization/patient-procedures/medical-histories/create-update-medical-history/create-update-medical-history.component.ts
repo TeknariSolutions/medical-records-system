@@ -37,32 +37,6 @@ export class CreateUpdateMedicalHistoryComponent {
 
   ngOnInit(): void {
 
-    console.log(this.idPatient)
-    console.log(this.idUser)
-
-
-    /* this.form = this.fb.group({
-      pathologicalHistory: [this.lastMedicalHistory?.pathologicalHistory || ''],
-      surgicalHistory: [this.lastMedicalHistory?.surgicalHistory || ''],
-      allergicHistory: [this.lastMedicalHistory?.allergicHistory || ''],
-      pharmacologicalHistory: [this.lastMedicalHistory?.pharmacologicalHistory || ''],
-      familyHistory: [this.lastMedicalHistory?.familyHistory || ''],
-      gynecoObstetricHistory: [this.lastMedicalHistory?.gynecoObstetricHistory || ''],
-      occupationalHistory: [this.lastMedicalHistory?.occupationalHistory || ''],
-      psychiatricHistory: [this.lastMedicalHistory?.psychiatricHistory || ''],
-      traumaticHistory: [this.lastMedicalHistory?.traumaticHistory || ''],
-      immunologicalHistory: [this.lastMedicalHistory?.immunologicalHistory || ''],
-      observations: [this.lastMedicalHistory?.observations || ''],
-      smoker: [this.lastMedicalHistory?.smoker || false],
-      smokingYears: [this.lastMedicalHistory?.smokingYears || 0],
-      cigarettesPerDay: [this.lastMedicalHistory?.cigarettesPerDay || 0],
-      smokingIndex: [this.lastMedicalHistory?.smokingIndex || 0],
-      alcoholConsumer: [this.lastMedicalHistory?.alcoholConsumer || false],
-      alcoholFrequency: [this.lastMedicalHistory?.alcoholFrequency || ''],
-      drugUse: [this.lastMedicalHistory?.drugUse || false],
-      drugDetails: [this.lastMedicalHistory?.drugDetails || '']
-    }); */
-
     this.form = this.fb.group({
       pathologicalHistory: [this.lastMedicalHistory?.pathologicalHistory || ''],
       surgicalHistory: [this.lastMedicalHistory?.surgicalHistory || ''],
@@ -79,7 +53,7 @@ export class CreateUpdateMedicalHistoryComponent {
       smokingYears: [this.lastMedicalHistory?.smokingYears || 0],
       cigarettesPerDay: [this.lastMedicalHistory?.cigarettesPerDay || 0],
       smokingIndex: [this.lastMedicalHistory?.smokingIndex || 0],
-      smokingDevice: [this.lastMedicalHistory?.smokigDevice || ''], // 🆕 nuevo campo
+      smokigDevice: [this.lastMedicalHistory?.smokigDevice || ''], // 🆕 nuevo campo
       alcoholConsumer: [this.lastMedicalHistory?.alcoholConsumer || false],
       alcoholFrequency: [this.lastMedicalHistory?.alcoholFrequency || ''],
       drugUse: [this.lastMedicalHistory?.drugUse || false],
@@ -157,24 +131,6 @@ export class CreateUpdateMedicalHistoryComponent {
     }
   }
 
-  /* save(): void {
-    if (this.form.invalid) return;
-
-    const dto: MedicalHistoryDTO = {
-      ...this.form.value,
-      idMedicalHistory: 0,
-      idPatient: this.idPatient,
-      createdBy: this.idUser,
-      createdAt: new Date(),
-      updatedBy: this.idUser,
-      updatedAt: new Date()
-    };
-
-    this._medicalHistoryUseCase.CreateMedicalHistory(dto).subscribe(() => {
-      this.bsModalRef.hide();
-    });
-  }
- */
   cancel(): void {
     this.bsModalRef.hide();
   }

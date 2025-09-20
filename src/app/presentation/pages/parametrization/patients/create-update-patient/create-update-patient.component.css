@@ -3,3 +3,26 @@
 }
 
 
+.button-back {
+  width: fit-content;
+    border: none;
+    padding: 0;
+    color: #1AAE9F;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    gap: 8px;
+}
+
+.button-back:hover {
+    background-color: white !important;
+    box-shadow: 0 10px 20px rgba(41, 197, 158, 0.245);
+    border: 1px solid #1AAE9F;
+}
+
+.button-back i {
+    font-size: 25px;
+}
+
+  
+

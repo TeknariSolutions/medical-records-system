@@ -72,5 +72,19 @@ export class MedicineUseCase {
     }
 
 
+    GetMedicineById(IdMedicine: number): Observable<any> {
+        return this._medicinesService.GetMedicineById(IdMedicine).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    }
+
+
+
+
 
 }

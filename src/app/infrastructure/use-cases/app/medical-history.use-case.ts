@@ -56,22 +56,12 @@ export class MedicalHistoryUseCase {
         );
     }
 
-   /*  GetLastMedicalHistory(idPatient?: number): Observable<TableResultDTO> {
-        return this._medicalHistoryService.GetLastMedicalHistory(idPatient).pipe(
-            map((response: ResponseDTO) => {
-                if (!response.isSuccess) {
-                    this._notificationService.showToastErrorMessage(response.message!);
-                }
-                return response.data;
-            })
-        );
-    } */
 
     GetLastMedicalHistory(idPatient?: number): Observable<MedicalHistoryDTO> {
         return this._medicalHistoryService.GetLastMedicalHistory(idPatient).pipe(
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {
-                    this._notificationService.showToastErrorMessage(response.message!);
+                    //this._notificationService.showToastErrorMessage(response.message!);
                 }
                 return response.data as MedicalHistoryDTO; // aseguras tipado
             })

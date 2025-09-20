@@ -35,25 +35,6 @@ export class PatientProceduresComponent implements OnInit {
     private _router: Router
   ) { }
 
-/*   ngOnInit(): void {
-     this.loadEPS();
-
-    this._dataTransferService.getData$()
-      .pipe(take(1))
-      .subscribe(patient => {
-        if (patient) {
-          this.patientData = patient;
-        } else {
-          // Intentar cargar desde sessionStorage
-          this._dataTransferService.loadFromStorage();
-          const saved = sessionStorage.getItem('patientData');
-          if (saved) {
-            this.patientData = JSON.parse(saved);
-          }
-        }
-        console.log(this.patientData);
-      });
-  } */
 
   ngOnInit(): void {
     this.loadEPS();

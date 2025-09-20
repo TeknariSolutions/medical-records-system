@@ -13,6 +13,8 @@ import { take } from 'rxjs';
 import { LocationService } from 'src/app/infrastructure/services/common/location/location.service';
 import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS-Colombia/eps-colombia.service';
 import { CountriesUseCase } from 'src/app/infrastructure/use-cases/app/countries.use-case';
+import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
+
 
 @Component({
   standalone: true,
@@ -88,6 +90,7 @@ export class CreateUpdatePatientComponent implements OnInit {
     { value: 'OTRO', label: 'Otro' }
   ];
 
+  // Regimenes
   regimes = [
     { code: 1, description: 'Régimen contributivo' },
     { code: 2, description: 'Régimen subsidiado' },
@@ -96,8 +99,7 @@ export class CreateUpdatePatientComponent implements OnInit {
     { code: 5, description: 'Otros (planes voluntarios, regímenes especiales, ARL, SOAT)' }
   ];
 
-
-
+ 
   constructor(
     private formBuilder: FormBuilder,
     private _patientsUseCase: PatientsUseCase,
@@ -113,9 +115,6 @@ export class CreateUpdatePatientComponent implements OnInit {
     this.initForm();
     
     this.loadEPS();
-
-    //this.loadDepartments();
-
     this.loadCountries();
 
     this._dataTransferService.getData$()
@@ -152,16 +151,8 @@ export class CreateUpdatePatientComponent implements OnInit {
             },
             contactInfo: {
               address: patient.address,
-              //residenceDepartment: patient.residenceDepartment,
-              //city: patient.city,
-
-
-              /* countryId: patient.countryId,
-              departmentId: patient.departmentId,
-              municipalityId: patient.municipalityId, */
-
-              countryId: patient.idCountry,        // 👈 corregido
-              departmentId: patient.idDepartment,  // 👈 corregido
+              countryId: patient.idCountry,        
+              departmentId: patient.idDepartment,  
               municipalityId: patient.idMunicipality, 
 
 
@@ -183,7 +174,6 @@ export class CreateUpdatePatientComponent implements OnInit {
               bloodType: patient.bloodType?.trim() || null,
               idEps: patient.idEps,
               stratum: patient.stratum,
-              //codRegimen: patient.codRegimen,
               codRegimen: patient.codRegimen ? Number(patient.codRegimen.toString().trim()) : null,
               regime: patient.regime,
             },
@@ -199,8 +189,6 @@ export class CreateUpdatePatientComponent implements OnInit {
         if (countryId) {
           this.onCountryChange(countryId);
         } 
-
-
       });
   }
 
@@ -224,15 +212,13 @@ export class CreateUpdatePatientComponent implements OnInit {
 
       contactInfo: this.formBuilder.group({
         address: ['', Validators.required],
-        //residenceDepartment: ['', Validators.required],
-        //city: ['', Validators.required],
         countryId: [null],
         departmentId: [null],
         municipalityId: [null],
         codRegimen: [null],
         phoneNumber: ['', Validators.required],
         phoneNumber2: [''],
-        email: ['', [Validators.email]],
+        email: [''],
 
         nameOfGuardian: [''],
         idDocumentGuardian: [''],
@@ -300,62 +286,6 @@ export class CreateUpdatePatientComponent implements OnInit {
   }
 
   
-
-/*  loadCountries() {
-  this._countriesUseCase
-    .GetListCountries({ pageIndex: 1, pageSize: 300 }) // 👈 solo pasas el paginador
-    .subscribe({
-      next: (res) => {
-        this.countries = res.results; // TableResultDTO.results
-        console.log(this.countries);
-      },
-      error: (err) => {
-        console.error('Error cargando países', err);
-      }
-    });
-}
-
-  onCountryChange(IdCountry: number) {
-    this.departments = [];
-    this.cities = [];
-    this.patientForm.get('contactInfo.departmentId')?.setValue('');
-    this.patientForm.get('contactInfo.municipalityId')?.setValue('');
-
-    this._countriesUseCase
-      .GetListDepartments({ pageIndex: 1, pageSize: 300 }, '', IdCountry)
-      .subscribe({
-        next: (res) => {
-          this.departments = res.results;
-          console.log(this.departments)
-        },
-        error: (err) => {
-          console.error('Error cargando departamentos', err);
-        }
-      });
-  }
-
-  onDepartmentChange(IdDepartment: number) {
-    this.cities = [];
-    this.patientForm.get('contactInfo.municipalityId')?.setValue('');
-
-    this._countriesUseCase
-      .GetListMunicipalities({ pageIndex: 1, pageSize: 200 }, '', '', IdDepartment)
-      .subscribe({
-        next: (res) => {
-          this.cities = res.results;
-          console.log(this.cities)
-          if (this.isEditMode && this.patientData?.municipalityId) {
-            this.patientForm.get('contactInfo.municipalityId')?.setValue(this.patientData.municipalityId);
-          }
-        },
-        error: (err) => {
-          console.error('Error cargando ciudades', err);
-        }
-      });
-  } */
-
-
-
   // Cargar países (primer paso)
   loadCountries() {
     this._countriesUseCase
@@ -427,41 +357,6 @@ export class CreateUpdatePatientComponent implements OnInit {
       });
   }
 
-
-/*   loadDepartments() {
-    this.locationService.getDepartments().subscribe({
-      next: (res) => {
-        this.departments = res;
-      },
-      error: (err) => {
-        console.error('Error cargando departamentos', err);
-      }
-    });
-  } */
-
-  /* onDepartmentChange(departmentId: string) {
-    if (!departmentId) {
-      this.cities = [];
-      this.patientForm.get('contactInfo.city')?.setValue('');
-      return;
-    }
-
-    this.locationService.getCitiesByDepartmentId(departmentId).subscribe({
-      next: (res) => {
-        this.cities = res;
-
-        // Si estamos en modo edición y hay una ciudad guardada, precargarla aquí
-        if (this.isEditMode && this.patientData?.city) {
-          this.patientForm.get('contactInfo.city')?.setValue(this.patientData.city);
-        }
-      },
-      error: (err) => {
-        console.error('Error cargando ciudades', err);
-        this.cities = [];
-      }
-    });
-  } */
-
   onSubmit(): void {
     this.submitted = true;
 
@@ -486,8 +381,6 @@ export class CreateUpdatePatientComponent implements OnInit {
         countryId: Number(formValue.contactInfo.countryId),
         departmentId: Number(formValue.contactInfo.departmentId),
         municipalityId: Number(formValue.contactInfo.municipalityId),
-        //residenceDepartment: formValue.contactInfo.residenceDepartment,
-        //city: formValue.contactInfo.city,
         phoneNumber: String(formValue.contactInfo.phoneNumber),
         phoneNumber2: String(formValue.contactInfo.phoneNumber2 || ''),
         email: formValue.contactInfo.email,
@@ -503,9 +396,9 @@ export class CreateUpdatePatientComponent implements OnInit {
         idCompany: Number(IdCompany),
         createdBy: Number(IdUser),
 
-        createdAt: new Date().toISOString(),
+        createdAt: DateTimeHelper.getLocalDateTimeWithOffset(),
         updatedBy: Number(IdUser),
-        updatedAt: new Date().toISOString(),
+        updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
         nameOfGuardian: formValue.contactInfo.nameOfGuardian,
         idDocumentGuardian: formValue.contactInfo.idDocumentGuardian,
         documentTypeGuradian: formValue.contactInfo.documentTypeGuradian,
@@ -556,6 +449,10 @@ export class CreateUpdatePatientComponent implements OnInit {
       });
     }
   }
+
+  goBackToPatients(): void {
+  this.router.navigate(['/parametrization/patients']);
+}
 
   
 }

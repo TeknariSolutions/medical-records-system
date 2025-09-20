@@ -5,16 +5,8 @@
 
 <div class="modal-body">
   <form [formGroup]="orderForm">
-    <!-- Observaciones -->
-    <div class="mb-3">
-      <label for="generalObservations" class="form-label">Observaciones Generales</label>
-      <textarea id="generalObservations" formControlName="generalObservations"
-        class="form-control" rows="3"></textarea>
-    </div>
 
-    <hr>
     <h6>Detalles de la Orden</h6>
-
     <div formArrayName="details">
       <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="border rounded p-2 mb-3">
 
@@ -57,6 +49,14 @@
         </button>
       </div>
     </div>
+
+    <!-- Observaciones -->
+    <div class="mb-3">
+      <label for="generalObservations" class="form-label">Observaciones Generales</label>
+      <textarea id="generalObservations" formControlName="generalObservations"
+        class="form-control" rows="3"></textarea>
+    </div>
+
 
     <button type="button" class="btn btn-secondary mt-2" (click)="addDetail()">Agregar Detalle</button>
   </form>

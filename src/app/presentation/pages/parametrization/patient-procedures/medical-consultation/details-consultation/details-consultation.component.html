@@ -24,34 +24,6 @@
           </div>
         </div>
 
-        <!-- Informacion del paciente -->
-       <!--  <div class="row section-info">
-        <h6 class="title-section mb-4">INFORMACION DEL PACIENTE</h6>
-          <div class="col-6">
-            <p><strong>Paciente:</strong>  {{ patientData.firstName }} {{ patientData.secondName }} {{ patientData.firstLastName }} {{
-              patientData.secondLastName }}</p>
-            <p><strong>{{ patientData.documentType }}:</strong> {{ patientData.idDocument }}</p>
-            <p><strong>Estado civil:</strong>  {{ patientData.maritalStatus }}</p>
-            <p><strong>Dirección:</strong>  {{ patientData.address }}</p>
-            <p><strong>Ciudad:</strong>  {{ patientData.city }}</p>
-            <p><strong>EPS:</strong>  {{ patientData.idEps }}</p>
-            <p><strong>Regimen:</strong>  {{ patientData.regime }}</p>
-            <p><strong>Fecha de Ingreso:</strong> {{patientData.registerDate}}</p>
-          </div>
-
-          <div class="col-6">
-            <p><strong>Fecha de Nacimiento:</strong>  {{patientData.birthDay}}</p>
-            <p><strong>Edad:</strong>  65 años</p>
-            <p><strong>Sexo:</strong>  {{patientData.sex}}</p>
-            <p><strong>Telefono:</strong>  {{patientData.phoneNumber}}</p>
-            <p><strong>Estrato:</strong>  {{patientData.stratum}}</p>
-            <p><strong>Grupo Etnico:</strong>  {{patientData.ethnic}}</p>
-            <p><strong>Discapacidad:</strong>  {{patientData.disAbilityDescription}}</p>
-          </div>
-
-        </div>
- -->
-
         <!-- Información del paciente -->
         <div class="row section-info">
           <h6 class="title-section mb-4">INFORMACION DEL PACIENTE</h6>
@@ -117,30 +89,15 @@
 
 
         <!-- Motivo de Consulta -->
-        <div class="row mt-5 mb-5">
+        <div class="row mt-3 mb-3">
           <div class="col-12">
             <p><strong>Motivo de Consulta:</strong> {{ dataConsultation.consultationReason }}</p>
             <p><strong>Enfermedad Actual:</strong> {{ dataConsultation.currentIllness }}</p>
           </div>
         </div>
 
-       <!--  <div class="v-divider">
-        </div> -->
-
         <!-- Estado General -->
-        <!-- <div class="row section-info mt-4 mb-4">
-          <h6 class="title-section mb-4">ESTADO GENERAL</h6>
-          <div class="col-12">
-            <p><strong>Estado de Hidratación:</strong> {{ dataConsultation.hydrationStatus}}</p>
-            <p><strong>Nivel de Glasgow:</strong> {{ dataConsultation.glasgowScore }}</p>
-            <p><strong>Estado de Conciencia:</strong> {{ dataConsultation.consciousnessStatus }}</p>
-            <p><strong>Estado de Respiración:</strong> {{ dataConsultation.respiratoryStatus }}</p>
-            <p><strong>Estado General:</strong> {{ dataConsultation.generalStatus }}</p>
-          </div>
-        </div> -->
-
-        <!-- Estado General -->
-        <div class="row section-info mt-4 mb-4">
+        <div class="row section-info mt-3 mb-3">
           <h6 class="title-section mb-4">ESTADO GENERAL</h6>
           <div class="table-responsive">
             <table class="table table-bordered">
@@ -177,12 +134,9 @@
             </table>
           </div>
         </div>
-<!-- 
-        <div class="v-divider">
-        </div> -->
 
-        <div class="html2pdf__page-break">
-        </div>
+       <!--  <div class="html2pdf__page-break">
+        </div> -->
 
       </div>
     </div>
@@ -195,61 +149,112 @@
       <div class="card-body">
 
           <!-- Signos Vitales -->
-          <div class="row section-info mt-5 mb-4">
-            <h6 class="title-section mb-4">SIGNOS VITALES</h6>
-            <div class="col-6">
-              <p><strong>Presión Arterial:</strong> {{ dataConsultation.vitalSigns_BP }}</p>
-              <p><strong>Frecuencia Cardíaca:</strong> {{ dataConsultation.vitalSigns_HR }}</p>
-              <p><strong>Frecuencia Respiratoria:</strong> {{ dataConsultation.vitalSigns_RR }}</p>
-              <p><strong>Temperatura:</strong> {{ dataConsultation.vitalSigns_Temp }}</p>
-            </div>
-            <div class="col-6">
-              <p><strong>Saturación de Oxígeno (SpO2):</strong> {{ dataConsultation.vitalSigns_SPO2 }}</p>
-              <p><strong>Peso (Kg):</strong> {{ dataConsultation.weightKg }}</p>
-              <p><strong>Talla (cms):</strong> {{ dataConsultation.heightCm }}</p>
-              <p><strong>IMC:</strong> {{ dataConsultation.bmi }}</p>
-            </div>
-          </div>
+          <div class="row section-info mt-3 mb-3">
+          <h6 class="title-section mb-4">SIGNOS VITALES</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <colgroup>
+                <col>
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td><strong>Presión Arterial:</strong></td>
+                  <td>{{ dataConsultation.vitalSigns_BP }}</td>
+                  <td><strong>Frecuencia Cardíaca::</strong></td>
+                  <td>{{ dataConsultation.vitalSigns_HR }}</td>
+                </tr>
 
-        <div class="v-divider">
+                
+                <tr>
+                  <td><strong>Frecuencia Respiratoria:</strong></td>
+                  <td>{{ dataConsultation.vitalSigns_RR }}</td>
+                  <td><strong>Temperatura:</strong></td>
+                  <td>{{ dataConsultation.vitalSigns_Temp }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Saturación de Oxígeno (SpO2):</strong></td>
+                  <td>{{ dataConsultation.vitalSigns_SPO2 }}</td>
+
+                  <td><strong>IMC:</strong></td>
+                  <td>{{ dataConsultation.bmi }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Talla (cms):</strong></td>
+                  <td>{{ dataConsultation.heightCm }}</td>
+
+                  <td><strong>Peso (Kg):</strong></td>
+                  <td>{{ dataConsultation.weightKg }}</td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
         </div>
+
+
 
         <!-- Examen Fisico -->
-        <div class="row section-info mt-4 mb-4">
+        <div class="row section-info mt-3 mb-3">
           <h6 class="title-section mb-4">EXAMEN FISICO</h6>
-          <div class="col-6">
-            <p><strong>Cabeza y Cuello:</strong> {{ dataConsultation.physicalExam_HeadNeck }}</p>
-            <p><strong>Tórax:</strong> {{ dataConsultation.physicalExam_Chest }}</p>
-            <p><strong>Corazón:</strong> {{ dataConsultation.physicalExam_Heart }}</p>
-            <p><strong>Abdomen:</strong> {{ dataConsultation.physicalExam_Abdomen }}</p>
-          </div>
-          <div class="col-6">
-            <p><strong>Genitourinario GU:</strong> {{ dataConsultation.physicalExam_GU }}</p>
-            <p><strong>Musculoesquelético:</strong> {{ dataConsultation.physicalExam_Musculoskeletal }}</p>
-            <p><strong>Neurológico:</strong> {{ dataConsultation.physicalExam_Neuro }}</p>
-            <p><strong>Piel:</strong> {{ dataConsultation.physicalExam_Skin }}</p>
-          </div>
-          <div class="col-12">
-            <p><strong>Observaciones:</strong> {{ dataConsultation.observations }}</p>
+       
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <colgroup>
+                <col>
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td><strong>Cabeza y Cuello:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_HeadNeck }}</td>
+                  <td><strong>Tórax:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_Chest }}</td>
+                </tr>
+
+                
+                <tr>
+                  <td><strong>Corazón:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_Heart }}</td>
+                  <td><strong>Abdomen:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_Abdomen }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Genitourinario GU:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_GU }}</td>
+
+                  <td><strong>Musculoesquelético:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_Musculoskeletal }}</td>
+                </tr>
+
+                <tr>
+                  <td><strong>Piel:</strong></td>
+                  <td>{{ dataConsultation.physicalExam_Skin }}</td>
+
+                  <td><strong>Observaciones:</strong></td>
+                  <td>{{ dataConsultation.observations }}</td>
+                </tr>
+
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div class="v-divider">
-        </div>
-
+        
         <!-- Resultados Paraclínicos -->
-        <div class="row section-info mt-4 mb-4">
+        <div class="row section-info mt-3 mb-3">
           <h6 class="title-section mb-4">RESULTADOS PARACLINICOS</h6>
           <div class="col-12">
             <p>{{ dataConsultation.paraClinicalTest }}</p>
           </div>
         </div>
 
-        <div class="v-divider">
-        </div>
-
+      
         <!-- Diagnosticos -->
-        <div class="row section-info mt-4 mb-4" *ngIf="diagnoses.length > 0">
+        <div class="row section-info mt-3 mb-3" *ngIf="diagnoses.length > 0">
           <h6 class="title-section mb-4">DIAGNOSTICOS</h6>
           <div class="table-responsive">
             <table class="table">

@@ -32,13 +32,13 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-create-update-medical-consultation',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     CdkStepperModule,
-    NgStepperModule ,
+    NgStepperModule,
 
-     MatStepperModule,
+    MatStepperModule,
     MatButtonModule,
     MatInputModule,
     MatSelectModule,
@@ -49,97 +49,11 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class CreateUpdateMedicalConsultationComponent {
 
-    //@ViewChild('stepperWrapper', { static: true }) stepperWrapper!: ElementRef<HTMLDivElement>;
   isLinear = false;
+  currentStep = 1;
 
-/*   scrollStepper(offset: number) {
-    this.stepperWrapper.nativeElement.scrollBy({
-      left: offset,
-      behavior: 'smooth'
-    });
-  } */
 
-     currentStep = 1;
-
-/* 
-private _formBuilder = inject(FormBuilder);
-
-  firstFormGroup = this._formBuilder.group({
-    firstCtrl: ['', Validators.required],
-  });
-  secondFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
-  thirdFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
-  fourthFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
- */
-
-   //@ViewChild('stepperWrapper') stepperWrapper!: ElementRef;
-   @ViewChild('stepperWrapper', { static: false }) stepperWrapper!: ElementRef<HTMLDivElement>;
-
-  scrollStepper(offset: number) {
-  if (!this.stepperWrapper) return;
-  this.stepperWrapper.nativeElement.scrollBy({ left: offset, behavior: 'smooth' });
-}
-
-/**
- * Ir a un step y alinear al borde izquierdo el botón/etiqueta correspondiente
- */
-goToStep(step: number) {
-  this.currentStep = step;
-
-  // intentar encontrar el elemento con data-step igual al número
-  try {
-    const wrapper = this.stepperWrapper?.nativeElement;
-    if (!wrapper) return;
-
-    const el: HTMLElement | null = wrapper.querySelector(`.step[data-step="${step}"]`);
-    if (!el) return;
-
-    // offset relativo dentro del wrapper
-    const left = el.offsetLeft - wrapper.offsetLeft - 8; // 8px margen pequeño
-    wrapper.scrollTo({ left, behavior: 'smooth' });
-
-    // opcional: pequeño highlight (clase temporal)
-    el.classList.add('clicked-step');
-    setTimeout(() => el.classList.remove('clicked-step'), 400);
-  } catch (err) {
-    console.warn('goToStep error', err);
-  }
-}
-
-nextStep() {
-  // avanza al siguiente visible (máx 8)
-  const maxStep = 8;
-  if (this.currentStep < maxStep) {
-    // si siguiente es admin-only y usuario no es admin, saltar
-    let next = this.currentStep + 1;
-    if ((next === 6 || next === 7) && this.idRol === 2) {
-      next = 8; // saltar antec/dx si no es admin
-    }
-    this.goToStep(next);
-  }
-}
-
-prevStep() {
-  if (this.currentStep > 1) {
-    let prev = this.currentStep - 1;
-    if ((prev === 6 || prev === 7) && this.idRol === 2) {
-      prev = 5; // saltar back si no es admin
-    }
-    this.goToStep(prev);
-  }
-}
-
-resetStepper() {
-  this.goToStep(1);
-}
- 
- 
+  @ViewChild('stepperWrapper', { static: false }) stepperWrapper!: ElementRef<HTMLDivElement>;
 
   @Input() idPatient!: number;
   @Input() consultationToEdit?: MedicalConsultationDTO;
@@ -152,10 +66,10 @@ resetStepper() {
   // Lista quemada para diagnosisType
   //diagnosisTypes = ['Confirmado nuevo', 'Confirmado repetido'];
   diagnosisTypes = [
-  { codeDiagnosisType: '01', diagnosisType: 'Impresión' },
-  { codeDiagnosisType: '02', diagnosisType: 'Confirmado nuevo' },
-  { codeDiagnosisType: '03', diagnosisType: 'Confirmado repetido' }
-];
+    { codeDiagnosisType: '01', diagnosisType: 'Impresión' },
+    { codeDiagnosisType: '02', diagnosisType: 'Confirmado nuevo' },
+    { codeDiagnosisType: '03', diagnosisType: 'Confirmado repetido' }
+  ];
 
   // Para guardar resultados de la búsqueda
   cie10Results$: Observable<any[]>[] = [];
@@ -169,8 +83,8 @@ resetStepper() {
   idUser: number = Number(localStorage.getItem('IdUser'));
 
   currentPage: number = 1;
-  pageSize: number = 10; 
-  pageSizeOptions = [5, 10, 25, 100]; 
+  pageSize: number = 10;
+  pageSizeOptions = [5, 10, 25, 100];
   totalRecords: number = 0;
 
 
@@ -179,7 +93,7 @@ resetStepper() {
   description = '';
   suggestions: any[] = [];
 
-  
+
   showDropdown = false;
 
   codeSuggestions: any[] = [];
@@ -198,6 +112,7 @@ resetStepper() {
 
 
 
+
   @ViewChild('cdkStepper') stepper!: CdkStepper;
 
   constructor(
@@ -207,23 +122,16 @@ resetStepper() {
     private _medicalConsultationDiagnosisUseCase: MedicalConsultationDiagnosisUseCase,
     private _medicalHistoryUseCase: MedicalHistoryUseCase,
     private cie10UseCase: Cie10UseCase,
-    //private cie10Service: Cie10Service,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private _notificationService: NotificationsService,
     private _closeConsultationUseCase: CloseConsultationUseCase
   ) {
 
-
-
-
-
     this.form = this.fb.group({
       basicInfo: this.fb.group({
         consultationReason: ['', Validators.required],
-        //consultationDate: [new Date().toISOString()],
         consultationDate: this.getLocalDateTime(),
-        //consultationDate: [new Date()],
         isFirstTime: [true],
         status: [false],
         currentIllness: ['']
@@ -265,68 +173,68 @@ resetStepper() {
         idExitCondition: [0],
         idExternalCauseCode: [0],
       }),
-     
+
       diagnoses: this.fb.array([]) // solo admin
     });
 
     // Escuchar cambios para recalcular BMI
     this.form.get('vitalSigns.weightKg')?.valueChanges.subscribe(() => this.updateBMI());
     this.form.get('vitalSigns.heightCm')?.valueChanges.subscribe(() => this.updateBMI());
-  
+
   }
 
 
- /*  ngOnInit(): void {
-    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-
-    this.idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-
-    // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
-    if (idRol === 1 && !this.form.contains('diagnoses')) {
-      this.form.addControl('diagnoses', this.fb.array([]));
-    }
-
-    const weightControl = this.form.get('weightKg');
-    const heightControl = this.form.get('heightCm');
-
-    if (weightControl && heightControl) {
-      weightControl.valueChanges.subscribe(() => this.updateBMI());
-      heightControl.valueChanges.subscribe(() => this.updateBMI());
-    }
-
-    // Si es auxiliar (rolId 2): forzar status a false y deshabilitar
-    if (idRol === 2) {
-      this.form.get('basicInfo.status')?.setValue(false);
-      this.form.get('basicInfo.status')?.disable();
-    }
-
-    this.loadLastMedicalHistory();
-
-
-    this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
-      if (value) {
-        const confirmed = await this._notificationService.confirm(
-          'Advertencia',
-          'Si marca la consulta como CERRADA y la guarda ya no podrá editarla después.',
-          'warning'
-        );
-
-        if (!confirmed) {
-          this.form.get('basicInfo.status')?.setValue(false, { emitEvent: false });
-        }
-      }
-    });
-
-    // 🔒 Si la consulta ya está cerrada, bloqueamos edición
-    if (this.consultationToEdit?.status) {
-      this.form.disable();
-    }
-
-    this.loadExistConditions();
-    this.loadExternalCauseCodes();
-    this.loadConsultationFinalities();
-
-  } */
+  /*  ngOnInit(): void {
+     const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
+ 
+     this.idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
+ 
+     // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
+     if (idRol === 1 && !this.form.contains('diagnoses')) {
+       this.form.addControl('diagnoses', this.fb.array([]));
+     }
+ 
+     const weightControl = this.form.get('weightKg');
+     const heightControl = this.form.get('heightCm');
+ 
+     if (weightControl && heightControl) {
+       weightControl.valueChanges.subscribe(() => this.updateBMI());
+       heightControl.valueChanges.subscribe(() => this.updateBMI());
+     }
+ 
+     // Si es auxiliar (rolId 2): forzar status a false y deshabilitar
+     if (idRol === 2) {
+       this.form.get('basicInfo.status')?.setValue(false);
+       this.form.get('basicInfo.status')?.disable();
+     }
+ 
+     this.loadLastMedicalHistory();
+ 
+ 
+     this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
+       if (value) {
+         const confirmed = await this._notificationService.confirm(
+           'Advertencia',
+           'Si marca la consulta como CERRADA y la guarda ya no podrá editarla después.',
+           'warning'
+         );
+ 
+         if (!confirmed) {
+           this.form.get('basicInfo.status')?.setValue(false, { emitEvent: false });
+         }
+       }
+     });
+ 
+     // 🔒 Si la consulta ya está cerrada, bloqueamos edición
+     if (this.consultationToEdit?.status) {
+       this.form.disable();
+     }
+ 
+     this.loadExistConditions();
+     this.loadExternalCauseCodes();
+     this.loadConsultationFinalities();
+ 
+   } */
 
 
   ngOnInit(): void {
@@ -399,139 +307,139 @@ resetStepper() {
 
 
 
-// helper getter para el FormArray
-get diagnoses(): FormArray {
-  return this.form.get('diagnoses') as FormArray;
-}
+  // helper getter para el FormArray
+  get diagnoses(): FormArray {
+    return this.form.get('diagnoses') as FormArray;
+  }
 
 
-onCodeInput(value: string, index: number) {
-  this.diagnoses.at(index).patchValue({ diagnosisDescription: '' });
+  onCodeInput(value: string, index: number) {
+    this.diagnoses.at(index).patchValue({ diagnosisDescription: '' });
 
-  if (value && value.length >= 2) {
-    this.searchCIE10({ code: value }, index);
-  } else {
+    if (value && value.length >= 2) {
+      this.searchCIE10({ code: value }, index);
+    } else {
+      this.codeSuggestions[index] = [];
+      this.descriptionSuggestions[index] = [];
+      this.showCodeDropdown[index] = false;
+      this.showDescriptionDropdown[index] = false;
+    }
+  }
+
+  onDescriptionInput(value: string, index: number) {
+    this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
+
+    if (value && value.length >= 4) {
+      this.searchCIE10({ name: value }, index);
+    } else {
+      this.codeSuggestions[index] = [];
+      this.descriptionSuggestions[index] = [];
+      this.showCodeDropdown[index] = false;
+      this.showDescriptionDropdown[index] = false;
+    }
+  }
+
+  searchCIE10(
+    filters: { code?: string; name?: string },
+    index: number
+  ) {
+    this.cie10UseCase
+      .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
+      .subscribe({
+        next: (data: TableResultDTO) => {
+          const results = data?.results || [];
+
+          // llenar ambas listas
+          this.codeSuggestions[index] = results;
+          this.descriptionSuggestions[index] = results;
+
+          // mostrar ambos dropdowns
+          this.showCodeDropdown[index] = this.codeSuggestions[index].length > 0;
+          this.showDescriptionDropdown[index] = this.descriptionSuggestions[index].length > 0;
+
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.codeSuggestions[index] = [];
+          this.descriptionSuggestions[index] = [];
+          this.showCodeDropdown[index] = false;
+          this.showDescriptionDropdown[index] = false;
+        },
+      });
+  }
+
+
+  selectSuggestion(item: any, index: number) {
+    const diagnosisGroup = this.diagnoses.at(index) as FormGroup;
+
+    // Rellenar ambos campos
+    diagnosisGroup.get('diagnosisCode')?.setValue(item.codigo);
+    diagnosisGroup.get('diagnosisDescription')?.setValue(item.nombre);
+
+    // Limpiar sugerencias
     this.codeSuggestions[index] = [];
     this.descriptionSuggestions[index] = [];
-    this.showCodeDropdown[index] = false;
-    this.showDescriptionDropdown[index] = false;
   }
-}
 
-onDescriptionInput(value: string, index: number) {
-  this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
 
-  if (value && value.length >= 3) {
-    this.searchCIE10({ name: value }, index);
-  } else {
-    this.codeSuggestions[index] = [];
-    this.descriptionSuggestions[index] = [];
-    this.showCodeDropdown[index] = false;
-    this.showDescriptionDropdown[index] = false;
+  // Método para sanear:
+  sanitize(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
-}
 
-searchCIE10(
-  filters: { code?: string; name?: string },
-  index: number
-) {
-  this.cie10UseCase
-    .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
-    .subscribe({
-      next: (data: TableResultDTO) => {
-        const results = data?.results || [];
-
-        // llenar ambas listas
-        this.codeSuggestions[index] = results;
-        this.descriptionSuggestions[index] = results;
-
-        // mostrar ambos dropdowns
-        this.showCodeDropdown[index] = this.codeSuggestions[index].length > 0;
-        this.showDescriptionDropdown[index] = this.descriptionSuggestions[index].length > 0;
-
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.codeSuggestions[index] = [];
-        this.descriptionSuggestions[index] = [];
-        this.showCodeDropdown[index] = false;
-        this.showDescriptionDropdown[index] = false;
-      },
-    });
-}
+  removeHtmlTags(html: string): string {
+    return html.replace(/<[^>]+>/g, '');
+  }
 
 
-selectSuggestion(item: any, index: number) {
-  const diagnosisGroup = this.diagnoses.at(index) as FormGroup;
-
-  // Rellenar ambos campos
-  diagnosisGroup.get('diagnosisCode')?.setValue(item.codigo);
-  diagnosisGroup.get('diagnosisDescription')?.setValue(item.nombre);
-
-  // Limpiar sugerencias
-  this.codeSuggestions[index] = [];
-  this.descriptionSuggestions[index] = [];
-}
-
-
-// Método para sanear:
-sanitize(html: string): SafeHtml {
-  return this.sanitizer.bypassSecurityTrustHtml(html);
-}
-
-removeHtmlTags(html: string): string {
-  return html.replace(/<[^>]+>/g, '');
-}
-
-
-/*   ngOnChanges(changes: SimpleChanges): void {
-  if (changes['consultationToEdit'] && this.consultationToEdit) {
-    console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
-
-    const normalized = this.normalizeConsultationData(this.consultationToEdit);
-    console.log('✅ Normalized data:', normalized);
-    this.form.patchValue(normalized);
-
-
-    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-    if (idRol === 1) {
-      // Asegurarse de tener el FormArray
-      if (!this.form.contains('diagnoses')) {
-        this.form.addControl('diagnoses', this.fb.array([]));
-      }
-      const array = this.form.get('diagnoses') as FormArray;
-      array.clear();
-
-      if (this.consultationToEdit.idMedicalConsultation) {
-        // 🔍 Obtener diagnósticos desde el backend
-
-        
-        this._medicalConsultationDiagnosisUseCase
-          .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(this.consultationToEdit.idMedicalConsultation)
-          .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
-            console.log('✅ Diagnósticos cargados:', diagnoses);
-            if (diagnoses && diagnoses.length) {
-              diagnoses.forEach(d => {
-                const group = this.createDiagnosisGroup();
-                group.patchValue({
-                  ...d,
-                  diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription || '')
+  /*   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['consultationToEdit'] && this.consultationToEdit) {
+      console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
+  
+      const normalized = this.normalizeConsultationData(this.consultationToEdit);
+      console.log('✅ Normalized data:', normalized);
+      this.form.patchValue(normalized);
+  
+  
+      const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
+      if (idRol === 1) {
+        // Asegurarse de tener el FormArray
+        if (!this.form.contains('diagnoses')) {
+          this.form.addControl('diagnoses', this.fb.array([]));
+        }
+        const array = this.form.get('diagnoses') as FormArray;
+        array.clear();
+  
+        if (this.consultationToEdit.idMedicalConsultation) {
+          // 🔍 Obtener diagnósticos desde el backend
+  
+          
+          this._medicalConsultationDiagnosisUseCase
+            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(this.consultationToEdit.idMedicalConsultation)
+            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
+              console.log('✅ Diagnósticos cargados:', diagnoses);
+              if (diagnoses && diagnoses.length) {
+                diagnoses.forEach(d => {
+                  const group = this.createDiagnosisGroup();
+                  group.patchValue({
+                    ...d,
+                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription || '')
+                  });
+                  array.push(group);
                 });
-                array.push(group);
-              });
-
-            } else {
-              //this.addDiagnosis();
-            }
-          });
-      } else {
-        // Si por alguna razón no tiene ID válido, agregamos uno vacío
-        this.addDiagnosis();
+  
+              } else {
+                //this.addDiagnosis();
+              }
+            });
+        } else {
+          // Si por alguna razón no tiene ID válido, agregamos uno vacío
+          this.addDiagnosis();
+        }
       }
     }
   }
-}
- */
+   */
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -591,7 +499,7 @@ removeHtmlTags(html: string): string {
                     diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription ?? ''),
                     codeDiagnosisType: d.codeDiagnosisType ?? '',
                     comment: d.comment || '',
-                    isPrincipal: d.isPrincipal || '',
+                    isPrincipal: d.isPrincipal || false,
                     // Si hay match, guardamos el objeto; si no, guardamos el texto (fallback)
                     diagnosisType: matchedType ?? (d.diagnosisType || '')
                   });
@@ -669,7 +577,7 @@ removeHtmlTags(html: string): string {
       idMedicalConsultation: [0],
       diagnosisCode: ['', Validators.required],
       diagnosisDescription: ['', Validators.required],
-      codeDiagnosisType: [''], 
+      codeDiagnosisType: [''],
       diagnosisType: [''],
       isPrincipal: [false],
       comment: [''],
@@ -682,25 +590,25 @@ removeHtmlTags(html: string): string {
   }
 
 
- /*  addDiagnosis() {
-
-    const now = new Date().toISOString();
-    const userId = Number(localStorage.getItem('IdUser')) || 0;
-
-    const diagForm = this.fb.group({
-      diagnosisCode: [''],
-      diagnosisDescription: [''],
-      codeDiagnosisType: [''],
-      diagnosisType: [''],
-      comment: [''],
-      isPrincipal: [false],
-      createdBy: [userId],
-      createdAt: [now],
-      updatedBy: [userId],
-      updatedAt: [now]
-    });
-    this.diagnoses.push(diagForm);
-  } */
+  /*  addDiagnosis() {
+ 
+     const now = new Date().toISOString();
+     const userId = Number(localStorage.getItem('IdUser')) || 0;
+ 
+     const diagForm = this.fb.group({
+       diagnosisCode: [''],
+       diagnosisDescription: [''],
+       codeDiagnosisType: [''],
+       diagnosisType: [''],
+       comment: [''],
+       isPrincipal: [false],
+       createdBy: [userId],
+       createdAt: [now],
+       updatedBy: [userId],
+       updatedAt: [now]
+     });
+     this.diagnoses.push(diagForm);
+   } */
 
   addDiagnosis() {
     const now = this.getLocalDateTime();
@@ -723,7 +631,7 @@ removeHtmlTags(html: string): string {
 
   removeDiagnosis(index: number) {
     this.diagnoses.removeAt(index);
-    this.cie10Results$.splice(index, 1); 
+    this.cie10Results$.splice(index, 1);
   }
 
   /* onDiagnosisTypeChange(index: number) {
@@ -748,7 +656,7 @@ removeHtmlTags(html: string): string {
     }
   } */
 
-  onDiagnosisTypeChange(index: number) {
+  /* onDiagnosisTypeChange(index: number) {
     const group = this.diagnoses.at(index) as FormGroup;
     if (!group) return;
 
@@ -769,7 +677,23 @@ removeHtmlTags(html: string): string {
         diagnosisType: selectedType ? selectedType.diagnosisType : (selected ?? '')
       }, { emitEvent: false });
     }
+  } */
+
+  onDiagnosisTypeChange(index: number) {
+    const group = this.diagnoses.at(index) as FormGroup;
+    if (!group) return;
+
+    const selected = group.get('diagnosisType')?.value;
+
+    if (selected && typeof selected === 'object') {
+      // Actualizamos ambos valores: el objeto completo y el código
+      group.patchValue({
+        diagnosisType: selected, // mantenemos el objeto completo para que se vea en el select
+        codeDiagnosisType: String(selected.codeDiagnosisType ?? selected.code ?? '').trim()
+      }, { emitEvent: false });
+    }
   }
+
 
 
   updateBMI() {
@@ -808,7 +732,7 @@ removeHtmlTags(html: string): string {
     if (this.form.invalid) {
       this._notificationService.showInfoMessage('Completa todos los campos requeridos antes de guardar');
       return;
-    } 
+    }
 
     const idUser = Number(localStorage.getItem('IdUser'));
     const idRol = Number(localStorage.getItem('IdRol'));
@@ -874,6 +798,7 @@ removeHtmlTags(html: string): string {
     if (isEdit) {
       // 🟢 Editar
       operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
+      this.backToList.emit();
 
       operation.subscribe({
         next: (res) => {
@@ -957,44 +882,44 @@ removeHtmlTags(html: string): string {
     });
   }
 
- /*  private saveDiagnosesForExistingConsultation() {
-  const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
-  const now = new Date().toISOString();
-
-  const operations = this.diagnoses.controls.map(control => {
-    const diag: MedicalDiagnosisDTO = {
-      ...control.value,
-      idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
-      updatedBy: idUser,
-      updatedAt: this.getLocalDateTime(),
-    };
-
-    if (diag.idMedicalConsultationDiagnosis > 0) {
-      // ya existe → actualizar
-      return this._medicalConsultationDiagnosisUseCase.UpdateMedicalConsultationDiagnosis(diag);
-    } else {
-      // nuevo → crear
-      diag.createdBy = idUser;
-      diag.createdAt = this.getLocalDateTime();
-      return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
-    }
-  });
-
-  forkJoin(operations).subscribe({
-    next: (responses) => {
-      const allSuccess = responses.every(res => res.isSuccess);
-      if (allSuccess) {
-        this.backToList.emit();
-      } else {
-        console.warn('⚠️ Algunos diagnósticos no se pudieron guardar');
-        this.backToList.emit(); // opcional: aún así volvemos
-      }
-    },
-    error: (err) => {
-      console.error('❌ Error al guardar diagnósticos:', err);
-    }
-  });
-} */
+  /*  private saveDiagnosesForExistingConsultation() {
+   const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
+   const now = new Date().toISOString();
+ 
+   const operations = this.diagnoses.controls.map(control => {
+     const diag: MedicalDiagnosisDTO = {
+       ...control.value,
+       idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
+       updatedBy: idUser,
+       updatedAt: this.getLocalDateTime(),
+     };
+ 
+     if (diag.idMedicalConsultationDiagnosis > 0) {
+       // ya existe → actualizar
+       return this._medicalConsultationDiagnosisUseCase.UpdateMedicalConsultationDiagnosis(diag);
+     } else {
+       // nuevo → crear
+       diag.createdBy = idUser;
+       diag.createdAt = this.getLocalDateTime();
+       return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
+     }
+   });
+ 
+   forkJoin(operations).subscribe({
+     next: (responses) => {
+       const allSuccess = responses.every(res => res.isSuccess);
+       if (allSuccess) {
+         this.backToList.emit();
+       } else {
+         console.warn('⚠️ Algunos diagnósticos no se pudieron guardar');
+         this.backToList.emit(); // opcional: aún así volvemos
+       }
+     },
+     error: (err) => {
+       console.error('❌ Error al guardar diagnósticos:', err);
+     }
+   });
+ } */
 
   private saveDiagnosesForExistingConsultation() {
     const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
@@ -1017,7 +942,7 @@ removeHtmlTags(html: string): string {
         idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
         /* codeDiagnosisType: codeDiagnosisType,
         diagnosisType: diagnosisTypeText, */
-         diagnosisType: value.diagnosisType?.diagnosisType,
+        diagnosisType: value.diagnosisType?.diagnosisType,
         codeDiagnosisType: value.diagnosisType?.codeDiagnosisType,
         updatedBy: idUser,
         createdBy: idUser,
@@ -1065,27 +990,27 @@ removeHtmlTags(html: string): string {
       .subscribe((data) => {
         this.lastMedicalHistory = data; // asignas el objeto directamente
 
-        console.log(this.lastMedicalHistory)
+        //console.log(this.lastMedicalHistory)
       });
   }
 
 
- openCreateMedicalHistoryModal(): void {
-  const initialState = {
-    lastMedicalHistory: this.lastMedicalHistory,  // pasa solo el primero
-    idPatient: this.idPatient,
-    idUser: this.idUser,
-    isEditMode: false
-  };
-  this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
-    initialState,
-    class: 'modal-lg'
-  });
+  openCreateMedicalHistoryModal(): void {
+    const initialState = {
+      lastMedicalHistory: this.lastMedicalHistory,  // pasa solo el primero
+      idPatient: this.idPatient,
+      idUser: this.idUser,
+      isEditMode: false
+    };
+    this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
+      initialState,
+      class: 'modal-lg'
+    });
 
-  this.modalRef.onHidden?.subscribe(() => {
-    this.loadLastMedicalHistory();
-  });
-}
+    this.modalRef.onHidden?.subscribe(() => {
+      this.loadLastMedicalHistory();
+    });
+  }
 
   loadExistConditions(): void {
     this._closeConsultationUseCase.GetExitConditions()
@@ -1112,6 +1037,62 @@ removeHtmlTags(html: string): string {
 
         console.log(this.consultationFinalities)
       });
+  }
+
+  scrollStepper(offset: number) {
+    if (!this.stepperWrapper) return;
+    this.stepperWrapper.nativeElement.scrollBy({ left: offset, behavior: 'smooth' });
+  }
+
+
+  goToStep(step: number) {
+    this.currentStep = step;
+
+    // intentar encontrar el elemento con data-step igual al número
+    try {
+      const wrapper = this.stepperWrapper?.nativeElement;
+      if (!wrapper) return;
+
+      const el: HTMLElement | null = wrapper.querySelector(`.step[data-step="${step}"]`);
+      if (!el) return;
+
+      // offset relativo dentro del wrapper
+      const left = el.offsetLeft - wrapper.offsetLeft - 8; // 8px margen pequeño
+      wrapper.scrollTo({ left, behavior: 'smooth' });
+
+      // opcional: pequeño highlight (clase temporal)
+      el.classList.add('clicked-step');
+      setTimeout(() => el.classList.remove('clicked-step'), 400);
+    } catch (err) {
+      console.warn('goToStep error', err);
+    }
+  }
+
+  nextStep() {
+    // avanza al siguiente visible (máx 8)
+    const maxStep = 8;
+    if (this.currentStep < maxStep) {
+      // si siguiente es admin-only y usuario no es admin, saltar
+      let next = this.currentStep + 1;
+      if ((next === 6 || next === 7) && this.idRol === 2) {
+        next = 8; // saltar antec/dx si no es admin
+      }
+      this.goToStep(next);
+    }
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) {
+      let prev = this.currentStep - 1;
+      if ((prev === 6 || prev === 7) && this.idRol === 2) {
+        prev = 5; // saltar back si no es admin
+      }
+      this.goToStep(prev);
+    }
+  }
+
+  resetStepper() {
+    this.goToStep(1);
   }
 
 

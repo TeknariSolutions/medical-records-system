@@ -20,10 +20,16 @@
     </div>
   </div>
 
+
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+
+                    <button class="btn btn-outline-secondary mb-1 button-back" (click)="goBackToPatients()">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </button>
+
                     <h4 class="mt-2 mb-4 title">{{patientData ? 'Actualizar Paciente' : 'Crear Paciente'}}</h4>
 
                         <div id="basic-example">
@@ -275,49 +281,12 @@
                                                     <div class="mb-2">
                                                         <label for="email" class="form-label">
                                                             Correo
-                                                            <span class="text-danger">*</span></label>
+                                                        </label>
                                                         <div class="input-group">
-                                                            <input type="email" class="form-control" id="email" formControlName="email"
-                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.email')?.invalid }" />
-                                                            @if(submitted && patientForm.get('contactInfo.email')?.errors) {
-                                                            <div class="invalid-feedback">
-                                                                @if(patientForm.get('contactInfo.email')?.errors['required']) {
-                                                                <span>Este campo es obligatorio.</span>
-                                                                }
-                                                            </div>
-                                                            }
+                                                            <input type="email" class="form-control" id="email" formControlName="email"/>
                                                         </div>
                                                     </div>
                                                 </div>
-
-
-
-                                                <!--Pais-->
-                                                 <!-- <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="countryId" class="form-label">
-                                                            Pais 
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <select id="residenceDepartment" class="form-control" formControlName="residenceDepartment"
-                                                                (change)="onDepartmentChange($event.target.value)"
-                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.residenceDepartment')?.invalid }">
-                                                                <option value="">Selecciona un departamento</option>
-                                                                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
-                                                            </select>
-                                                
-                                                            @if(submitted && patientForm.get('contactInfo.residenceDepartment')?.errors) {
-                                                            <div class="invalid-feedback">
-                                                                @if(patientForm.get('contactInfo.residenceDepartment')?.errors['required']) {
-                                                                <span>Este campo es obligatorio.</span>
-                                                                }
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div> 
-                                                 -->
 
 
                                                 <!-- País -->
@@ -399,40 +368,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-
-
-
-                                                <!-- Departamento -->
-                                               <!--  <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="residenceDepartment" class="form-label">
-                                                            Departamento 
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <select id="residenceDepartment" class="form-control" formControlName="residenceDepartment"
-                                                                (change)="onDepartmentChange($event.target.value)"
-                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('contactInfo.residenceDepartment')?.invalid }">
-                                                                <option value="">Selecciona un departamento</option>
-                                                                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
-                                                            </select>
-                                                
-                                                            @if(submitted && patientForm.get('contactInfo.residenceDepartment')?.errors) {
-                                                            <div class="invalid-feedback">
-                                                                @if(patientForm.get('contactInfo.residenceDepartment')?.errors['required']) {
-                                                                <span>Este campo es obligatorio.</span>
-                                                                }
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div> -->
-                                                
-                                                
-                                               
- 
-
                                             </div>
                                     
                                             <div class="row mb-3">
@@ -714,31 +649,7 @@
                                                     </div>
                                                 </div>
 
-                                                <!--Régimen-->
-                                               <!--  <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="regime" class="form-label">
-                                                            Régimen
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <select id="regime" name="regime" class="form-control" formControlName="regime"
-                                                                placeholder="Selecciona una opción"
-                                                                [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.regime')?.invalid }">
-                                                                <option value="subsidiado">Subsidiado</option>
-                                                                <option value="contributivo">Contributivo</option>
-                                                            </select>
-                                                            @if(submitted && patientForm.get('medicalInfo.regime')?.errors) {
-                                                            <div class="invalid-feedback">
-                                                                @if(patientForm.get('medicalInfo.regime')?.errors['required']) {
-                                                                <span>Este campo es obligatorio.</span>
-                                                                }
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div> -->
-
+                                            
                                                 <!-- Régimen -->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
@@ -746,14 +657,6 @@
                                                             Régimen <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="input-group">
-                                                            <!-- <select id="regime" class="form-control" (change)="onRegimeChange($event)" 
-                                                            [ngClass]="{'is-invalid': submitted &&(patientForm.get('medicalInfo.regime')?.invalid || patientForm.get('medicalInfo.codRegimen')?.invalid)}">
-                                                                <option value="">Selecciona una opción</option>
-                                                                <option *ngFor="let r of regimes" [value]="r.code">
-                                                                    {{ r.description }}
-                                                                </option>
-                                                            </select> -->
-
                                                             <select id="regime" class="form-control" formControlName="codRegimen" (change)="onRegimeChange($event)"
                                                                 [ngClass]="{'is-invalid': submitted && patientForm.get('medicalInfo.codRegimen')?.invalid}">
                                                                 <option value="">Selecciona una opción</option>
@@ -821,11 +724,19 @@
                                                         <label for="ethnic" class="form-label">
                                                             Grupo Étnico
                                                         </label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="ethnic" formControlName="ethnic"/>
-                                                        </div>
+                            
+                                                        <select id="ethnic" name="ethnic" class="form-control" formControlName="ethnic">
+                                                            <option value="Indígena">Indígena</option>
+                                                            <option value="Afrodescendiente">Afrodescendiente</option>
+                                                            <option value="Raizal">Raizal</option>
+                                                            <option value="Palenquero">Palenquero</option>
+                                                            <option value="Gitano">Gitano</option>
+                                                            <option value="Mestizo">Mestizo</option>
+                                                            <option value="Otro / No Aplica">Otro / No Aplica</option>
+                                                        </select>
                                                     </div>
                                                 </div>
+                                            
                                             </div>
                                         
                                             <ul class="list-inline wizard d-flex justify-content-end mb-0">

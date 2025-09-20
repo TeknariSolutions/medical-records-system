@@ -43,7 +43,7 @@ export class PrescriptionDetailsUseCase {
     }
 
 
-    GetPrescriptionDetailsByIdPrescription(idPrescription?: number): Observable<TableResultDTO> {
+    GetPrescriptionDetailsByIdPrescription(idPrescription?: number): Observable<any> {
         return this._prescriptionDetailsService.GetPrescriptionDetailsByIdPrescription(idPrescription).pipe(
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {

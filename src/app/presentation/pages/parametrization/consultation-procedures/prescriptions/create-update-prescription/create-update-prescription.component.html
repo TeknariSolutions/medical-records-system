@@ -1,50 +1,74 @@
 <div class="modal-header">
-  <h5 class="modal-title">Nueva Prescripción</h5>
+  <h5 class="modal-title">
+    {{ prescriptionToEdit ? 'Actualizar Prescripción Médica' : 'Crear Prescripción  Médica' }}
+  </h5>
+
   <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
 </div>
 
 <div class="modal-body">
   <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()">
 
-    <!-- 🔹 Prescripción -->
-    <div class="mb-3">
-      <label>Observaciones Generales</label>
-      <textarea formControlName="generalObservations" class="form-control"></textarea>
-    </div>
-
-    <!-- 🔹 Detalles -->
+    <!-- Detalles -->
     <div formArrayName="details">
-      <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="border p-2 mb-2 rounded">
+      <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="card-custom border p-2 mb-4 rounded">
+
+         <!-- Título  -->
+        <div class="title-card">
+          <h5 class="mb-3">Medicamento {{ i + 1 }}</h5>
+
+          @if(!prescriptionToEdit) {
+            <button class="btn btn-sm btn-soft-danger" (click)="removeDetail(i)" *ngIf="details.length > 1" data-bs-toggle="tooltip"
+              data-bs-placement="top" title="Eliminar">
+              <i class="mdi mdi-delete-outline"></i>
+            </button>
+          }
+
+        </div>
     
         <!-- Autocomplete de medicamentos -->
         <div class="mb-2 position-relative">
           <label>Medicamento</label>
-          <input type="text" class="form-control" [formControlName]="'medicineName'"
-            (input)="onMedicineInput($event.target.value, i)"
-            (focus)="onMedicineInput(detail.get('medicineName')?.value, i)">
-    
+          <!-- <input type="text" class="form-control" [formControlName]="'medicineName'" placeholder="Busque un medicamento"
+            (input)="onMedicineInput($event.target.value, i)"> -->
+
+            <input type="text" class="form-control" [formControlName]="'medicineName'" placeholder="Busque un medicamento"
+              (input)="onMedicineInput($event.target.value, i)" (keydown.enter)="$event.preventDefault()" />
+
+        
           <!-- Sugerencias -->
           <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
             <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">
               {{ med.commercialName }} - {{ med.activeIngredient }}
             </li>
+          
+            <li class="li-custom d-flex justify-content-between align-items-center">
+              <button type="button" class="btn btn-sm btn-light" (click)="previousPage(i)"
+                [disabled]="medicinesPaginator[i].pageIndex === 1">Anterior</button>
+          
+              <!-- Usamos el arreglo paralelo totalPagesByDetail -->
+              <span>Página {{ medicinesPaginator[i].pageIndex }} de {{ totalPagesByDetail[i] || 1 }}</span>
+          
+              <button type="button" class="btn btn-sm btn-light" (click)="nextPage(i)"
+                [disabled]="medicinesPaginator[i].pageIndex >= (totalPagesByDetail[i] || 1)">Siguiente</button>
+            </li>
           </ul>
         </div>
-    
+
         <div class="row g-2">
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-3">
             <label>Dosis</label>
             <input type="text" formControlName="dosage" class="form-control">
           </div>
-          <div class="col">
+          <div class="col-12 col-md-3">
             <label>Frecuencia</label>
             <input type="text" formControlName="frequency" class="form-control">
           </div>
-          <div class="col">
+          <div class="col-12 col-md-3">
             <label>Duración</label>
             <input type="text" formControlName="duration" class="form-control">
           </div>
-          <div class="col">
+          <div class="col-12 col-md-3">
             <label>Cantidad</label>
             <input type="number" formControlName="prescribedQuantity" class="form-control">
           </div>
@@ -54,18 +78,19 @@
           <label>Instrucciones</label>
           <textarea formControlName="instructions" class="form-control"></textarea>
         </div>
-    
-        <button type="button" class="btn btn-danger btn-sm mt-2" (click)="removeDetail(i)" *ngIf="details.length > 1">
-          Quitar
-        </button>
       </div>
     </div>
 
-    <button type="button" class="btn btn-secondary mt-2" (click)="addDetail()">Agregar Detalle</button>
+    <button type="button" class="btn btn-primary mt-2" (click)="addDetail()">
+      <i class="mdi mdi-plus mr-1"></i>
+      Agregar
+    </button>
 
   </form>
 </div>
 
 <div class="modal-footer">
-  <button type="submit" class="btn btn-primary" [disabled]="prescriptionForm.invalid" (click)="onSubmit()">Guardar</button>
+  <button type="submit" class="btn btn-primary" [disabled]="prescriptionForm.invalid" (click)="onSubmit()">
+    Guardar Prescripción
+  </button>
 </div>

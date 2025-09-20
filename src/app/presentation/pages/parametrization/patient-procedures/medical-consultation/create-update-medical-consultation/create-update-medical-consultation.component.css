@@ -130,3 +130,25 @@
   .step-number { padding: 4px 6px; font-size: 0.78rem; }
   .scroll-btn { width: 30px; height: 30px; }
 }
+
+.card-custom {
+    border: 1px solid #1AAE9F !important;
+    padding: 1rem !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.title-card {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-card i {
+    font-size: 18px !important;
+}
+
+.li-custom {
+    background: white;
+    padding: 20px 15px;
+}
+

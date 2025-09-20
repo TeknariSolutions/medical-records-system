@@ -3,7 +3,6 @@ export interface PrescriptionDTO {
     idMedicalConsultation: number;
     idPatient: number;
     idUser: number;
-    prescriptionDate: Date;
-    generalObservations: string;
+    prescriptionDate: string;
     isActive: boolean;
 }

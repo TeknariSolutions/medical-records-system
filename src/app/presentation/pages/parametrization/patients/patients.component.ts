@@ -51,7 +51,8 @@ export class PatientsComponent implements OnInit {
     this.loadPatients();
   }
 
-  /* loadPatients(filterIdDocument: string = '') {
+ 
+  loadPatients(): void {
     this.isLoading = true;
 
     const paginatorDTO: PaginatorDTO = {
@@ -59,36 +60,19 @@ export class PatientsComponent implements OnInit {
       pageSize: this.pageSize,
     };
 
-    this._patientsUseCase.GetListPatients(paginatorDTO, filterIdDocument, '', '').subscribe({
+    this._patientsUseCase.GetListPatients(
+      paginatorDTO,
+      this.filterIdDocument,
+      this.filterFirstName,
+      this.filterFirstLastName
+    ).subscribe({
       next: (data: TableResultDTO) => {
         this.patients = data.results;
         this.totalRecords = data.totalRecords;
         this.isLoading = false;
       }
     });
-  } */
-
-    loadPatients(): void {
-  this.isLoading = true;
-
-  const paginatorDTO: PaginatorDTO = {
-    pageIndex: this.currentPage,
-    pageSize: this.pageSize,
-  };
-
-  this._patientsUseCase.GetListPatients(
-    paginatorDTO,
-    this.filterIdDocument,
-    this.filterFirstName,
-    this.filterFirstLastName
-  ).subscribe({
-    next: (data: TableResultDTO) => {
-      this.patients = data.results;
-      this.totalRecords = data.totalRecords;
-      this.isLoading = false;
-    }
-  });
-}
+  }
 
   applyFilter(): void {
     this.currentPage = 1; // reset paginación al aplicar filtro

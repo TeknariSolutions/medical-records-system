@@ -31,7 +31,7 @@ export class PrescriptionsComponent {
 
   modalRef?: BsModalRef;
 
-  constructor(private router: Router, 
+  constructor(private router: Router,
     private modalService: BsModalService,
     private _prescriptionsUseCase: PrescriptionsUseCase) {
   }
@@ -44,7 +44,7 @@ export class PrescriptionsComponent {
   loadPrescriptions() {
     this.isLoading = true;
 
- 
+
     this._prescriptionsUseCase.GetListPrescriptions(this.idMedicalConsultation).subscribe({
       next: (data: any) => {
         this.prescriptions = data;
@@ -58,38 +58,20 @@ export class PrescriptionsComponent {
   }
 
 
- /*  openPrescriptionModal() {
+  openPrescriptionModal(prescription?: PrescriptionDTO) {
     this.modalRef = this.modalService.show(CreateUpdatePrescriptionComponent, {
-      class: 'modal-lg',
+      class: 'modal-xl',
       initialState: {
-        consultationData: this.consultationData
+        consultationData: this.consultationData,
+        prescriptionToEdit: prescription
       }
     });
 
-    this.modalRef.content.onClose = (result: any) => {
-      if (result === 'refresh') {
-        this.loadPrescriptions();
-      }
-    };
-  } */
-
-
-  openPrescriptionModal() {
-    this.modalRef = this.modalService.show(CreateUpdatePrescriptionComponent, {
-      class: 'modal-lg',
-      initialState: {
-        consultationData: this.consultationData
-      }
-    });
-
-    // 🔹 Ahora sí me suscribo al EventEmitter
     this.modalRef.content.onClose.subscribe((result: any) => {
       if (result === 'refresh') {
         this.loadPrescriptions();
       }
     });
   }
-
-
 
 }

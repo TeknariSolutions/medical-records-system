@@ -13,6 +13,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DetailsConsultationComponent } from './details-consultation/details-consultation.component';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-medical-consultation',
@@ -23,7 +24,9 @@ import { DataTransferService } from 'src/app/infrastructure/services/common/data
     CommonModule,
     LoadingComponent,
     CreateUpdateMedicalConsultationComponent,
-    PaginationComponent
+    PaginationComponent,
+    FormsModule,
+    ReactiveFormsModule,
   ]
 })
 export class MedicalConsultationComponent implements OnInit {
@@ -44,6 +47,11 @@ export class MedicalConsultationComponent implements OnInit {
   showForm: boolean = false;
 
   modalRef?: BsModalRef;
+
+  //filterStatus?: boolean;
+  filterStatus: boolean | '' = '';
+
+  filterConsultationDate: string = '';
 
   constructor(
     private router: Router,
@@ -69,19 +77,40 @@ export class MedicalConsultationComponent implements OnInit {
       pageSize: this.pageSize,
     };
 
-    this._medicalConsultationUseCase.GetListMedicalConsultationByIdPatient(paginatorDTO, this.idPatient).subscribe({
-      next: (data: TableResultDTO) => {
-        this.consults = data.results;
-        this.totalRecords = data.totalRecords;
-        this.isLoading = false;
+    // Pasamos valores solo si existen
+    const statusToSend = typeof this.filterStatus === 'boolean' ? this.filterStatus : undefined;
+    const dateToSend = this.filterConsultationDate ? this.filterConsultationDate : undefined;
 
-        console.log(this.consults)
-      }
-    });
+    this._medicalConsultationUseCase
+      .GetListMedicalConsultationByIdPatient(paginatorDTO, this.idPatient, statusToSend, dateToSend)
+      .subscribe({
+        next: (data: TableResultDTO) => {
+          this.consults = data.results;
+          this.totalRecords = data.totalRecords;
+          this.isLoading = false;
+        },
+        error: () => { this.isLoading = false; }
+      });
   }
 
+
+
+
+  applyFilter(): void {
+    this.currentPage = 1; // reset paginación
+    this.loadConsults();
+  }
+
+  clearFilter(): void {
+    this.filterStatus = '';
+    this.filterConsultationDate = '';
+    this.currentPage = 1; // opcional: reiniciar paginación
+    this.loadConsults();
+  }
+
+
   onNewConsultationClick() {
-    this.selectedConsultation = undefined; 
+    this.selectedConsultation = undefined;
     this.showForm = true;
     this.createNewConsultation.emit();
   }
@@ -96,7 +125,7 @@ export class MedicalConsultationComponent implements OnInit {
   onEditConsultation(consultation: MedicalConsultationDTO) {
     this.selectedConsultation = consultation;
     this.showForm = true;
-  } 
+  }
 
   onPageChange(newPage: number): void {
     this.currentPage = newPage;

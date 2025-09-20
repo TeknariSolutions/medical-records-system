@@ -2,9 +2,6 @@
 // @import '~bootstrap/scss/bootstrap';
 
 /* You can add global styles to this file, and also import other style files */
-
-//@import 'node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
-
 @import '~dropzone/dist/min/dropzone.min.css';
 
 .modal-holder {
@@ -171,28 +168,5 @@ dropzone>.dropzone.dz-wrapper {
 }
 
 .btn-sm {
-  i {
-    font-size: 15px !important;
-  }
+  font-size: 15px !important;
 }
-html, body { height: 100%; }
-
-/* 
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
- */
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif !important; // 👈 pon aquí tu fuente original
-}
-
-/* .mat-h5, .mat-typography .mat-h5, .mat-typography h5 {
-    font: icon !important; 
-    margin: 0 0 12px;
-
-}
-
-.mat-body, .mat-body-2, .mat-typography .mat-body, .mat-typography .mat-body-2, .mat-typography {
-    font: icon !important; 
-    letter-spacing: .0178571429em;
-}
- */

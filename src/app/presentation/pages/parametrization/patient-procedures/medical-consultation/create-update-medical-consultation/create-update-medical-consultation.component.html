@@ -82,14 +82,26 @@
 
         <!-- Paso 1: Motivo -->
         <div *ngIf="currentStep === 1" formGroupName="basicInfo">
-          <div class="col-12">
-            <label>Motivo de Consulta</label>
-            <textarea class="form-control mb-2" formControlName="consultationReason" required></textarea>
+          <div class="col-12 mb-3">
+            <label>Motivo de Consulta
+              <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control mb-2" formControlName="consultationReason" rows="1"
+              [ngClass]="{ 'is-invalid': submitted && form.get('basicInfo.consultationReason')?.invalid }">
+                      </textarea>
+          
+            @if(submitted && form.get('basicInfo.consultationReason')?.errors) {
+            <div class="invalid-feedback">
+              @if(form.get('basicInfo.consultationReason')?.errors['required']) {
+              <span>Este campo es obligatorio.</span>
+              }
+            </div>
+            }
           </div>
 
           <div class="col-12 mb-3">
             <label>Enfermedad Actual</label>
-            <textarea class="form-control mb-2" formControlName="currentIllness"></textarea>
+            <textarea class="form-control mb-2" formControlName="currentIllness" rows="4"></textarea>
           </div>
 
           <div class="row mt-4">
@@ -188,26 +200,45 @@
         <!-- Paso 3: Signos Vitales -->
         <div *ngIf="currentStep === 3" formGroupName="vitalSigns">
           <div class="row mt-4">
-            <div class="col-md-4 mb-3">
-              <label>Presión Arterial</label>
-              <input formControlName="vitalSigns_BP" type="text" class="form-control" placeholder="Ej: 120/80" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Frecuencia Cardíaca</label>
-              <input formControlName="vitalSigns_HR" type="number" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Frecuencia Respiratoria</label>
-              <input formControlName="vitalSigns_RR" type="number" class="form-control" />
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-              <label>Temperatura</label>
-              <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-              <label>Saturación SpO2</label>
-              <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
-            </div>
+              <div class="col-md-4 mb-3">
+                <label>Presión Arterial</label>
+                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Frecuencia Cardíaca</label>
+                <input formControlName="vitalSigns_HR" type="number" class="form-control" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Frecuencia Respiratoria</label>
+                <input formControlName="vitalSigns_RR" type="number" class="form-control" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label>Temperatura</label>
+                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label>Saturación de Oxígeno SpO2</label>
+                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
+              </div>
+
+               <div class="col-md-4 mb-3">
+                <label>Peso (Kg)</label>
+                <input class="form-control" type="number" formControlName="weightKg" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Talla (cms)</label>
+                <input class="form-control" type="text" formControlName="heightCm" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>IMC</label>
+                <input class="form-control" type="number" formControlName="bmi" readonly />
+              </div>
           </div>
 
           <div class="mt-3">
@@ -270,7 +301,7 @@
         <div *ngIf="currentStep === 5" formGroupName="paraClinicals">
           <div class="col-12">
             <label>Paraclínicos</label>
-            <textarea class="form-control mb-2" formControlName="paraClinicalTest"></textarea>
+            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5"></textarea>
           </div>
 
           <div class="mt-3">
@@ -350,33 +381,47 @@
                 <div class="col-md-6 mb-2">
                   <strong>Detalle drogas:</strong> {{ lastMedicalHistory.drugDetails || 'NO APLICA' }}
                 </div>
-              </div>
-
-              <div class="mt-3">
-                <button type="button" class="btn btn-primary" (click)="openCreateMedicalHistoryModal()">Crear</button>
-              </div>
-            </div>
-
-
-            <div class="mt-3">
-              <button type="button" class="btn btn-light me-2" (click)="goToStep(5)">Atrás</button>
-              <button type="button" class="btn btn-primary" (click)="goToStep(7)">Siguiente</button>
+              </div> 
             </div>
           </div>
+
           <ng-template #noData>
             <p>No hay antecedentes previos registrados.</p>
-            <div class="mt-3">
+          </ng-template>
+
+          <div class="mt-3">
+            <button type="button" class="btn btn-primary" (click)="openCreateMedicalHistoryModal()">Crear</button>
+          </div>
+
+          <div class="mt-3">
               <button type="button" class="btn btn-light me-2" (click)="goToStep(5)">Atrás</button>
               <button type="button" class="btn btn-primary" (click)="goToStep(7)">Siguiente</button>
-            </div>
-          </ng-template>
+          </div>
         </div>
 
         <!-- Paso 7: Diagnósticos (solo admin) -->
-        <div *ngIf="currentStep === 7 && idRol !== 2" formArrayName="diagnoses">
+        <div *ngIf="currentStep === 7 && idRol !== 2 && diagnoses?.controls" formArrayName="diagnoses">
           <h5 class="mt-4">Diagnósticos</h5>
 
-          <div *ngFor="let diag of diagnoses.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3">
+          <div *ngFor="let diag of diagnoses.controls; let i = index" [formGroupName]="i" class="card-custom border p-3 mb-4">
+
+            <!-- Título dinámico -->
+            
+            <div class="title-card">
+              <h5 class="mb-3">Diagnóstico {{ i + 1 }}</h5>
+            
+              @if(!consultationToEdit?.status) {
+              <button class="btn btn-sm btn-soft-danger" [class.readonly-form]="consultationToEdit?.status"
+                (click)="removeDiagnosis(i)" *ngIf="diagnoses.length > 1" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Eliminar">
+                <i class="mdi mdi-delete-outline"></i>
+              </button>
+            
+              }
+            
+            </div>
+    
+
             <div class="row">
               <div class="col-md-4 mb-2 position-relative">
                 <label>Código</label>
@@ -419,13 +464,21 @@
                 <label class="ms-1">Principal</label>
               </div>
 
-              <div class="col-md-6 mt-2 text-end">
+              <!-- <div class="col-md-6 mt-2 text-end">
                 <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
-              </div>
+              </div> -->
             </div>
           </div>
 
-          <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button>
+          <!-- <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button> -->
+
+          @if(!consultationToEdit?.status) {
+            <button type="button" class="btn btn-primary mt-2 mb-5" (click)="addDiagnosis()">
+              <i class="mdi mdi-plus mr-1"></i>
+              Agregar
+            </button>
+            }
+          
 
           <div class="mt-3">
             <button type="button" class="btn btn-light me-2" (click)="goToStep(idRol !== 2 ? 6 : 5)">Atrás</button>
@@ -441,7 +494,7 @@
               <div class="mb-2">
                 <label for="idExitCondition" class="form-label">
                   Condición de Salida
-                  <span class="text-danger">*</span>
+                  
                 </label>
                 <div class="input-group">
                   <select id="idExitCondition" class="form-control" formControlName="idExitCondition">
@@ -450,14 +503,6 @@
                       {{ index.exitConditionName }}
                     </option>
                   </select>
-
-                  @if(submitted && form.get('closeConsultation.idExitCondition')?.errors) {
-                  <div class="invalid-feedback">
-                    @if(patientForm.get('closeConsultation.idExitCondition')?.errors['required']) {
-                    <span>Este campo es obligatorio.</span>
-                    }
-                  </div>
-                  }
                 </div>
               </div>
             </div>
@@ -468,7 +513,6 @@
               <div class="mb-2">
                 <label for="idExternalCauseCode" class="form-label">
                   Causa Externa
-                  <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
                   <select id="idExternalCauseCode" class="form-control" formControlName="idExternalCauseCode">
@@ -477,14 +521,6 @@
                       {{ index.externalCauseName }}
                     </option>
                   </select>
-
-                  @if(submitted && form.get('closeConsultation.idExternalCauseCode')?.errors) {
-                  <div class="invalid-feedback">
-                    @if(patientForm.get('closeConsultation.idExternalCauseCode')?.errors['required']) {
-                    <span>Este campo es obligatorio.</span>
-                    }
-                  </div>
-                  }
                 </div>
               </div>
             </div>
@@ -495,7 +531,6 @@
               <div class="mb-2">
                 <label for="idConsultationFinality" class="form-label">
                   Finalidad de Consulta
-                  <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
                   <select id="idConsultationFinality" class="form-control" formControlName="idConsultationFinality">
@@ -504,14 +539,6 @@
                       {{ index.consultationFinalityName }}
                     </option>
                   </select>
-
-                  @if(submitted && form.get('closeConsultation.idConsultationFinality')?.errors) {
-                  <div class="invalid-feedback">
-                    @if(patientForm.get('closeConsultation.idConsultationFinality')?.errors['required']) {
-                    <span>Este campo es obligatorio.</span>
-                    }
-                  </div>
-                  }
                 </div>
               </div>
             </div>

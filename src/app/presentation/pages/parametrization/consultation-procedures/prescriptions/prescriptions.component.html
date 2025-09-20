@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
-                        <h5 class="mb-0 flex-grow-1">Listado de Prescripciones</h5>
+                        <h5 class="mb-0 flex-grow-1">Listado de Prescripciones Médicas</h5>
                         <div class="flex-shrink-0 d-flex gap-1">
                             <button type="button" class="btn btn-primary" (click)="openPrescriptionModal()">
                                 <i class="mdi mdi-plus mr-1"></i>
@@ -33,7 +33,6 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th scope="col">Fecha</th>
-                                            <th scope="col">Observaciones</th>
                                             <th scope="col" class="align-middle text-center" style="width: 10%">
                                                 Acciones
                                             </th>
@@ -43,19 +42,26 @@
                                     <tbody>
                                         @for(data of prescriptions; track $index){
                                             <tr>
-                                                <td>{{ data.prescriptionDate }}</td>
-                                                <td>{{ data.generalObservations }}</td>
-
+                                                <td>
+                                                    Fecha: {{ data.prescriptionDate | date:'dd-MM-yyyy' }} <br>
+                                                    Hora: {{ data.prescriptionDate | date:'hh:mm a' }}
+                                                </td>
+                                                
                                                 <!-- Actions -->
                                                 <td class="d-flex justify-content-end">
-                                                
-                                                    <ul class="list-unstyled hstack gap-1 mb-0">
-                                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Prescripción">
-                                                            <button class="btn btn-sm btn-success-info">
-                                                                <i class="mdi mdi-eye-outline"></i>
-                                                            </button>
-                                                        </li>
-                                                    </ul>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <!-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Prescripción">
+                                                        <button class="btn btn-sm btn-primary" (click)="openPrescriptionModal(data)">
+                                                            <i class="mdi mdi-pencil-outline"></i>
+                                                        </button>
+                                                    </li> -->
+                                                    
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                                        <button class="btn btn-sm btn-soft-success" (click)="openPrescriptionModal(data)">
+                                                            <i class="mdi mdi-pencil-outline"></i>
+                                                        </button>
+                                                    </li>
+                                                </ul>
                                                 </td>
                                             </tr>
                                         }

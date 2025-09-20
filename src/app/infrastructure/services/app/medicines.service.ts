@@ -59,4 +59,17 @@ export class MedicinesService {
     );
   }
 
+  
+
+  GetMedicineById(IdMedicine: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          IdMedicine
+        };
+        return this._httpService.get<ResponseDTO>(url, "GetMedicineById", params);
+      })
+    );
+  }
+
 }

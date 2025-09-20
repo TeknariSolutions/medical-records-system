@@ -143,17 +143,23 @@ export class NotificationsService {
     this.openSwal('Información', message, 'info');
   }
 
-  confirm(title: string, text: string, icon: 'warning' | 'question' = 'question'): Promise<boolean> {
+  confirm(
+    title: string,
+    text: string,
+    icon: 'warning' | 'question' = 'question',
+    confirmColor: string = '#1AAE9F'
+  ): Promise<boolean> {
     return Swal.fire({
       title,
       text,
       icon,
       showCancelButton: true,
-      confirmButtonText: 'Aceptar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'ACEPTAR',
+      cancelButtonText: 'CANCELAR',
       reverseButtons: true,
-      focusCancel: true
+      focusCancel: true,
+      confirmButtonColor: confirmColor // 🔹 aquí se aplica el color
     }).then(result => result.isConfirmed);
   }
-  
+
 }

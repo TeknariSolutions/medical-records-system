@@ -23,8 +23,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(),
     ...appConfig.providers, 
-    provideAnimationsAsync(),
-    provideAnimations(),
+    provideAnimationsAsync()
   ]
 })
 .catch((err) => console.error('Error during bootstrapping the application:', err));
