@@ -410,7 +410,7 @@
             <div class="title-card">
               <h5 class="mb-3">Diagnóstico {{ i + 1 }}</h5>
             
-              @if(!consultationToEdit?.status) {
+              @if(!consultationToEdit) {
               <button class="btn btn-sm btn-soft-danger" [class.readonly-form]="consultationToEdit?.status"
                 (click)="removeDiagnosis(i)" *ngIf="diagnoses.length > 1" data-bs-toggle="tooltip" data-bs-placement="top"
                 title="Eliminar">
@@ -464,13 +464,8 @@
                 <label class="ms-1">Principal</label>
               </div>
 
-              <!-- <div class="col-md-6 mt-2 text-end">
-                <button type="button" class="btn btn-danger btn-sm" (click)="removeDiagnosis(i)">Eliminar</button>
-              </div> -->
             </div>
           </div>
-
-          <!-- <button type="button" class="btn btn-outline-primary" (click)="addDiagnosis()">Agregar diagnóstico</button> -->
 
           @if(!consultationToEdit?.status) {
             <button type="button" class="btn btn-primary mt-2 mb-5" (click)="addDiagnosis()">
@@ -498,11 +493,12 @@
                 </label>
                 <div class="input-group">
                   <select id="idExitCondition" class="form-control" formControlName="idExitCondition">
-                    <option value="">Selecciona una condición de salida </option>
-                    <option *ngFor="let index of exitConditions" [value]="index.idExitCondition">
+                    <option [ngValue]="null">Selecciona una condición de salida</option>
+                    <option *ngFor="let index of exitConditions" [ngValue]="index.idExitCondition">
                       {{ index.exitConditionName }}
                     </option>
                   </select>
+                  
                 </div>
               </div>
             </div>
@@ -516,8 +512,8 @@
                 </label>
                 <div class="input-group">
                   <select id="idExternalCauseCode" class="form-control" formControlName="idExternalCauseCode">
-                    <option value="">Selecciona una condición de salida </option>
-                    <option *ngFor="let index of externalCauses" [value]="index.idExternalCauseCode">
+                    <option [ngValue]="null">Selecciona una causa externa</option>
+                    <option *ngFor="let index of externalCauses" [ngValue]="index.idExternalCauseCode">
                       {{ index.externalCauseName }}
                     </option>
                   </select>
@@ -534,8 +530,8 @@
                 </label>
                 <div class="input-group">
                   <select id="idConsultationFinality" class="form-control" formControlName="idConsultationFinality">
-                    <option value="">Selecciona una finalidad de consulta </option>
-                    <option *ngFor="let index of consultationFinalities" [value]="index.idConsultationFinality">
+                    <option [ngValue]="null">Selecciona una finalidad de consulta</option>
+                    <option *ngFor="let index of consultationFinalities" [ngValue]="index.idConsultationFinality">
                       {{ index.consultationFinalityName }}
                     </option>
                   </select>
@@ -544,16 +540,11 @@
             </div>
 
           </div>
-
-          <!-- <div class="mt-3">
-      <button type="button" class="btn btn-light me-2" (click)="goToStep(idRol !== 2 ? 7 : 5)">Atrás</button>
-      <button type="button" class="btn btn-success" (click)="submit()">Finalizar</button>
-    </div> -->
         </div>
 
         <!-- Guardar Datos -->
         <div class="mt-4 text-end gap-3">
-          <!--  <button type="button" class="btn btn-light" (click)="back()">Cancelar</button> -->
+          <button type="button" class="btn btn-light" (click)="back()">Cancelar</button>
           <button type="button" class="btn btn-primary" (click)="submit()">Guardar</button>
         </div>
 

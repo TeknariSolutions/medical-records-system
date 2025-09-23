@@ -34,8 +34,7 @@ export class MedicalHistoriesComponent {
 
   ngOnInit(): void {
     this.idPatient = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('ID del paciente:', this.idPatient);
-
+   
     this.loadListMedicalHistory();
   }
 
@@ -49,7 +48,6 @@ export class MedicalHistoriesComponent {
       .subscribe({
         next: (data) => {
           this.medicalHistories = data.results;
-          console.log(this.medicalHistories);
         },
         error: (error) => {
           console.error(error);

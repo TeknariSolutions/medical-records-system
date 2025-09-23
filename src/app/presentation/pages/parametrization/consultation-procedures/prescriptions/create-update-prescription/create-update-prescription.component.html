@@ -23,7 +23,6 @@
               <i class="mdi mdi-delete-outline"></i>
             </button>
           }
-
         </div>
     
         <!-- Autocomplete de medicamentos -->
@@ -90,7 +89,8 @@
 </div>
 
 <div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="close()">Cancelar</button>
   <button type="submit" class="btn btn-primary" [disabled]="prescriptionForm.invalid" (click)="onSubmit()">
-    Guardar Prescripción
+    Guardar
   </button>
 </div>

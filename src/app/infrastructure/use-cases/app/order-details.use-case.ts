@@ -42,7 +42,7 @@ export class OrderDetailsUseCase {
         );
     }
 
-    GetListOrderDetailsByOrder(idOrder?: number): Observable<ResponseDTO> {
+    GetListOrderDetailsByOrder(idOrder?: number): Observable<any> {
         return this._orderDetailsService.GetListOrderDetailsByOrder(idOrder).pipe(
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {

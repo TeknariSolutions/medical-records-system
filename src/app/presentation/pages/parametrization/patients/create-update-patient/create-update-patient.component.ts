@@ -117,6 +117,11 @@ export class CreateUpdatePatientComponent implements OnInit {
     this.loadEPS();
     this.loadCountries();
 
+    if (!this.isEditMode && this.patientForm.get('contactInfo.countryId')?.value) {
+      const countryId = this.patientForm.get('contactInfo.countryId')?.value;
+      this.onCountryChange(countryId);
+    }
+
     this._dataTransferService.getData$()
       .pipe(take(1)) // solo una vez, evita acumulación
       .subscribe(patient => {
@@ -132,8 +137,7 @@ export class CreateUpdatePatientComponent implements OnInit {
             municipalityId: patient.idMunicipality ?? patient.municipalityId,
           };
 
-          console.log(this.patientData);
-
+  
           // Transformar la fecha para el input[type="date"]
           const birthDayFormatted = this.formatDate(patient.birthDay);
 
@@ -185,10 +189,10 @@ export class CreateUpdatePatientComponent implements OnInit {
         }
 
         // Ya se tiene el valor de residenceDepartment en el formulario
-        const countryId = patient.countryId;
+        /* const countryId = patient.countryId;
         if (countryId) {
           this.onCountryChange(countryId);
-        } 
+        }  */
       });
   }
 
@@ -212,7 +216,7 @@ export class CreateUpdatePatientComponent implements OnInit {
 
       contactInfo: this.formBuilder.group({
         address: ['', Validators.required],
-        countryId: [null],
+        countryId: [48],
         departmentId: [null],
         municipalityId: [null],
         codRegimen: [null],
@@ -287,6 +291,7 @@ export class CreateUpdatePatientComponent implements OnInit {
 
   
   // Cargar países (primer paso)
+  
   loadCountries() {
     this._countriesUseCase
       .GetListCountries({ pageIndex: 1, pageSize: 300 })

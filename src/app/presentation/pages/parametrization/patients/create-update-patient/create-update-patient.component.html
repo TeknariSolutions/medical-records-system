@@ -416,100 +416,106 @@
                                             </div>
 
                                             <!--Datos del acudiente-->
-                                            <div class="row mb-3">
-                                                <h5>Datos del Acudiente</h5>
+
+                                            <div class="card-custom border p-2 mb-4 rounded">
                                             
-                                                <!--Nombre del acudiente-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="phoneNumber" class="form-label">
-                                                            Nombre
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="nameOfGuardian" formControlName="nameOfGuardian" />
+                                                <div class="row mb-3">
+                                                    <h5 class="mb-4">Datos del Acudiente</h5>
+                                            
+                                                    <!--Nombre del acudiente-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="phoneNumber" class="form-label">
+                                                                Nombre
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="nameOfGuardian" formControlName="nameOfGuardian" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            
+                                                    <!-- Parentesco -->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="relationship" class="form-label">
+                                                                Parentesco
+                                                            </label>
+                                                            <ng-select [items]="relationships" bindLabel="label" bindValue="value" formControlName="relationship"
+                                                                placeholder="Selecciona un parentesco">
+                                                            </ng-select>
+                                                        </div>
+                                                    </div>
+                                            
+                                                    <!-- Tipo de Documento-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="documentType" class="form-label">
+                                                                Tipo de Documento
+                                                            </label>
+                                                            <ng-select [items]="documentTypes" bindLabel="label" bindValue="value"
+                                                                formControlName="documentTypeGuradian" placeholder="Selecciona un tipo de documento">
+                                                            </ng-select>
+                                                        </div>
+                                                    </div>
+                                            
+                                                    <!-- Documento-->
+                                                    <div class="col-12 col-lg-6 col-md-6">
+                                                        <div class="mb-2">
+                                                            <label for="text" class="form-label">
+                                                                Documento
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="idDocumentGuardian"
+                                                                    formControlName="idDocumentGuardian" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             
-                                                <!-- Parentesco -->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="relationship" class="form-label">
-                                                            Parentesco
-                                                        </label>
-                                                        <ng-select [items]="relationships" bindLabel="label" bindValue="value" formControlName="relationship"
-                                                            placeholder="Selecciona un parentesco">
-                                                        </ng-select>
-                                                    </div>
-                                                </div>
                                             
-                                                <!-- Tipo de Documento-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="documentType" class="form-label">
-                                                            Tipo de Documento
-                                                        </label>
-                                                        <ng-select [items]="documentTypes" bindLabel="label" bindValue="value"
-                                                            formControlName="documentTypeGuradian" placeholder="Selecciona un tipo de documento">
-                                                        </ng-select>
-                                                    </div>
-                                                </div>
+                                                <div class="row mb-3">
                                             
-                                                <!-- Documento-->
-                                                <div class="col-12 col-lg-6 col-md-6">
-                                                    <div class="mb-2">
-                                                        <label for="text" class="form-label">
-                                                            Documento
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="idDocumentGuardian"
-                                                                formControlName="idDocumentGuardian" />
+                                                    <!--Direccion del acudiente-->
+                                                    <div class="col-12 col-lg-4 col-md-4">
+                                                        <div class="mb-2">
+                                                            <label for="phoneNumber" class="form-label">
+                                                                Dirección
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="addressOfGuardian"
+                                                                    formControlName="addressOfGuardian" />
+                                                            </div>
                                                         </div>
                                                     </div>
+                                            
+                                                    <!--Telefono del acudiente-->
+                                                    <div class="col-12 col-lg-4 col-md-4">
+                                                        <div class="mb-2">
+                                                            <label for="phoneNumberOfGuardian" class="form-label">
+                                                                Telefono
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" id="phoneNumberOfGuardian"
+                                                                    formControlName="phoneNumberOfGuardian" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            
+                                                    <!--Correo del acudiente-->
+                                                    <div class="col-12 col-lg-4 col-md-4">
+                                                        <div class="mb-2">
+                                                            <label for="emailOfGuardian" class="form-label">
+                                                                Correo
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <input type="email" class="form-control" id="emailOfGuardian" formControlName="emailOfGuardian" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            
                                                 </div>
                                             </div>
 
-                                        
-                                             <div class="row mb-3">
-
-                                                <!--Direccion del acudiente-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="phoneNumber" class="form-label">
-                                                            Dirección
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="addressOfGuardian" formControlName="addressOfGuardian" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!--Telefono del acudiente-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="phoneNumberOfGuardian" class="form-label">
-                                                            Telefono
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="phoneNumberOfGuardian" formControlName="phoneNumberOfGuardian" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!--Correo del acudiente-->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="emailOfGuardian" class="form-label">
-                                                            Correo
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <input type="email" class="form-control" id="emailOfGuardian" formControlName="emailOfGuardian" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                             </div>
-                                    
                                             <ul class="list-inline wizard d-flex justify-content-end mb-0">
                                                 <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-light"
                                                         cdkStepperPrevious>Anterior</button></li>

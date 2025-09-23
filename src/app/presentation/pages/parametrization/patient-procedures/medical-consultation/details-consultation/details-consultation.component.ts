@@ -30,9 +30,6 @@ export class DetailsConsultationComponent {
   }
 
   ngOnInit(): void {
-    console.log('ID del paciente:', this.idPatient);
-    console.log('ID de la consulta:', this.idMedicalConsultation);
-
     this.loadDataConsultation();
   }
 
@@ -74,9 +71,6 @@ export class DetailsConsultationComponent {
       next: (data) => {
         this.dataConsultation = data.main.length > 0 ? data.main[0] : null;
         this.diagnoses = data.related;
-
-        console.log("Consulta:", this.dataConsultation);
-        console.log("Diagnósticos:", this.diagnoses);
       }
     });
   }

@@ -49,7 +49,7 @@
 
 /* cada step */
 .step {
-  min-width: 18%;
+  min-width: 23%;
   display: inline-flex;
   align-items: center;
   gap: 8px;

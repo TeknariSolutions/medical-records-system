@@ -66,9 +66,8 @@ export class PatientProceduresComponent implements OnInit {
           }
         }
 
-        console.log('patientData en PatientProcedures:', this.patientData);
-
-        // ✅ Revisa el flag
+      
+        // Revisa el flag
         const flag = sessionStorage.getItem('pp_showConsultations');
         if (flag === 'true') {
           this.showConsultations = true;

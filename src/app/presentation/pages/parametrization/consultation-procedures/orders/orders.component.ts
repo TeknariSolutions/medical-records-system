@@ -43,7 +43,6 @@ export class OrdersComponent {
     this._ordersUseCase.GetListOrders(this.idMedicalConsultation).subscribe({
       next: (data: any) => {
         this.orders = data.results;
-        console.log(this.orders)
         this.isLoading = false;
       },
       error: () => {
@@ -52,21 +51,21 @@ export class OrdersComponent {
     });
   }
 
-  openOrderModal() {
-     this.modalRef = this.modalService.show(CreateUpdateOrderComponent, {
-      class: 'modal-lg',
+  openOrderModal(order?: OrderDTO) {
+    this.modalRef = this.modalService.show(CreateUpdateOrderComponent, {
+      class: 'modal-xl',
       initialState: {
-        consultationData: this.consultationData
+        consultationData: this.consultationData,
+        orderToEdit: order
       }
-    }); 
+    });
 
-     // 🔹 Ahora sí me suscribo al EventEmitter
-      this.modalRef.content.onClose.subscribe((result: any) => {
-        if (result === 'refresh') {
-          this.loadOrders();
-        }
-      });
+    // 🔹 Ahora sí me suscribo al EventEmitter
+    this.modalRef.content.onClose.subscribe((result: any) => {
+      if (result === 'refresh') {
+        this.loadOrders();
+      }
+    });
   }
-
 
 }

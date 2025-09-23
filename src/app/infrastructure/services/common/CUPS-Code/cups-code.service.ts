@@ -17,7 +17,7 @@ export class CUPSCodeService {
   ) { }
 
 
-   GetListCUPS_Codes(paginator: PaginatorDTO, code?: string, name?: string): Observable<ResponseDTO> {
+  GetListCUPS_Codes(paginator: PaginatorDTO, code?: string, name?: string): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {
         let params: any = {
@@ -29,6 +29,18 @@ export class CUPSCodeService {
         return this._httpService.get<ResponseDTO>(url, "GetListCUPS_Codes", params);
       })
     );
-  } 
+  }
+
+
+  GetCUPSCodeById(idCUPSCode: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idCUPSCode
+        };
+        return this._httpService.get<ResponseDTO>(url, "GetCUPSCodeById", params);
+      })
+    );
+  }
 
 }

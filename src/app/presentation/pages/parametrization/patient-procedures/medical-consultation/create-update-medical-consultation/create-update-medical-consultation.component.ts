@@ -19,6 +19,8 @@ import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
 import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
+import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
+
 
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
@@ -169,9 +171,9 @@ export class CreateUpdateMedicalConsultationComponent {
         paraClinicalTest: ['']
       }),
       closeConsultation: this.fb.group({
-        idConsultationFinality: [0],
-        idExitCondition: [0],
-        idExternalCauseCode: [0],
+        idConsultationFinality: [null],
+        idExitCondition: [null],
+        idExternalCauseCode: [null],
       }),
 
       diagnoses: this.fb.array([]) // solo admin
@@ -182,59 +184,6 @@ export class CreateUpdateMedicalConsultationComponent {
     this.form.get('vitalSigns.heightCm')?.valueChanges.subscribe(() => this.updateBMI());
 
   }
-
-
-  /*  ngOnInit(): void {
-     const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
- 
-     this.idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
- 
-     // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
-     if (idRol === 1 && !this.form.contains('diagnoses')) {
-       this.form.addControl('diagnoses', this.fb.array([]));
-     }
- 
-     const weightControl = this.form.get('weightKg');
-     const heightControl = this.form.get('heightCm');
- 
-     if (weightControl && heightControl) {
-       weightControl.valueChanges.subscribe(() => this.updateBMI());
-       heightControl.valueChanges.subscribe(() => this.updateBMI());
-     }
- 
-     // Si es auxiliar (rolId 2): forzar status a false y deshabilitar
-     if (idRol === 2) {
-       this.form.get('basicInfo.status')?.setValue(false);
-       this.form.get('basicInfo.status')?.disable();
-     }
- 
-     this.loadLastMedicalHistory();
- 
- 
-     this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
-       if (value) {
-         const confirmed = await this._notificationService.confirm(
-           'Advertencia',
-           'Si marca la consulta como CERRADA y la guarda ya no podrá editarla después.',
-           'warning'
-         );
- 
-         if (!confirmed) {
-           this.form.get('basicInfo.status')?.setValue(false, { emitEvent: false });
-         }
-       }
-     });
- 
-     // 🔒 Si la consulta ya está cerrada, bloqueamos edición
-     if (this.consultationToEdit?.status) {
-       this.form.disable();
-     }
- 
-     this.loadExistConditions();
-     this.loadExternalCauseCodes();
-     this.loadConsultationFinalities();
- 
-   } */
 
 
   ngOnInit(): void {
@@ -391,63 +340,12 @@ export class CreateUpdateMedicalConsultationComponent {
     return html.replace(/<[^>]+>/g, '');
   }
 
-
-  /*   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['consultationToEdit'] && this.consultationToEdit) {
-      console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
-  
-      const normalized = this.normalizeConsultationData(this.consultationToEdit);
-      console.log('✅ Normalized data:', normalized);
-      this.form.patchValue(normalized);
-  
-  
-      const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-      if (idRol === 1) {
-        // Asegurarse de tener el FormArray
-        if (!this.form.contains('diagnoses')) {
-          this.form.addControl('diagnoses', this.fb.array([]));
-        }
-        const array = this.form.get('diagnoses') as FormArray;
-        array.clear();
-  
-        if (this.consultationToEdit.idMedicalConsultation) {
-          // 🔍 Obtener diagnósticos desde el backend
-  
-          
-          this._medicalConsultationDiagnosisUseCase
-            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(this.consultationToEdit.idMedicalConsultation)
-            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
-              console.log('✅ Diagnósticos cargados:', diagnoses);
-              if (diagnoses && diagnoses.length) {
-                diagnoses.forEach(d => {
-                  const group = this.createDiagnosisGroup();
-                  group.patchValue({
-                    ...d,
-                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription || '')
-                  });
-                  array.push(group);
-                });
-  
-              } else {
-                //this.addDiagnosis();
-              }
-            });
-        } else {
-          // Si por alguna razón no tiene ID válido, agregamos uno vacío
-          this.addDiagnosis();
-        }
-      }
-    }
-  }
-   */
-
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['consultationToEdit'] && this.consultationToEdit) {
-      console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
+      //console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
 
       const normalized = this.normalizeConsultationData(this.consultationToEdit);
-      console.log('✅ Normalized data:', normalized);
+      //console.log('✅ Normalized data:', normalized);
       this.form.patchValue(normalized);
 
       const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
@@ -459,26 +357,7 @@ export class CreateUpdateMedicalConsultationComponent {
         array.clear();
 
         if (this.consultationToEdit.idMedicalConsultation) {
-          /* this._medicalConsultationDiagnosisUseCase
-            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(this.consultationToEdit.idMedicalConsultation)
-            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
-              console.log('✅ Diagnósticos cargados:', diagnoses);
-              if (diagnoses && diagnoses.length) {
-                diagnoses.forEach(d => {
-                  const group = this.createDiagnosisGroup();
-                  group.patchValue({
-                    diagnosisCode: d.diagnosisCode,
-                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription || ''),
-                    codeDiagnosisType: d.codeDiagnosisType || '', // 👈 siempre asignamos aunque venga vacío
-                    diagnosisType: d.diagnosisType || ''
-                  });
-                  array.push(group);
-                });
-              } else {
-                this.addDiagnosis();
-              }
-            }); */
-
+        
           this._medicalConsultationDiagnosisUseCase
             .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(this.consultationToEdit.idMedicalConsultation)
             .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
@@ -564,9 +443,10 @@ export class CreateUpdateMedicalConsultationComponent {
         paraClinicalTest: c.paraClinicalTest ?? ''
       },
       closeConsultation: {
-        idConsultationFinality: c.idConsultationFinality != null ? Number(c.idConsultationFinality) : 0,
-        idExitCondition: c.idExitCondition != null ? Number(c.idExitCondition) : 0,
-        idExternalCauseCode: c.idExternalCauseCode != null ? Number(c.idExternalCauseCode) : 0,
+        idConsultationFinality: c.idConsultationFinality || null,
+        idExitCondition: c.idExitCondition || null,
+        idExternalCauseCode: c.idExternalCauseCode || null,
+
       },
     };
   }
@@ -585,30 +465,8 @@ export class CreateUpdateMedicalConsultationComponent {
       updatedAt: [''],
       createdBy: [0],
       createdAt: [''],
-      //updateAt: ['']
     });
   }
-
-
-  /*  addDiagnosis() {
- 
-     const now = new Date().toISOString();
-     const userId = Number(localStorage.getItem('IdUser')) || 0;
- 
-     const diagForm = this.fb.group({
-       diagnosisCode: [''],
-       diagnosisDescription: [''],
-       codeDiagnosisType: [''],
-       diagnosisType: [''],
-       comment: [''],
-       isPrincipal: [false],
-       createdBy: [userId],
-       createdAt: [now],
-       updatedBy: [userId],
-       updatedAt: [now]
-     });
-     this.diagnoses.push(diagForm);
-   } */
 
   addDiagnosis() {
     const now = this.getLocalDateTime();
@@ -634,51 +492,6 @@ export class CreateUpdateMedicalConsultationComponent {
     this.cie10Results$.splice(index, 1);
   }
 
-  /* onDiagnosisTypeChange(index: number) {
-    const group = this.diagnoses.at(index) as FormGroup;
-    if (!group) return;
-
-    const selected = group.get('diagnosisType')?.value; // aquí vendrá el objeto {codeDiagnosisType, diagnosisType} por [ngValue]
-    if (selected && typeof selected === 'object') {
-      const code = selected.codeDiagnosisType ?? selected.code ?? '';
-      const text = selected.diagnosisType ?? selected.name ?? '';
-      group.patchValue({
-        codeDiagnosisType: String(code).trim(),
-        diagnosisType: text
-      }, { emitEvent: false });
-    } else {
-      // Si por alguna razón diagnosisType viene como string (ej.: al precargar), intentar mantener code si existe
-      const existingCode = group.get('codeDiagnosisType')?.value;
-      group.patchValue({
-        codeDiagnosisType: existingCode ?? '',
-        diagnosisType: selected ?? ''
-      }, { emitEvent: false });
-    }
-  } */
-
-  /* onDiagnosisTypeChange(index: number) {
-    const group = this.diagnoses.at(index) as FormGroup;
-    if (!group) return;
-
-    const selected = group.get('diagnosisType')?.value;
-
-    if (selected && typeof selected === 'object') {
-      const code = selected.codeDiagnosisType ?? selected.code ?? '';
-      const text = selected.diagnosisType ?? selected.name ?? '';
-      group.patchValue({
-        codeDiagnosisType: String(code).trim(),
-        diagnosisType: text   // si quieres guardar solo texto además del objeto
-      }, { emitEvent: false });
-    } else {
-      // si por alguna razón viene string, intentar resolver por la lista
-      const selectedType = this.diagnosisTypes.find(t => t.diagnosisType === selected || String(t.codeDiagnosisType) === String(selected));
-      group.patchValue({
-        codeDiagnosisType: selectedType?.codeDiagnosisType ?? (group.get('codeDiagnosisType')?.value ?? ''),
-        diagnosisType: selectedType ? selectedType.diagnosisType : (selected ?? '')
-      }, { emitEvent: false });
-    }
-  } */
-
   onDiagnosisTypeChange(index: number) {
     const group = this.diagnoses.at(index) as FormGroup;
     if (!group) return;
@@ -693,8 +506,6 @@ export class CreateUpdateMedicalConsultationComponent {
       }, { emitEvent: false });
     }
   }
-
-
 
   updateBMI() {
     const weight = this.form.get('vitalSigns.weightKg')?.value;
@@ -781,9 +592,10 @@ export class CreateUpdateMedicalConsultationComponent {
 
       paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
 
-      idConsultationFinality: Number(formValues.closeConsultation.idConsultationFinality),
-      idExitCondition: Number(formValues.closeConsultation.idExitCondition),
-      idExternalCauseCode: Number(formValues.closeConsultation.idExternalCauseCode),
+      idConsultationFinality: formValues.closeConsultation.idConsultationFinality ?? null,
+      idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
+      idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
+
 
       createdBy: isEdit ? Number(this.consultationToEdit!.createdBy) : idUser,
       createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
@@ -791,12 +603,12 @@ export class CreateUpdateMedicalConsultationComponent {
       updateAt: this.getLocalDateTime()
     };
 
-    console.log(baseData)
+    //console.log(baseData)
 
     let operation: Observable<any>;
 
-    if (isEdit) {
-      // 🟢 Editar
+    /* if (isEdit) {
+      // Editar
       operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
       this.backToList.emit();
 
@@ -817,23 +629,48 @@ export class CreateUpdateMedicalConsultationComponent {
       });
 
       return; // 👈 importante: salimos aquí para no ejecutar el bloque común de abajo
+    } */
+
+    if (isEdit) {
+      // 🟢 Editar
+      operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
+
+      operation.subscribe({
+        next: (res) => {
+          if (res.isSuccess) {
+            // 🔹 Actualizamos el form y el objeto en memoria con lo que devuelve el backend
+            if (res.data) {
+              this.form.patchValue(res.data);
+              this.consultationToEdit = res.data;
+            } else {
+              // fallback: al menos sincronizamos con lo que acabamos de enviar
+              this.form.patchValue(baseData);
+              this.consultationToEdit = baseData;
+            }
+
+            // 👉 Guardar diagnósticos después de actualizar la consulta
+            this.saveDiagnosesForExistingConsultation();
+
+            this._notificationService.showInfoMessage('Consulta actualizada correctamente');
+
+            // 🔹 Si quieres volver a la lista, hazlo aquí (después de refrescar datos)
+            this.backToList.emit();
+          } else {
+            this._notificationService.showInfoMessage('Error al actualizar la consulta');
+          }
+        },
+        error: (err) => {
+          this._notificationService.showInfoMessage('Error al actualizar la consulta');
+          console.error(err);
+        }
+      });
+
+      return; // 👈 importante
     }
 
     // 🟢 Crear
     if (idRol === 1 && this.diagnoses.length > 0) {
-      // ✅ Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
-      /* const preparedDiagnoses = this.diagnoses.value.map((d: any) => ({
-        ...d,
-        idMedicalConsultationDiagnosis: 0,
-        createdBy: idUser,
-        createdAt: this.getLocalDateTime(),
-        updatedBy: idUser,
-        updatedAt: this.getLocalDateTime(),
-        codeDiagnosisType: d.codeDiagnosisType || '', // 👈 nunca null
-        diagnosisType: d.diagnosisType || ''
-      }));
- */
-
+      // Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
       const preparedDiagnoses = this.diagnoses.value.map((d: any) => {
         // Si diagnosisType es un objeto, lo desarmamos
         if (d.diagnosisType && typeof d.diagnosisType === 'object') {
@@ -861,11 +698,11 @@ export class CreateUpdateMedicalConsultationComponent {
       operation = this._medicalConsultationUseCase.CreateMedicalConsultationWithMedicalDiagnosis(newConsultationWithDiagnosis);
 
     } else {
-      // ✅ Admin sin diagnósticos o Auxiliar → usar CreateMedicalConsultation
+      // Admin sin diagnósticos o Auxiliar → usar CreateMedicalConsultation
       operation = this._medicalConsultationUseCase.CreateMedicalConsultation(baseData);
     }
 
-    // 🟢 Ejecutar operación (solo creación)
+    // Ejecutar operación (solo creación)
     operation.subscribe({
       next: (res) => {
         if (res.isSuccess) {
@@ -881,45 +718,6 @@ export class CreateUpdateMedicalConsultationComponent {
       }
     });
   }
-
-  /*  private saveDiagnosesForExistingConsultation() {
-   const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
-   const now = new Date().toISOString();
- 
-   const operations = this.diagnoses.controls.map(control => {
-     const diag: MedicalDiagnosisDTO = {
-       ...control.value,
-       idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
-       updatedBy: idUser,
-       updatedAt: this.getLocalDateTime(),
-     };
- 
-     if (diag.idMedicalConsultationDiagnosis > 0) {
-       // ya existe → actualizar
-       return this._medicalConsultationDiagnosisUseCase.UpdateMedicalConsultationDiagnosis(diag);
-     } else {
-       // nuevo → crear
-       diag.createdBy = idUser;
-       diag.createdAt = this.getLocalDateTime();
-       return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
-     }
-   });
- 
-   forkJoin(operations).subscribe({
-     next: (responses) => {
-       const allSuccess = responses.every(res => res.isSuccess);
-       if (allSuccess) {
-         this.backToList.emit();
-       } else {
-         console.warn('⚠️ Algunos diagnósticos no se pudieron guardar');
-         this.backToList.emit(); // opcional: aún así volvemos
-       }
-     },
-     error: (err) => {
-       console.error('❌ Error al guardar diagnósticos:', err);
-     }
-   });
- } */
 
   private saveDiagnosesForExistingConsultation() {
     const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
@@ -940,14 +738,12 @@ export class CreateUpdateMedicalConsultationComponent {
       const diag: MedicalDiagnosisDTO = {
         ...value,
         idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
-        /* codeDiagnosisType: codeDiagnosisType,
-        diagnosisType: diagnosisTypeText, */
         diagnosisType: value.diagnosisType?.diagnosisType,
         codeDiagnosisType: value.diagnosisType?.codeDiagnosisType,
         updatedBy: idUser,
         createdBy: idUser,
-        createdAt: now,
-        updatedAt: now,
+        createdAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+        updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
         idMedicalConsultationDiagnosis: value.idMedicalConsultationDiagnosis ?? 0
       };
 
@@ -989,8 +785,6 @@ export class CreateUpdateMedicalConsultationComponent {
     this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
       .subscribe((data) => {
         this.lastMedicalHistory = data; // asignas el objeto directamente
-
-        //console.log(this.lastMedicalHistory)
       });
   }
 
@@ -1016,8 +810,6 @@ export class CreateUpdateMedicalConsultationComponent {
     this._closeConsultationUseCase.GetExitConditions()
       .subscribe((data) => {
         this.exitConditions = data; // asignas el objeto directamente
-
-        console.log(this.exitConditions)
       });
   }
 
@@ -1025,8 +817,6 @@ export class CreateUpdateMedicalConsultationComponent {
     this._closeConsultationUseCase.GetExternalCauseCodes()
       .subscribe((data) => {
         this.externalCauses = data; // asignas el objeto directamente
-
-        console.log(this.externalCauses)
       });
   }
 
@@ -1034,8 +824,6 @@ export class CreateUpdateMedicalConsultationComponent {
     this._closeConsultationUseCase.GetConsultationFinalities()
       .subscribe((data) => {
         this.consultationFinalities = data; // asignas el objeto directamente
-
-        console.log(this.consultationFinalities)
       });
   }
 

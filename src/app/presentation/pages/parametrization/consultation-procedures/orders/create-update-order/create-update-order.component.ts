@@ -12,6 +12,9 @@ import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
 import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
 import { forkJoin } from 'rxjs';
 import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
+import { CupsCodeUseCase } from 'src/app/infrastructure/use-cases/common/cups-code.use.case';
+import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
+
 
 @Component({
   selector: 'app-create-update-order',
@@ -29,16 +32,22 @@ export class CreateUpdateOrderComponent implements OnInit {
   orderForm!: FormGroup;
   cupsSuggestions: any[][] = [];   // sugerencias por cada detalle
   showCupsDropdown: boolean[] = []; // visibilidad dropdown
-  paginator: PaginatorDTO = { pageIndex: 1, pageSize: 20 };
+  //paginator: PaginatorDTO = { pageIndex: 1, pageSize: 20 };
+
+  cupsPaginator: PaginatorDTO[] = [];
+  totalCupsPagesByDetail: number[] = [];
 
   constructor(
     private fb: FormBuilder,
     private ordersUseCase: OrdersUseCase,
     private orderDetailsUseCase: OrderDetailsUseCase,
     private cupsCodeService: CUPSCodeService,
+    private _cupsCodeUseCase: CupsCodeUseCase,
     private cdr: ChangeDetectorRef,
     public bsModalRef: BsModalRef
   ) {}
+
+
 
   ngOnInit(): void {
     this.orderForm = this.fb.group({
@@ -46,14 +55,50 @@ export class CreateUpdateOrderComponent implements OnInit {
       details: this.fb.array([])
     });
 
+
     if (this.orderToEdit) {
+      // 👇 precargar observaciones generales
       this.orderForm.patchValue({
-        generalObservations: this.orderToEdit.generalObservations
+        generalObservations: this.orderToEdit.generalObservations || ''
       });
-      // TODO: cargar detalles de la orden si estás editando
+
+      this.loadOrderDetails(this.orderToEdit.idOrder);
     } else {
       this.addDetail();
     }
+  }
+
+
+ 
+ 
+  loadOrderDetails(idOrder: number) {
+    this.orderDetailsUseCase.GetListOrderDetailsByOrder(idOrder).subscribe(res => {
+      // aquí res ya es el objeto { results: [...], totalRecords: 0 }
+      const orderDetails = res.results;
+      
+
+      orderDetails.forEach(d => {
+        this._cupsCodeUseCase.GetCUPSCodeById(d.idCupsCode).subscribe(cups => {
+          const cupsData = cups;
+
+          const detailGroup = this.fb.group({
+            idOrderDetail: [d.idOrderDetail],
+            idCupsCode: [d.idCupsCode, Validators.required],
+            cupsName: [`${cupsData.code} - ${cupsData.name}`],
+            procedureDescription: [cupsData.description],
+            quantity: [d.quantity, Validators.required],
+            instructions: [d.instructions]
+          });
+
+          this.details.push(detailGroup);
+
+          this.cupsSuggestions.push([]);
+          this.showCupsDropdown.push(false);
+          this.cupsPaginator.push({ pageIndex: 1, pageSize: 10 });
+          this.totalCupsPagesByDetail.push(1);
+        });
+      });
+    });
   }
 
   get details(): FormArray {
@@ -63,25 +108,32 @@ export class CreateUpdateOrderComponent implements OnInit {
   addDetail() {
     const detail = this.fb.group({
       idCupsCode: [null, Validators.required],
-      cupsName: [''], // para mostrar en el input
+      cupsName: [''],
       procedureDescription: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1)]],
       instructions: ['']
     });
+
     this.details.push(detail);
     this.cupsSuggestions.push([]);
     this.showCupsDropdown.push(false);
+    this.cupsPaginator.push({ pageIndex: 1, pageSize: 10 });
+    this.totalCupsPagesByDetail.push(1);
   }
 
   removeDetail(index: number) {
     this.details.removeAt(index);
     this.cupsSuggestions.splice(index, 1);
     this.showCupsDropdown.splice(index, 1);
+    this.cupsPaginator.splice(index, 1);
+    this.totalCupsPagesByDetail.splice(index, 1);
   }
 
-  // 🔹 Cuando escribe en el campo CUPS
+  // Cuando escribe en el campo CUPS
+
   onCupsInput(value: string, index: number) {
     if (value && value.length >= 2) {
+      this.cupsPaginator[index].pageIndex = 1; // reset
       this.searchCups(value, index);
     } else {
       this.cupsSuggestions[index] = [];
@@ -89,38 +141,23 @@ export class CreateUpdateOrderComponent implements OnInit {
     }
   }
 
-  // 🔹 Buscar CUPS en el backend
-  /* searchCups(term: string, index: number) {
-    this.cupsCodeService.GetListCUPS_Codes(this.paginator, term, term).subscribe({
-      next: (response: ResponseDTO) => {
-        const data = response.data as TableResultDTO;
-        const results = data?.results || [];
-        this.cupsSuggestions[index] = results;
-        this.showCupsDropdown[index] = results.length > 0;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.cupsSuggestions[index] = [];
-        this.showCupsDropdown[index] = false;
-      }
-    });
-  } */
+
+  // Buscar CUPS en el backend
 
   searchCups(term: string, index: number) {
-    const isCode = /^[0-9]+$/.test(term); // 👈 si solo números => es código
+    const isCode = /^[0-9]+$/.test(term);
 
-    this.cupsCodeService
+    this._cupsCodeUseCase
       .GetListCUPS_Codes(
-        this.paginator,
-        isCode ? term : '',  // si es código lo mando aquí
-        !isCode ? term : ''  // si es texto lo mando aquí
+        this.cupsPaginator[index],
+        isCode ? term : '',
+        !isCode ? term : ''
       )
       .subscribe({
-        next: (response: ResponseDTO) => {
-          const data = response.data as TableResultDTO;
-          const results = data?.results || [];
-          this.cupsSuggestions[index] = results;
-          this.showCupsDropdown[index] = results.length > 0;
+        next: (data: TableResultDTO) => {
+          this.cupsSuggestions[index] = data.results || [];
+          this.totalCupsPagesByDetail[index] = data.totalRecords || 1;
+          this.showCupsDropdown[index] = this.cupsSuggestions[index].length > 0;
           this.cdr.detectChanges();
         },
         error: () => {
@@ -131,17 +168,42 @@ export class CreateUpdateOrderComponent implements OnInit {
   }
 
 
-  // 🔹 Selección de un CUPS
-  selectCups(cup: any, index: number) {
-    const group = this.details.at(index) as FormGroup;
-    group.get('idCupsCode')?.setValue(cup.idCupsCode);
-    group.get('cupsName')?.setValue(`${cup.code} - ${cup.name}`);
-    group.get('procedureDescription')?.setValue(cup.name);
-    this.cupsSuggestions[index] = [];
+  /* selectCups(cups: any, index: number) {
+    this.details.at(index).patchValue({
+      idCupsCode: cups.idCupsCode,
+      cupsName: cups.name,
+      procedureDescription: cups.description
+    });
     this.showCupsDropdown[index] = false;
+  } */
+
+  selectCups(cups: any, index: number) {
+    this.details.at(index).patchValue({
+      idCupsCode: cups.idCupsCode,
+      cupsName: `${cups.code} - ${cups.name}`, // 🔹 aquí mejor mostrar el formato completo
+      procedureDescription: cups.description
+    });
+
+    this.showCupsDropdown[index] = false;
+    this.cdr.detectChanges(); // 🔹 fuerza actualización del DOM
   }
 
-  // 🔹 Guardar
+
+  nextCupsPage(index: number) {
+    if (this.cupsPaginator[index].pageIndex < (this.totalCupsPagesByDetail[index] || 1)) {
+      this.cupsPaginator[index].pageIndex++;
+      this.searchCups(this.details.at(index).get('cupsName')?.value, index);
+    }
+  }
+
+  previousCupsPage(index: number) {
+    if (this.cupsPaginator[index].pageIndex > 1) {
+      this.cupsPaginator[index].pageIndex--;
+      this.searchCups(this.details.at(index).get('cupsName')?.value, index);
+    }
+  }
+
+ /*
   onSubmit() {
     if (this.orderForm.invalid) {
       this.orderForm.markAllAsTouched();
@@ -153,7 +215,7 @@ export class CreateUpdateOrderComponent implements OnInit {
       idMedicalConsultation: this.consultationData.idMedicalConsultation,
       idPatient: this.consultationData.idPatient,
       idUser: this.consultationData.idUser,
-      orderDate: new Date(),
+      orderDate: DateTimeHelper.getLocalDateTimeWithOffset(),
       generalObservations: this.orderForm.value.generalObservations,
       isActive: true
     };
@@ -171,7 +233,7 @@ export class CreateUpdateOrderComponent implements OnInit {
       return;
     }
 
-    // 🔹 Crear nueva orden
+    // Crear nueva orden
     this.ordersUseCase.CreateOrders(orderData).subscribe({
       next: (res) => {
         if (res.isSuccess) {
@@ -185,16 +247,18 @@ export class CreateUpdateOrderComponent implements OnInit {
             quantity: d.quantity,
             instructions: d.instructions,
             registeredByUser: this.consultationData.idUser,
-            registeredAt: new Date(),
+            registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
             updatedByUserId: this.consultationData.idUser,
-            updatedAt: new Date()
+            updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
           }));
 
-          // ejecutar en paralelo
           const requests = details.map(detail =>
-            this.orderDetailsUseCase.CreateOrderDetails(detail)
+            detail.idOrderDetail
+              ? this.orderDetailsUseCase.UpdateOrderDetails(detail)
+              : this.orderDetailsUseCase.CreateOrderDetails(detail)
           );
 
+          
           forkJoin(requests).subscribe({
             next: () => {
               this.onClose.emit('refresh');
@@ -205,9 +269,98 @@ export class CreateUpdateOrderComponent implements OnInit {
         }
       }
     });
+  } 
+ */
+ 
+ onSubmit() {
+  if (this.orderForm.invalid) {
+    this.orderForm.markAllAsTouched();
+    return;
   }
 
-  close() {
+  const orderData: OrderDTO = {
+    idOrder: this.orderToEdit ? this.orderToEdit.idOrder : 0,
+    idMedicalConsultation: this.consultationData.idMedicalConsultation,
+    idPatient: this.consultationData.idPatient,
+    idUser: this.consultationData.idUser,
+    orderDate: DateTimeHelper.getLocalDateTimeWithOffset(),
+    generalObservations: this.orderForm.value.generalObservations,
+    isActive: true
+  };
+
+  if (this.orderToEdit) {
+    // 👉 Actualizar orden + detalles
+    this.ordersUseCase.UpdateOrders(orderData).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          const details: OrderDetailsDTO[] = this.details.value.map((d: any) => ({
+            idOrderDetail: d.idOrderDetail ?? 0,
+            idOrder: orderData.idOrder,
+            idCupsCode: d.idCupsCode,
+            procedureDescription: d.procedureDescription,
+            quantity: d.quantity,
+            instructions: d.instructions,
+            registeredByUser: this.consultationData.idUser,
+            registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+            updatedByUserId: this.consultationData.idUser,
+            updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+          }));
+
+          const requests = details.map(detail =>
+            detail.idOrderDetail && detail.idOrderDetail > 0
+              ? this.orderDetailsUseCase.UpdateOrderDetails(detail)
+              : this.orderDetailsUseCase.CreateOrderDetails(detail)
+          );
+
+          forkJoin(requests).subscribe({
+            next: () => {
+              this.onClose.emit('refresh');
+              this.bsModalRef.hide();
+            },
+            error: (err) => console.error('Error procesando detalles', err)
+          });
+        }
+      }
+    });
+    return;
+  }
+
+  // 👉 Crear nueva orden
+  this.ordersUseCase.CreateOrders(orderData).subscribe({
+    next: (res) => {
+      if (res.isSuccess) {
+        const createdOrderId = res.data.idOrder || res.data;
+
+        const details: OrderDetailsDTO[] = this.details.value.map((d: any) => ({
+          idOrderDetail: 0,
+          idOrder: createdOrderId,
+          idCupsCode: d.idCupsCode,
+          procedureDescription: d.procedureDescription,
+          quantity: d.quantity,
+          instructions: d.instructions,
+          registeredByUser: this.consultationData.idUser,
+          registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+          updatedByUserId: this.consultationData.idUser,
+          updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+        }));
+
+        const requests = details.map(detail =>
+          this.orderDetailsUseCase.CreateOrderDetails(detail)
+        );
+
+        forkJoin(requests).subscribe({
+          next: () => {
+            this.onClose.emit('refresh');
+            this.bsModalRef.hide();
+          },
+          error: (err) => console.error('Error creando detalles', err)
+        });
+      }
+    }
+  });
+}
+
+close() {
     this.bsModalRef.hide();
   }
 }

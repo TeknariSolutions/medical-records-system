@@ -83,7 +83,8 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
               frequency: [d.frequency, Validators.required],
               duration: [d.duration, Validators.required],
               prescribedQuantity: [d.prescribedQuantity, Validators.required],
-              instructions: [d.instructions]
+              instructions: [d.instructions],
+              idMedicalEquipment: 1
             });
             this.details.push(detailGroup);
             this.medicinesSuggestions.push([]);
@@ -223,6 +224,8 @@ nextPage(index: number) {
       updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
       registeredByUser: this.consultationData.idUser,
       registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+      idMedicalEquipment: 1
+      
     }));
 
     const requests = details.map(detail =>
@@ -270,6 +273,7 @@ nextPage(index: number) {
             updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
             registeredByUser: this.consultationData.idUser,
             registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+            idMedicalEquipment: 1
           }));
 
           const requests = details.map(detail =>
@@ -294,5 +298,10 @@ nextPage(index: number) {
     });
   }
 }
+
+
+  close() {
+    this.bsModalRef.hide();
+  }
 
 }

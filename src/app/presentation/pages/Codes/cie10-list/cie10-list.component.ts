@@ -62,7 +62,6 @@ export class CIE10ListComponent {
         if (res.isSuccess && res.data) {
           const table = res.data as TableResultDTO;
           this.cie10Codes = table.results;
-          console.log(this.cie10Codes)
           this.totalRecords = table.totalRecords;
         } else {
           this.isLoading = false;

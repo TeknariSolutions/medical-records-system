@@ -48,7 +48,6 @@ export class PrescriptionsComponent {
     this._prescriptionsUseCase.GetListPrescriptions(this.idMedicalConsultation).subscribe({
       next: (data: any) => {
         this.prescriptions = data;
-        console.log(this.prescriptions)
         this.isLoading = false;
       },
       error: () => {
