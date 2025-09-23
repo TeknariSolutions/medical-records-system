@@ -455,8 +455,8 @@ export class CreateUpdateMedicalConsultationComponent {
     return this.fb.group({
       idMedicalConsultationDiagnosis: [0],
       idMedicalConsultation: [0],
-      diagnosisCode: ['', Validators.required],
-      diagnosisDescription: ['', Validators.required],
+      diagnosisCode: [''],
+      diagnosisDescription: [''],
       codeDiagnosisType: [''],
       diagnosisType: [''],
       isPrincipal: [false],
