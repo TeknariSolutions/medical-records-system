@@ -190,10 +190,16 @@ export class CreateUpdateMedicalConsultationComponent {
     const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
     this.idRol = idRol;
 
-    // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
+   /*  // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
     if (idRol === 1 && !this.form.contains('diagnoses')) {
       this.form.addControl('diagnoses', this.fb.array([]));
+    } */
+
+    // Si el rol es admin o médico → habilitar diagnósticos
+    if ((idRol === 1 || idRol === 3) && !this.form.contains('diagnoses')) {
+      this.form.addControl('diagnoses', this.fb.array([]));
     }
+
 
     const weightControl = this.form.get('weightKg');
     const heightControl = this.form.get('heightCm');
@@ -349,7 +355,7 @@ export class CreateUpdateMedicalConsultationComponent {
       this.form.patchValue(normalized);
 
       const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-      if (idRol === 1) {
+      if (idRol === 1 || idRol === 3) {
         if (!this.form.contains('diagnoses')) {
           this.form.addControl('diagnoses', this.fb.array([]));
         }
@@ -669,7 +675,7 @@ export class CreateUpdateMedicalConsultationComponent {
     }
 
     // 🟢 Crear
-    if (idRol === 1 && this.diagnoses.length > 0) {
+    if ((idRol === 1 || idRol === 3) && this.diagnoses.length > 0) {
       // Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
       const preparedDiagnoses = this.diagnoses.value.map((d: any) => {
         // Si diagnosisType es un objeto, lo desarmamos
