@@ -1,10 +1,6 @@
 <div class="modal-header">
   <h5 class="modal-title">{{ orderToEdit ? 'Editar Orden Médica' : 'Crear Orden Médica' }}</h5>
   <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
-
-  <!-- <button type="button" class="btn btn-danger btn-sm mt-2" (click)="removeDetail(i)" *ngIf="details.length > 1">
-          Quitar
-        </button> -->
 </div>
 
 <div class="modal-body">
@@ -33,27 +29,6 @@
             (input)="onCupsInput($event.target.value, i)" (keydown.enter)="$event.preventDefault()" />
         
           <!-- Sugerencias -->
-          <!-- <ul class="list-group position-absolute w-100">
-            <li class="list-group-item" *ngFor="let c of cupsSuggestions[i]" (click)="selectCups(c, i)">
-              {{ c.code }} - {{ c.name }}
-            </li>
-        
-            <li class="li-custom d-flex justify-content-between align-items-center">
-              <button type="button" class="btn btn-sm btn-light" (click)="previousCupsPage(i)"
-                [disabled]="cupsPaginator[i].pageIndex === 1">
-                Anterior
-              </button>
-        
-              <span>Página {{ cupsPaginator[i].pageIndex }} de {{ totalCupsPagesByDetail[i] || 1 }}</span>
-        
-              <button type="button" class="btn btn-sm btn-light" (click)="nextCupsPage(i)"
-                [disabled]="cupsPaginator[i].pageIndex >= (totalCupsPagesByDetail[i] || 1)">
-                Siguiente
-              </button>
-            </li>
-          </ul> -->
-
-          <!-- Sugerencias -->
           <ul class="list-group position-absolute w-100" *ngIf="showCupsDropdown[i] && cupsSuggestions[i]?.length > 0">
             <li class="list-group-item" *ngFor="let c of cupsSuggestions[i]" (click)="selectCups(c, i)">
               {{ c.code }} - {{ c.name }}
@@ -73,7 +48,6 @@
               </button>
             </li>
           </ul>
-
 
         </div>
 

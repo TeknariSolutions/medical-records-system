@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
 import { MedicalDiagnosisDTO } from 'src/app/core/DTOs/app/medical-diagnosis.dto';
 import { MedicalConsultationDiagnosisUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation-diagnosis.use-case';
@@ -153,7 +153,7 @@ export class CreateUpdateMedicalConsultationComponent {
         vitalSigns_Temp: [null],
         vitalSigns_SPO2: [null],
         weightKg: [0],
-        heightCm: [''],
+        heightCm: ['', [this.heightCmValidator()]],
         bmi: [0],
       }),
       physicalExam: this.fb.group({
@@ -528,6 +528,26 @@ export class CreateUpdateMedicalConsultationComponent {
     }
   }
 
+  heightCmValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+
+      if (value === null || value === undefined || value === '') return null;
+
+      // Verificar que sea número entero
+      if (!Number.isInteger(Number(value))) {
+        return { notInteger: true };
+      }
+
+      // Verificar rango válido
+      if (value < 30 || value > 300) {
+        return { outOfRange: true };
+      }
+
+      return null;
+    };
+  }
+
   getLocalDateTime(): string {
     const now = new Date();
 
@@ -557,7 +577,7 @@ export class CreateUpdateMedicalConsultationComponent {
     const formValues = this.form.value;
     const isEdit = !!this.consultationToEdit;
 
-    // 🟢 Datos base
+    // Datos base
     const baseData: MedicalConsultationDTO = {
       idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
       idPatient: this.idPatient,
@@ -583,7 +603,7 @@ export class CreateUpdateMedicalConsultationComponent {
       vitalSigns_Temp: Number(formValues.vitalSigns.vitalSigns_Temp),
       vitalSigns_SPO2: Number(formValues.vitalSigns.vitalSigns_SPO2),
       weightKg: Number(formValues.vitalSigns.weightKg),
-      heightCm: formValues.vitalSigns.heightCm,
+      heightCm: String(formValues.vitalSigns.heightCm),
       bmi: Number(formValues.vitalSigns.bmi),
 
       physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
@@ -602,49 +622,22 @@ export class CreateUpdateMedicalConsultationComponent {
       idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
       idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
 
-
       createdBy: isEdit ? Number(this.consultationToEdit!.createdBy) : idUser,
       createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
       updateBy: idUser,
       updateAt: this.getLocalDateTime()
     };
 
-    //console.log(baseData)
-
     let operation: Observable<any>;
 
-    /* if (isEdit) {
+    if (isEdit) {
       // Editar
       operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
-      this.backToList.emit();
 
       operation.subscribe({
         next: (res) => {
           if (res.isSuccess) {
-            // 👉 Guardar diagnósticos después de actualizar la consulta
-            this.saveDiagnosesForExistingConsultation();
-            this._notificationService.showInfoMessage('Consulta actualizada correctamente');
-          } else {
-            this._notificationService.showInfoMessage('Error al actualizar la consulta');
-          }
-        },
-        error: (err) => {
-          this._notificationService.showInfoMessage('Error al actualizar la consulta');
-          console.error(err);
-        }
-      });
-
-      return; // 👈 importante: salimos aquí para no ejecutar el bloque común de abajo
-    } */
-
-    if (isEdit) {
-      // 🟢 Editar
-      operation = this._medicalConsultationUseCase.UpdateMedicalConsultation(baseData);
-
-      operation.subscribe({
-        next: (res) => {
-          if (res.isSuccess) {
-            // 🔹 Actualizamos el form y el objeto en memoria con lo que devuelve el backend
+            // Actualizamos el form y el objeto en memoria con lo que devuelve el backend
             if (res.data) {
               this.form.patchValue(res.data);
               this.consultationToEdit = res.data;
@@ -654,12 +647,12 @@ export class CreateUpdateMedicalConsultationComponent {
               this.consultationToEdit = baseData;
             }
 
-            // 👉 Guardar diagnósticos después de actualizar la consulta
+            // Guardar diagnósticos después de actualizar la consulta
             this.saveDiagnosesForExistingConsultation();
 
             this._notificationService.showInfoMessage('Consulta actualizada correctamente');
 
-            // 🔹 Si quieres volver a la lista, hazlo aquí (después de refrescar datos)
+            // Si quieres volver a la lista, hazlo aquí (después de refrescar datos)
             this.backToList.emit();
           } else {
             this._notificationService.showInfoMessage('Error al actualizar la consulta');
@@ -671,10 +664,10 @@ export class CreateUpdateMedicalConsultationComponent {
         }
       });
 
-      return; // 👈 importante
+      return; 
     }
 
-    // 🟢 Crear
+    // Crear
     if ((idRol === 1 || idRol === 3) && this.diagnoses.length > 0) {
       // Admin con diagnósticos → usar CreateMedicalConsultationWithMedicalDiagnosis
       const preparedDiagnoses = this.diagnoses.value.map((d: any) => {

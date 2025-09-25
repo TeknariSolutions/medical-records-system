@@ -33,22 +33,6 @@ export class DetailsConsultationComponent {
     this.loadDataConsultation();
   }
 
-  /* printConsultation() {
-    const element = document.getElementById('consultation-content');
-    if (!element) return;
-
-    const opt = {
-      margin: [0, 0, 10, 0],
-      filename: 'historia-clinica.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, // scrollY=0 evita cortes raros
-      jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // mejora saltos de página
-    };
-
-    html2pdf().from(element).set(opt).save();
-  } */
-
   printConsultation() {
     const element = document.getElementById('consultation-content');
     if (!element) return;

@@ -40,6 +40,8 @@
         color: var(--#{$prefix}gray-600);
         font-weight: $font-weight-semibold;
         background-color: rgba($primary, 0.1);
+        cursor: pointer;
+
       }
 
       .current-info {
@@ -52,7 +54,7 @@
 
           background-color: rgba($primary, 0.2);
           color: var(--#{$prefix}gray-600);
-
+            
           .number {
             background-color: $primary;
             color: $white;

@@ -12,6 +12,8 @@
       </h6>
     </div>
 
+    <div class="row content-consultation">
+
 
     <div class="stepper-container">
       <button class="scroll-btn left" type="button" (click)="scrollStepper(-240)">
@@ -230,10 +232,24 @@
                 <input class="form-control" type="number" formControlName="weightKg" />
               </div>
 
+             
               <div class="col-md-4 mb-3">
-                <label>Talla (cms)</label>
-                <input class="form-control" type="text" formControlName="heightCm" />
+                <label>Estatura (cm) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" formControlName="heightCm"
+                  [ngClass]="{ 'is-invalid': (submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.invalid }">
+              
+                @if((submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.errors) {
+                <div class="invalid-feedback">
+                  @if(form.get('vitalSigns.heightCm')?.errors['notInteger']) {
+                  <span>Ingrese la estatura en centímetros sin decimales (ej: 175, no 1.75).</span>
+                  }
+                  @if(form.get('vitalSigns.heightCm')?.errors['outOfRange']) {
+                  <span>Ingrese una estatura válida entre 30 cm y 300 cm.</span>
+                  }
+                </div>
+                }
               </div>
+
 
               <div class="col-md-4 mb-3">
                 <label>IMC</label>
@@ -494,7 +510,7 @@
                 </label>
                 <div class="input-group">
                   <select id="idExitCondition" class="form-control" formControlName="idExitCondition">
-                    <option [ngValue]="null">Selecciona una condición de salida</option>
+                    <option [ngValue]="null"></option>
                     <option *ngFor="let index of exitConditions" [ngValue]="index.idExitCondition">
                       {{ index.exitConditionName }}
                     </option>
@@ -513,7 +529,7 @@
                 </label>
                 <div class="input-group">
                   <select id="idExternalCauseCode" class="form-control" formControlName="idExternalCauseCode">
-                    <option [ngValue]="null">Selecciona una causa externa</option>
+                    <option [ngValue]="null"></option>
                     <option *ngFor="let index of externalCauses" [ngValue]="index.idExternalCauseCode">
                       {{ index.externalCauseName }}
                     </option>
@@ -531,7 +547,7 @@
                 </label>
                 <div class="input-group">
                   <select id="idConsultationFinality" class="form-control" formControlName="idConsultationFinality">
-                    <option [ngValue]="null">Selecciona una finalidad de consulta</option>
+                    <option [ngValue]="null"></option>
                     <option *ngFor="let index of consultationFinalities" [ngValue]="index.idConsultationFinality">
                       {{ index.consultationFinalityName }}
                     </option>
@@ -551,6 +567,8 @@
 
 
       </form>
+
+    </div>
 
     </div>
 

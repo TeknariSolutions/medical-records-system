@@ -28,13 +28,10 @@
         <!-- Autocomplete de medicamentos -->
         <div class="mb-2 position-relative">
           <label>Medicamento</label>
-          <!-- <input type="text" class="form-control" [formControlName]="'medicineName'" placeholder="Busque un medicamento"
-            (input)="onMedicineInput($event.target.value, i)"> -->
-
-            <input type="text" class="form-control" [formControlName]="'medicineName'" placeholder="Busque un medicamento"
+        
+          <input type="text" class="form-control" [formControlName]="'medicineName'" placeholder="Busque un medicamento"
               (input)="onMedicineInput($event.target.value, i)" (keydown.enter)="$event.preventDefault()" />
 
-        
           <!-- Sugerencias -->
           <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
             <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">

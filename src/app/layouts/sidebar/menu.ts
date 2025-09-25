@@ -16,7 +16,7 @@ export const MENU: MenuItem[] = [
                 label: 'Usuarios',
                 link: '/parametrization/users',
                 parentId: 2,
-                roleAuthenticated: [1] 
+                roleAuthenticated: [1,3] 
             },
             {
                 id: 3,
@@ -30,13 +30,14 @@ export const MENU: MenuItem[] = [
         id: 2,
         label: 'Medicamentos',
         icon: 'bx-band-aid',
+        roleAuthenticated: [1,3],
         subItems: [
             {
                 id: 3,
                 label: 'Listado de Medicamentos',
                 link: '/medicines/list-medicines',
                 parentId: 2,
-                roleAuthenticated: [1]
+                roleAuthenticated: [1,3]
             }
         ]
 
@@ -46,13 +47,14 @@ export const MENU: MenuItem[] = [
         id: 2,
         label: 'Codigos CIE10',
         icon: 'bx bx-book-content',
+        roleAuthenticated: [1,3],
         subItems: [
             {
                 id: 3,
                 label: 'Listado de Códigos',
                 link: '/codes/list-CIE10',
                 parentId: 2,
-                roleAuthenticated: [1]
+                roleAuthenticated: [1,3]
             }
         ]
 
