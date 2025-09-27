@@ -35,7 +35,7 @@ export class DoctorProfileService implements IDoctorProfileService {
         let params :any={
           idUser
         }
-        return this._httpService.get<ResponseDTO>(url, "GetDoctorProfileById", params);
+        return this._httpService.get<ResponseDTO>(url, "GetDoctorProfileByIdUser", params);
       })
     );
   }

@@ -37,7 +37,10 @@
               "metismenujs/dist/metismenujs",
               "sweetalert2",
               "polylabel",
-              "@ckeditor/ckeditor5-build-classic"
+              "@ckeditor/ckeditor5-build-classic",
+              "raf",
+              "rgbcolor",
+              "html2pdf.js"
             ],
             "outputPath": "dist/skote",
             "index": "src/index.html",

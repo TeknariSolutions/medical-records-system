@@ -1,1 +1,91 @@
-<p>doctor-profile works!</p>
+<div class="card shadow-lg mt-4">
+  <!-- Header -->
+  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">
+      {{ isEditMode ? 'Editar Perfil del Doctor' : 'Crear Perfil del Doctor' }}
+    </h5>
+  </div>
+
+  <!-- Body -->
+  <div class="card-body">
+    
+    <!-- Datos del Doctor (solo lectura) -->
+    <div class="mb-4 p-3 border rounded bg-light">
+      <h6 class="text-secondary">Información del Doctor</h6>
+      <p class="mb-1 fw-bold">
+        Dr./Dra. {{ doctorForm.get('name')?.value }} {{ doctorForm.get('secondName')?.value }} 
+        {{ doctorForm.get('lastName')?.value }} {{ doctorForm.get('secondLastName')?.value }}
+      </p>
+      <p class="mb-0 text-muted">
+        {{ doctorForm.get('email')?.value }}
+      </p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="doctorForm" (ngSubmit)="saveProfile()">
+
+      <!-- Especialidad -->
+      <div class="mb-3">
+        <label class="form-label">Especialidad</label>
+        <input type="number" class="form-control" formControlName="idSpeciality">
+      </div>
+
+      <!-- Registro Médico -->
+      <div class="mb-3">
+        <label class="form-label">Registro Médico</label>
+        <input type="text" class="form-control" formControlName="medicalRegistre">
+      </div>
+
+      <!-- Firma Digital -->
+      <div class="mb-3">
+        <label class="form-label">Firma Digital</label>
+
+        <!-- Si hay firma guardada, mostrarla -->
+        <div *ngIf="signaturePreview && isEditMode" class="mt-2 text-center">
+          <img *ngIf="isImage"
+               [src]="signaturePreview"
+               alt="Firma actual"
+               class="img-fluid rounded shadow-sm"
+               style="max-height: 200px;" />
+
+          <p *ngIf="!isImage" class="text-muted">Archivo subido</p>
+
+          <button type="button"
+                  class="btn btn-sm btn-danger mt-2"
+                  (click)="removeFile()">
+            Eliminar Firma
+          </button>
+        </div>
+
+        <!-- Si no hay firma, o si se eliminó, permitir subir nueva -->
+        <div *ngIf="!signaturePreview">
+          <dropzone
+            class="dropzone border rounded p-3"
+            [config]="dropzoneConfig"
+            [message]="'Arrastra tu firma o haz clic para subirla'"
+            (addedFile)="onFileAdded($event)">
+          </dropzone>
+        </div>
+      </div>
+
+      <!-- Tipo de Documento -->
+      <div class="mb-3">
+        <label class="form-label">Tipo de Documento</label>
+        <input type="text" class="form-control" formControlName="documentType">
+      </div>
+
+      <!-- Número de Documento -->
+      <div class="mb-3">
+        <label class="form-label">Número de Documento</label>
+        <input type="text" class="form-control" formControlName="idDocument">
+      </div>
+
+      <!-- Botón Guardar -->
+      <div class="text-end">
+        <button type="submit" class="btn btn-success">
+          {{ isEditMode ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
