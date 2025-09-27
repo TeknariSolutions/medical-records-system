@@ -38,7 +38,7 @@ export class DoctorProfileUseCase {
                 this._notificationService.showToastErrorMessage(response.message!);
                 return null;
             }
-            return response.data as DoctorProfileDTO;
+            return response;
         })) 
     }
     DeleteDoctorProfile(idDoctorProfile:number) {

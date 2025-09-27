@@ -54,7 +54,7 @@ export class ConsultationProceduresComponent implements OnInit {
         }
 
         if (this.consultationData) {
-          this.loadDiagnosisConsultation(); // 👈 mover aquí
+          this.loadDiagnosisConsultation(); 
         }
       });
   }

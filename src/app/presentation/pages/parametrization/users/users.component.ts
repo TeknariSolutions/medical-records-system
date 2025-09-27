@@ -117,6 +117,8 @@ export class UsersComponent implements OnInit {
     this.currentPage = 1;
     this.loadUsers();
   }
-
+goToDoctorProfile(idUser: number): void {
+    this.router.navigate(['/parametrization/doctor-profile', idUser]);
+  }
 
 }
