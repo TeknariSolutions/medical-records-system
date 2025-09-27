@@ -1,18 +1,8 @@
-.logo-login {
-    margin: 30px 0 30px 0;
-    img {
-        width: 300px;
-    }
-}
-
-.col-8 {
-    background-image: url('../../../../../assets/images/login/team-cermi-2.jpg');
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.alert alert-danger {
-    margin: 10px 0 !important;
-    padding: 8px 15px !important;
+/* Imagen solo visible en desktop (d-none d-lg-block en HTML ya la oculta en móviles/tablets) */
+.image-background {
+  background-image: url('../../../../../assets/images/login/team-cermi-2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
 }

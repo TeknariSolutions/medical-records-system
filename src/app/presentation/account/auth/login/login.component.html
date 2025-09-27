@@ -1,85 +1,88 @@
 <div class="container-fluid p-0">
-    <div class="row g-0">
-      <div class="col-8">
-
-      </div>
-
-      <div class="col-4">
-         <div class="auth-full-page-content px-5 py-4">
-                <div class="w-100">
-
-                    <div class="d-flex flex-column h-100 justify-content-center">
-                        <div class="mb-3 d-flex justify-content-center">
-                            <a routerLink="/" class="d-block auth-logo">
-                                <img src="assets/images/CERMI.png" alt="" height="175" class="auth-logo-dark">
-                            </a>
-                        </div>
-                        <div class="my-2">
-                            <div>
-                                <h5 class="text-primary">Bienvenido de nuevo !</h5>
-                                <p class="text-muted">Inicia sesion para continuar</p>
-                            </div>
-
-                            <div class="mt-4">
-                                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
-                                    <!-- Email -->
-                                    <div class="mb-3">
-                                        <label for="userName">Usuario</label>
-                                        <input type="userName" class="form-control" id="text" formControlName="userName" [ngClass]="{ 'is-invalid': submitted && f.userName.errors }" placeholder="Ingresa tu usuario">
-                                        @if(submitted && f.userName.errors){
-                                        <div class="invalid-feedback">
-                                            @if(f.userName.errors?.required){
-                                            <div>Este campo es obligatorio.</div>
-                                            }
-                                        </div>}
-                                    </div>
-
-                                    <!-- Conraseña -->
-                                    <div class="mb-3">
-                                      <label for="userpassword">Contraseña</label>
-                                      <div class="input-group auth-pass-inputgroup">
-                                        <input [type]="fieldTextType ? 'text' : 'password'" class="form-control" formControlName="password"
-                                          [ngClass]="{ 'is-invalid': submitted && f.password.errors }" placeholder="Ingresa tu contraseña"
-                                          aria-label="Password" aria-describedby="password-addon" />
-                                        <button class="btn btn-light" type="button" (click)="toggleFieldTextType()" id="password-addon">
-                                          <i class="mdi" [ngClass]="fieldTextType ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"></i>
-                                        </button>
-                                        @if(submitted && f.password.errors){
-                                        <div class="invalid-feedback">
-                                          @if(f.password.errors.required){
-                                          <span>Este campo es obligatorio.</span>
-                                          }
-                                        </div>
-                                        }
-                                      </div>
-                                    </div>
-
-                                    <div class="mt-5 d-grid">
-                                      <button class="btn btn-primary btn-block" type="submit" [disabled]="loading">
-                                        <ng-container *ngIf="!loading; else loadingTpl">Iniciar Sesión</ng-container>
-                                        <ng-template #loadingTpl>
-                                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                          Cargando...
-                                        </ng-template>
-                                      </button>
-                                    </div>
-                                    
-                                    <alert *ngIf="loginFailed" [dismissible]="false" type="danger" class="mt-2 d-flex p-1 justify-content-center custom-alert">
-                                      <i class="mdi mdi-block-helper me-2"></i>
-                                        Credenciales Incorrectas
-                                    </alert>
-                                </form> 
-                            </div>
-                        </div>
-
-                        <div class="mt-4 mt-md-5 text-center">
-                            <p class="mb-0">© {{year}} Desarrollado por: Teknari Solutions </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-      </div>
-      
+  <div class="row g-0">
+    
+    <!-- Imagen (solo visible en escritorio) -->
+    <div class="col-lg-8 d-none d-lg-block">
+      <div class="image-background"></div>
     </div>
+
+    <!-- Formulario -->
+    <div class="col-12 col-lg-4">
+      <div class="auth-full-page-content px-4 py-4">
+        <div class="w-100">
+          <div class="d-flex flex-column h-100 justify-content-center">
+            
+            <!-- Logo -->
+            <div class="mb-3 d-flex justify-content-center">
+              <a routerLink="/" class="d-block auth-logo">
+                <img src="assets/images/CERMI.png" alt="" height="175" class="auth-logo-dark">
+              </a>
+            </div>
+
+            <!-- Título -->
+            <div class="my-2 text-center text-lg-start">
+              <h5 class="text-primary">Bienvenido de nuevo!</h5>
+              <p class="text-muted">Inicia sesión para continuar</p>
+            </div>
+
+            <!-- Formulario -->
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              
+              <!-- Usuario -->
+              <div class="mb-3">
+                <label for="userName">Usuario</label>
+                <input type="text" class="form-control" id="userName" formControlName="userName"
+                  [ngClass]="{ 'is-invalid': submitted && f.userName.errors }"
+                  placeholder="Ingresa tu usuario">
+                <div *ngIf="submitted && f.userName.errors" class="invalid-feedback">
+                  <div *ngIf="f.userName.errors?.required">Este campo es obligatorio.</div>
+                </div>
+              </div>
+
+              <!-- Contraseña -->
+              <div class="mb-3">
+                <label for="userPassword">Contraseña</label>
+                <div class="input-group auth-pass-inputgroup">
+                  <input [type]="fieldTextType ? 'text' : 'password'" class="form-control"
+                    formControlName="password"
+                    [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                    placeholder="Ingresa tu contraseña" aria-label="Password" />
+                  <button class="btn btn-light" type="button" (click)="toggleFieldTextType()" id="password-addon">
+                    <i class="mdi" [ngClass]="fieldTextType ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"></i>
+                  </button>
+                  <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                    <div *ngIf="f.password.errors?.required">Este campo es obligatorio.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón login -->
+              <div class="mt-5 d-grid">
+                <button class="btn btn-primary btn-block" type="submit" [disabled]="loading">
+                  <ng-container *ngIf="!loading; else loadingTpl">Iniciar Sesión</ng-container>
+                  <ng-template #loadingTpl>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Cargando...
+                  </ng-template>
+                </button>
+              </div>
+
+              <!-- Alerta error -->
+              <alert *ngIf="loginFailed" [dismissible]="false" type="danger"
+                class="mt-2 d-flex p-1 justify-content-center custom-alert">
+                <i class="mdi mdi-block-helper me-2"></i> Credenciales Incorrectas
+              </alert>
+            </form>
+
+            <!-- Footer -->
+            <div class="mt-4 text-center">
+              <p class="mb-0">© {{year}} Desarrollado por: Teknari Solutions</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
