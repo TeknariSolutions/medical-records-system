@@ -5,6 +5,6 @@ import { ResponseDTO } from "../../DTOs/common/response/response.dto";
 export interface IDoctorProfileService {
   createDoctorProfile(doctorProfileDTO: DoctorProfileDTO): Observable<ResponseDTO>;
   updateDoctorProfile(doctorProfileDTO: DoctorProfileDTO): Observable<ResponseDTO>;
-  getDoctorProfileById(doctorProfileDTO: number): Observable<ResponseDTO>;
+  getDoctorProfileById(idUser: number): Observable<ResponseDTO>;
   deleteDoctorProfile(idDoctorProfile: number): Observable<ResponseDTO>;
 }
