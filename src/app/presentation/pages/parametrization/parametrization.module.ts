@@ -5,7 +5,6 @@ import { DoctorProfileComponent } from './doctor-profile/doctor-profile.componen
 
 @NgModule({
   declarations: [
-    DoctorProfileComponent
   ],
   imports: [
     CommonModule,
