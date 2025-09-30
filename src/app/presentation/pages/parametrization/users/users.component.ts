@@ -10,6 +10,7 @@ import { LoadingComponent } from 'src/app/presentation/common/loading/loading.co
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 import { NgClass } from '@angular/common';
 import { PaginationComponent } from 'src/app/presentation/common/pagination/pagination.component';
+import { DoctorProfileComponent } from '../doctor-profile/doctor-profile.component';
 
 
 @Component({
@@ -117,8 +118,28 @@ export class UsersComponent implements OnInit {
     this.currentPage = 1;
     this.loadUsers();
   }
+
+
 goToDoctorProfile(idUser: number): void {
     this.router.navigate(['/parametrization/doctor-profile', idUser]);
   }
+
+  viewDoctorProfile(idUser: number): void {
+    const initialState = {
+      idUser: idUser,
+      onClose: (result: string) => {
+        if (result === 'refresh') {
+          this.loadUsers();
+        }
+      }
+    };
+
+    this.modalRef = this.modalService.show(DoctorProfileComponent, {
+      initialState,
+      class: 'modal-lg'
+    });
+  }
+
+
 
 }

@@ -348,10 +348,10 @@ export class CreateUpdateMedicalConsultationComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['consultationToEdit'] && this.consultationToEdit) {
-      //console.log('📦 consultationToEdit llegó en ngOnChanges:', this.consultationToEdit);
+     
 
       const normalized = this.normalizeConsultationData(this.consultationToEdit);
-      //console.log('✅ Normalized data:', normalized);
+     
       this.form.patchValue(normalized);
 
       const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);

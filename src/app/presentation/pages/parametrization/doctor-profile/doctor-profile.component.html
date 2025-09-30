@@ -1,15 +1,14 @@
-<div class="card shadow-lg mt-4">
-  <!-- Header -->
+<!-- <div class="card shadow-lg mt-4">
+
   <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
     <h5 class="mb-0">
       {{ isEditMode ? 'Editar Perfil del Doctor' : 'Crear Perfil del Doctor' }}
     </h5>
   </div>
 
-  <!-- Body -->
   <div class="card-body">
     
-    <!-- Datos del Doctor (solo lectura) -->
+  
     <div class="mb-4 p-3 border rounded bg-light">
       <h6 class="text-secondary">Información del Doctor</h6>
       <p class="mb-1 fw-bold">
@@ -21,26 +20,23 @@
       </p>
     </div>
 
-    <!-- Formulario -->
     <form [formGroup]="doctorForm" (ngSubmit)="saveProfile()">
 
-      <!-- Especialidad -->
+
       <div class="mb-3">
         <label class="form-label">Especialidad</label>
         <input type="number" class="form-control" formControlName="idSpeciality">
       </div>
 
-      <!-- Registro Médico -->
       <div class="mb-3">
         <label class="form-label">Registro Médico</label>
         <input type="text" class="form-control" formControlName="medicalRegistre">
       </div>
 
-      <!-- Firma Digital -->
+   
       <div class="mb-3">
         <label class="form-label">Firma Digital</label>
 
-        <!-- Si hay firma guardada, mostrarla -->
         <div *ngIf="signaturePreview && isEditMode" class="mt-2 text-center">
           <img *ngIf="isImage"
                [src]="signaturePreview"
@@ -57,7 +53,6 @@
           </button>
         </div>
 
-        <!-- Si no hay firma, o si se eliminó, permitir subir nueva -->
         <div *ngIf="!signaturePreview">
           <dropzone
             class="dropzone border rounded p-3"
@@ -68,24 +63,136 @@
         </div>
       </div>
 
-      <!-- Tipo de Documento -->
       <div class="mb-3">
         <label class="form-label">Tipo de Documento</label>
         <input type="text" class="form-control" formControlName="documentType">
       </div>
 
-      <!-- Número de Documento -->
       <div class="mb-3">
         <label class="form-label">Número de Documento</label>
         <input type="text" class="form-control" formControlName="idDocument">
       </div>
 
-      <!-- Botón Guardar -->
       <div class="text-end">
         <button type="submit" class="btn btn-success">
           {{ isEditMode ? 'Actualizar' : 'Crear' }}
         </button>
       </div>
     </form>
+
+
   </div>
+</div>
+ -->
+
+ <div class="modal-header">
+  <h5 class="modal-title">
+    {{ isEditMode ? 'Actualizar Perfil Medico' : 'Crear Perfil Medico' }}
+  </h5>
+
+  <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+</div>
+
+ <div class="modal-body">
+  <form [formGroup]="doctorForm" (ngSubmit)="saveProfile()">
+
+
+     <form [formGroup]="doctorForm" (ngSubmit)="saveProfile()">
+
+      <div class="mb-3">
+        <label for="documentType" class="form-label">
+          Especialidad
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select [items]="medicalSpecialities" bindLabel="label" bindValue="value" formControlName="idSpeciality"
+          placeholder="Selecciona una especialidad">
+        </ng-select>
+      </div>
+
+      
+
+      <div class="mb-3">
+        <label class="form-label">Registro Médico</label>
+        <input type="text" class="form-control" formControlName="medicalRegistre">
+      </div>
+
+   
+    <div class="mb-3">
+      <label class="form-label">Firma Digital</label>
+    
+      <!-- Preview + eliminar -->
+      <div *ngIf="signaturePreview" class="mt-2 text-center">
+        <div class="title-card d-flex justify-content-between align-items-center">
+          <span class="fw-bold">Vista previa</span>
+          <button class="btn btn-sm btn-soft-danger" (click)="removeFile()" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="Eliminar Firma">
+            <i class="mdi mdi-delete-outline"></i>
+          </button>
+        </div>
+    
+        <img *ngIf="isImage" [src]="signaturePreview" alt="Firma actual" class="img-fluid rounded shadow-sm mt-2"
+          style="max-height: 200px;" />
+    
+        <p *ngIf="!isImage" class="text-muted mt-2">Archivo subido</p>
+      </div>
+    
+      <!-- Dropzone (solo se muestra si no hay archivo) -->
+      <div *ngIf="!signaturePreview">
+        <dropzone class="dropzone border rounded p-3" [config]="dropzoneConfig"
+          [message]="'Arrastra tu firma o haz clic para subirla'" (addedFile)="onFileAdded($event)">
+        </dropzone>
+      </div>
+    </div>
+
+
+      <div class="mb-3">
+        <label for="documentType" class="form-label">
+          Tipo de Documento
+          <span class="text-danger">*</span>
+        </label>
+        <ng-select [items]="documentTypes" bindLabel="label" bindValue="value" formControlName="documentType"
+          placeholder="Selecciona un tipo de documento">
+        </ng-select>
+      </div>
+
+
+      <div class="mb-3">
+        <label class="form-label">Número de Documento</label>
+        <input type="text" class="form-control" formControlName="idDocument">
+      </div>
+
+    <!--   <div class="text-end">
+        <button type="submit" class="btn btn-success">
+          {{ isEditMode ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div> -->
+
+    </form>
+
+  <!-- Botones -->
+  <div class="d-flex justify-content-between gap-3 mt-4">
+    <div>
+      <!-- Botón eliminar perfil solo en modo edición -->
+      <button *ngIf="isEditMode" type="button" class="btn btn-danger" (click)="deleteProfile()">
+        <i class="bx bx-trash me-1"></i> Eliminar Perfil
+      </button>
+    </div>
+  
+    <div class="d-flex gap-3">
+      <button type="button" class="btn btn-light" (click)="onCancel()">
+        <i class="bx bx-x me-1"></i> Cancelar
+      </button>
+
+      <button class="btn btn-primary" type="submit">
+        <i class="bx bx-save me-1"></i>
+        {{ isEditMode ? 'Actualizar' : 'Guardar' }}
+      </button>
+
+    </div>
+  </div>
+
+
+
+
+  </form>
 </div>

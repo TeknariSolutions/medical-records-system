@@ -9,6 +9,7 @@ import { MedicalHistoriesComponent } from './patient-procedures/medical-historie
 import { ConsultationProceduresComponent } from './consultation-procedures/consultation-procedures.component';
 import { OrdersComponent } from './consultation-procedures/orders/orders.component';
 import { DoctorProfileComponent } from './doctor-profile/doctor-profile.component';
+import { ParaclinicsComponent } from './patient-procedures/paraclinics/paraclinics.component';
 
 const routes: Routes = [
     {
@@ -24,7 +25,11 @@ const routes: Routes = [
         component: CreateUpdatePatientComponent
     },
     {
-        path: 'patient-procedures',
+        path: 'create-update-patient/:idPatient',
+        component: CreateUpdatePatientComponent
+    },
+    {
+        path: 'patient-procedures/:idPatient',
         component: PatientProceduresComponent
     },
     {
@@ -36,7 +41,7 @@ const routes: Routes = [
         component: MedicalHistoriesComponent
     },
     {
-        path: 'consultation-procedures',
+        path: 'consultation-procedures/:idMedicalConsultation',
         component: ConsultationProceduresComponent
     },
     {
@@ -46,7 +51,11 @@ const routes: Routes = [
     {
         path: 'doctor-profile/:idUser',
         component:DoctorProfileComponent
-    }
+    },
+    {
+        path: 'paraclinics/:id',
+        component: ParaclinicsComponent
+    },
 ];
 
 @NgModule({

@@ -14,57 +14,30 @@ export class MedicalConsultationService implements IMedicalConsultationService {
   constructor(
     private _httpService: HttpService,
     private _configService: ConfigService
-  ) {}
+  ) { }
 
-  CreateMedicalConsultation(
-    medicalConsultation: MedicalConsultationDTO
-  ): Observable<ResponseDTO> {
+  CreateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap((url) => {
         return this._httpService.post(
-          url,
-          "CreateMedicalConsultation",
-          null,
-          medicalConsultation
-        );
+          url,"CreateMedicalConsultation",null,medicalConsultation);
       })
     );
   }
 
-  UpdateMedicalConsultation(
-    medicalConsultation: MedicalConsultationDTO
-  ): Observable<ResponseDTO> {
+  UpdateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap((url) => {
         return this._httpService.put(
-          url,
-          "UpdateMedicalConsultation",
-          null,
-          medicalConsultation
-        );
+          url,"UpdateMedicalConsultation",null,medicalConsultation);
       })
     );
   }
 
-  /*  GetListMedicalConsultationByIdPatient(paginator: PaginatorDTO, idPatient?: number, Status?: boolean, ConsultationDate?: string): Observable<ResponseDTO> {
-    return this._configService.getUrl().pipe(
-      switchMap(url => {
-        let params: any = {
-          PageIndex: paginator.pageIndex,
-          PageSize: paginator.pageSize,
-          idPatient,
-          Status,
-          ConsultationDate
-        };
-        return this._httpService.get<ResponseDTO>(url, "GetListMedicalConsultationByIdPatient", params);
-      })
-    );
-  } */
-
-  GetListMedicalConsultationByIdPatient(paginator: PaginatorDTO,idPatient?: number,Status?: boolean,ConsultationDate?: string): Observable<ResponseDTO> {
+ 
+  GetListMedicalConsultationByIdPatient(paginator: PaginatorDTO, idPatient?: number, Status?: boolean, ConsultationDate?: string): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap((url) => {
-        // Construimos params dinámicamente
         const params: any = {
           PageIndex: paginator.pageIndex,
           PageSize: paginator.pageSize,
@@ -82,40 +55,28 @@ export class MedicalConsultationService implements IMedicalConsultationService {
           params.ConsultationDate = ConsultationDate;
         }
 
-        return this._httpService.get<ResponseDTO>(url,"GetListMedicalConsultationByIdPatient",params);
+        return this._httpService.get<ResponseDTO>(url, "GetListMedicalConsultationByIdPatient", params);
       })
     );
   }
-  
 
-  CreateMedicalConsultationWithMedicalDiagnosis(
-    medicalDiagnosis: MedicalConsultationDTO
-  ): Observable<ResponseDTO> {
+
+  CreateMedicalConsultationWithMedicalDiagnosis(medicalDiagnosis: MedicalConsultationDTO): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap((url) => {
         return this._httpService.post(
-          url,
-          "CreateMedicalConsultationWithMedicalDiagnosis",
-          null,
-          medicalDiagnosis
-        );
+          url,"CreateMedicalConsultationWithMedicalDiagnosis",null,medicalDiagnosis);
       })
     );
   }
 
-  GetMedicalConsultationById(
-    IdMedicalConsultation?: number
-  ): Observable<ResponseDTO> {
+  GetMedicalConsultationById(IdMedicalConsultation?: number): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap((url) => {
         let params: any = {
           IdMedicalConsultation,
         };
-        return this._httpService.get<ResponseDTO>(
-          url,
-          "GetMedicalConsultationById",
-          params
-        );
+        return this._httpService.get<ResponseDTO>(url,"GetMedicalConsultationById",params);
       })
     );
   }

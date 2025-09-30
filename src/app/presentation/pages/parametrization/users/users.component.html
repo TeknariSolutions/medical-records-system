@@ -119,6 +119,17 @@
                     <td class="d-flex justify-content-end">
 
                       <ul class="list-unstyled hstack gap-2 mb-0">
+
+                          <!-- Mostrar solo si el rol es "Medico" -->
+                          @if(data.roleDescription === 'Medico') {
+                          <li data-bs-toggle="tooltip" data-bs-placement="top" title="Perfil Doctor">
+                            <button class="btn btn-sm btn-soft-primary" (click)="viewDoctorProfile(data.idUser)">
+                              <i class="mdi mdi-account-outline"></i>
+                            </button>
+                          </li>
+                          }
+
+
                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                           <button class="btn btn-sm btn-soft-info" (click)="editUser(data)">
                             <i class="mdi mdi-pencil-outline"></i>
@@ -130,13 +141,17 @@
                             <i class="mdi mdi-delete-outline"></i>
                           </button>
                         </li>
-                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Perfil Doctor">
+
+                        <!-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="Perfil Doctor">
                           <button 
                           class="btn btn-sm btn-soft-primary"
-                          (click)="goToDoctorProfile(data.idUser)">
+                          (click)="viewDoctorProfile(data.idUser)">
                           <i class="mdi mdi-account-outline"></i>
                           </button>
-                        </li>
+                        </li> -->
+
+                      
+
                       </ul>
                     </td>
                 </tr>

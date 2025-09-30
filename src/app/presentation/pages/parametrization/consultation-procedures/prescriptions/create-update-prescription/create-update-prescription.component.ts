@@ -101,7 +101,6 @@ searchMedicineById(idMedicine: number): Observable<any | undefined> {
   const paginator = { pageIndex: 1, pageSize: 1 }; // solo necesitamos 1 resultado
   return this.medicineUseCase.GetListMedicines(paginator, '', '').pipe(
     map((tableResult: any) => {
-      console.log(tableResult)
       return tableResult.results?.find(m => m.idMedicine === idMedicine);
     })
   );

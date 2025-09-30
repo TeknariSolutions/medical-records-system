@@ -10,45 +10,48 @@ import { map } from "rxjs";
 })
 
 export class DoctorProfileUseCase {
-    constructor(private _doctorProfileService: DoctorProfileService,private _notificationService: NotificationsService) { }
+    constructor(private _doctorProfileService: DoctorProfileService, private _notificationService: NotificationsService) { }
 
-    CreateDoctorProfile(doctorProfile:DoctorProfileDTO) {
-        return this._doctorProfileService.createDoctorProfile(doctorProfile).pipe(map((response:ResponseDTO)=>{
-            if(response.isSuccess){
+    CreateDoctorProfile(doctorProfile: DoctorProfileDTO) {
+        return this._doctorProfileService.createDoctorProfile(doctorProfile).pipe(map((response: ResponseDTO) => {
+            if (response.isSuccess) {
                 this._notificationService.showToastSuccessMessage(response.message || 'Perfil de doctor creado exitosamente');
-            }else{
+            } else {
                 this._notificationService.showToastErrorMessage(response.message || 'Ocurrió un error al crear el perfil de doctor');
             }
             return response; // retornas el objeto completo
         }))
     }
-    UpdateDoctorProfile(doctorProfile:DoctorProfileDTO) {
-        return this._doctorProfileService.updateDoctorProfile(doctorProfile).pipe(map((response:ResponseDTO)=>{
-            if(response.isSuccess){
+
+    UpdateDoctorProfile(doctorProfile: DoctorProfileDTO) {
+        return this._doctorProfileService.updateDoctorProfile(doctorProfile).pipe(map((response: ResponseDTO) => {
+            if (response.isSuccess) {
                 this._notificationService.showToastSuccessMessage(response.message || 'Perfil de doctor actualizado exitosamente');
-            }else{
+            } else {
                 this._notificationService.showToastErrorMessage(response.message || 'Ocurrió un error al actualizar el perfil de doctor');
             }
             return response; // retornas el objeto completo
-        })) 
+        }))
     }
-    GetDoctorProfileById(idUser:number) {
-        return this._doctorProfileService.getDoctorProfileById(idUser).pipe(map((response:ResponseDTO)=>{
-            if(!response.isSuccess){
-                this._notificationService.showToastErrorMessage(response.message!);
-                return null;
-            }
-            return response;
-        })) 
-    }
-    DeleteDoctorProfile(idDoctorProfile:number) {
-        return this._doctorProfileService.deleteDoctorProfile(idDoctorProfile).pipe(map((response:ResponseDTO)=>{
-            if(response.isSuccess){
+
+    DeleteDoctorProfile(idDoctorProfile: number) {
+        return this._doctorProfileService.deleteDoctorProfile(idDoctorProfile).pipe(map((response: ResponseDTO) => {
+            if (response.isSuccess) {
                 this._notificationService.showToastSuccessMessage(response.message || 'Perfil de doctor eliminado exitosamente');
-            }else{
+            } else {
                 this._notificationService.showToastErrorMessage(response.message || 'Ocurrió un error al eliminar el perfil de doctor');
             }
             return response; // retornas el objeto completo
+        }))
+    }
+
+    GetDoctorProfileById(idUser: number) {
+        return this._doctorProfileService.getDoctorProfileById(idUser).pipe(map((response: ResponseDTO) => {
+            if (!response.isSuccess) {
+                //this._notificationService.showToastErrorMessage(response.message!);
+                return null;
+            }
+            return response;
         }))
     }
 

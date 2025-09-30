@@ -63,8 +63,6 @@ export class MedicalConsultationComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.idPatient) {
-      console.log(this.idPatient)
-
       this.loadConsults();
     }
   }
@@ -153,7 +151,7 @@ export class MedicalConsultationComponent implements OnInit {
   }
 
 
-  viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
+/*   viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
     // Guardar la consulta
     this._dataTransferService.setData(consultation);
     sessionStorage.setItem('consultationData', JSON.stringify(consultation));
@@ -167,10 +165,45 @@ export class MedicalConsultationComponent implements OnInit {
     sessionStorage.setItem('pp_showConsultations', 'true');
 
     this.router.navigate(['parametrization/consultation-procedures']);
+  } */
+
+  /* viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
+    if (!consultation.idMedicalConsultation) {
+      this._notificationService.showToastErrorMessage('No se encontró el ID de la consulta');
+      return;
+    }
+
+    this._medicalConsultationUseCase
+      .GetMedicalConsultationById(consultation.idMedicalConsultation)
+      .subscribe({
+        next: (data) => {
+          if (data) {
+            // 🔹 Guardar los datos en el DataTransferService
+            this._dataTransferService.setData({
+              consultation: data,
+              patient: this.patientData
+            });
+
+            // 🔹 Navegar a la ruta de procedimientos
+            this.router.navigate(['parametrization/consultation-procedures', consultation.idMedicalConsultation]);
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener la consulta por ID', err);
+          this._notificationService.showToastErrorMessage('Error al cargar la consulta');
+        }
+      });
   }
+ */
 
+  viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
+    if (!consultation.idMedicalConsultation) {
+      this._notificationService.showToastErrorMessage('No se encontró el ID de la consulta');
+      return;
+    }
 
-
-
+    this.router.navigate([
+      'parametrization/consultation-procedures',consultation.idMedicalConsultation]);
+  }
 
 }

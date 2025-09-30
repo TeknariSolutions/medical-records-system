@@ -65,7 +65,7 @@
                             <!-- EPS -->
                             <td style="width: 97px; font-weight: 500;">EPS:</td>
                             <td colspan="2">
-                                {{ patientData.epsName}}
+                                {{ patientData?.epsName}}
                             </td>
                         </tr>
                     </tbody>
@@ -99,7 +99,7 @@
             </div>
         
             <div class="col-12 col-md-6 col-lg-4">
-                <div class="card justify-content-center custom-card text-center p-3">
+                <div class="card justify-content-center custom-card text-center p-3" (click)="navigateToParaclinicsList()">
                     <i class="mdi mdi-clipboard-edit-outline"></i>
                     <h4 class="card-title mt-2">Examenes Paraclinicos</h4>
                 </div>

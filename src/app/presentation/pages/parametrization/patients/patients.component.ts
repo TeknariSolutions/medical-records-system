@@ -87,18 +87,22 @@ export class PatientsComponent implements OnInit {
   }
 
   createPatient() {
-    this._dataTransferService.clearData();  // limpia el dato antes de navegar
+    //this._dataTransferService.clearData();  // limpia el dato antes de navegar
     this.router.navigate(['parametrization/create-update-patient']);
   }
 
   editPatient(patient: any): void {
-    this._dataTransferService.setData(patient);
-    this.router.navigate(['parametrization/create-update-patient']);
+    //this._dataTransferService.setData(patient);
+    this.router.navigate(['parametrization/create-update-patient', patient.idPatient]);
   }
 
-  viewPatientProcedures(patient: any): void {
+  /* viewPatientProcedures(patient: any): void {
     this._dataTransferService.setData(patient);
     this.router.navigate(['parametrization/patient-procedures']);
+  } */
+
+  viewPatientProcedures(patient: any): void {
+    this.router.navigate(['parametrization/patient-procedures', patient.idPatient]);
   }
 
   deletePatient(idPatient: number): void {

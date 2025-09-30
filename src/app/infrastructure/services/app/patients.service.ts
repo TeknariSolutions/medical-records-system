@@ -58,4 +58,15 @@ export class PatientsService implements IPatientService {
       })
     );
   }
+
+  GetPatientByIdAll(idPatient: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idPatient
+        };
+        return this._httpService.get<ResponseDTO>(url, "GetPatientByIdAll", params);
+      })
+    );
+  }
 }

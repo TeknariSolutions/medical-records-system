@@ -7,5 +7,6 @@ export interface IPatientService {
     CreatePatient(patient: PatientDTO): Observable<ResponseDTO>;
     UpdatePatient(patient: PatientDTO): Observable<ResponseDTO>;
     DeletePatient(idPatient: number): Observable<ResponseDTO>;
-    GetListPatients(paginator: PaginatorDTO, IdDocument?: string, FirstName?: string, FirstLastName?: string): Observable<ResponseDTO>
+    GetListPatients(paginator: PaginatorDTO, IdDocument?: string, FirstName?: string, FirstLastName?: string): Observable<ResponseDTO>;
+    GetPatientByIdAll(idPatient: number): Observable<ResponseDTO>;
 }

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgStepperModule } from 'angular-ng-stepper';
 import { CdkStepper, CdkStepperModule, StepperSelectionEvent } from '@angular/cdk/stepper';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
@@ -104,6 +104,7 @@ export class CreateUpdatePatientComponent implements OnInit {
     private formBuilder: FormBuilder,
     private _patientsUseCase: PatientsUseCase,
     private router: Router,
+    private _route: ActivatedRoute,
     public bsModalRef: BsModalRef,
     private _dataTransferService: DataTransferService,
     private locationService: LocationService,
@@ -111,7 +112,7 @@ export class CreateUpdatePatientComponent implements OnInit {
     private _countriesUseCase: CountriesUseCase
   ) {}
 
-  ngOnInit(): void {
+ /*  ngOnInit(): void {
     this.initForm();
     
     this.loadEPS();
@@ -123,13 +124,11 @@ export class CreateUpdatePatientComponent implements OnInit {
     }
 
     this._dataTransferService.getData$()
-      .pipe(take(1)) // solo una vez, evita acumulación
+      .pipe(take(1)) 
       .subscribe(patient => {
         if (patient) {
           this.isEditMode = true;
-          //this.patientData = patient;
 
-          // 🔄 transformar propiedades para que coincidan con tu DTO
           this.patientData = {
             ...patient,
             countryId: patient.idCountry ?? patient.countryId,
@@ -138,7 +137,6 @@ export class CreateUpdatePatientComponent implements OnInit {
           };
 
   
-          // Transformar la fecha para el input[type="date"]
           const birthDayFormatted = this.formatDate(patient.birthDay);
 
           this.patientForm.patchValue({
@@ -187,15 +185,72 @@ export class CreateUpdatePatientComponent implements OnInit {
             }
           });
         }
-
-        // Ya se tiene el valor de residenceDepartment en el formulario
-        /* const countryId = patient.countryId;
-        if (countryId) {
-          this.onCountryChange(countryId);
-        }  */
       });
-  }
+  } */
 
+ ngOnInit(): void {
+  this.initForm();
+  this.loadEPS();
+  this.loadCountries();
+
+  const idPatient = this._route.snapshot.paramMap.get('idPatient');
+
+  if (idPatient) {
+    this.isEditMode = true;
+    this._patientsUseCase.GetPatientByIdAll(Number(idPatient)).subscribe({
+      next: (patient) => {
+        this.patientData = patient; // ya viene con countryId, departmentId, municipalityId
+
+        const birthDayFormatted = this.formatDate(patient.birthDay);
+
+        this.patientForm.patchValue({
+          personalInfo: {
+            firstName: patient.firstName,
+            secondName: patient.secondName,
+            firstLastName: patient.firstLastName,
+            secondLastName: patient.secondLastName,
+            documentType: patient.documentType,
+            idDocument: patient.idDocument,
+            birthDay: birthDayFormatted,
+            sex: patient.sex,
+            maritalStatus: patient.maritalStatus,
+          },
+          contactInfo: {
+            address: patient.address,
+            countryId: patient.countryId,         // ✅ corregido
+            departmentId: patient.departmentId,   // ✅ corregido
+            municipalityId: patient.municipalityId, // ✅ corregido
+            phoneNumber: patient.phoneNumber,
+            phoneNumber2: patient.phoneNumber2,
+            email: patient.email,
+            nameOfGuardian: patient.nameOfGuardian,
+            idDocumentGuardian: patient.idDocumentGuardian,
+            documentTypeGuradian: patient.documentTypeGuradian,
+            relationship: patient.relationship,
+            addressOfGuardian: patient.addressOfGuardian,
+            phoneNumberOfGuardian: patient.phoneNumberOfGuardian,
+            emailOfGuardian: patient.emailOfGuardian,
+          },
+          medicalInfo: {
+            isDisAbility: patient.isDisAbility,
+            disAbilityDescription: patient.disAbilityDescription,
+            bloodType: patient.bloodType?.trim() || null,
+            idEps: patient.idEps,
+            stratum: patient.stratum,
+            codRegimen: patient.codRegimen ? Number(patient.codRegimen.toString().trim()) : null,
+            regime: patient.regime,
+          },
+          aditionalInfo: {
+            job: patient.job,
+            ethnic: patient.ethnic,
+          }
+        });
+      }
+    });
+  }
+}
+
+  
   ngOnDestroy(): void {
     this._dataTransferService.clearData();
   }

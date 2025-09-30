@@ -11,12 +11,6 @@ export const routes: Routes = [
         pathMatch: "full"
     }, 
     { path: 'auth/login', component: LoginComponent},
-
-  /*   {
-        path: "auth",
-        loadChildren: () =>
-            import("./account/account.module").then((m) => m.AccountModule),
-    }, */
     {
         path: "",
         component: LayoutComponent,
@@ -25,6 +19,5 @@ export const routes: Routes = [
             import("./../app/presentation/pages/pages.module").then((m) => m.PagesModule)
     },
 
-   
     { path: "**", component: Page404Component },
 ];

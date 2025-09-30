@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
 import { MedicalDiagnosisDTO } from 'src/app/core/DTOs/app/medical-diagnosis.dto';
@@ -8,6 +8,10 @@ import { DataTransferService } from 'src/app/infrastructure/services/common/data
 import { MedicalConsultationDiagnosisUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation-diagnosis.use-case';
 import { PrescriptionsComponent } from './prescriptions/prescriptions.component';
 import { OrdersComponent } from './orders/orders.component';
+import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
+import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
+import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
+import { MedicalConsultationByIdDTO } from 'src/app/core/DTOs/app/medical-consultation-by-id.dto';
 
 @Component({
   standalone: true,
@@ -23,7 +27,9 @@ import { OrdersComponent } from './orders/orders.component';
 })
 export class ConsultationProceduresComponent implements OnInit {
 
-  consultationData?: MedicalConsultationDTO;
+  //consultationData?: MedicalConsultationDTO;
+  consultationData: Partial<MedicalConsultationDTO> = {};
+
 
   diagnoses: MedicalDiagnosisDTO[] = [];
 
@@ -32,45 +38,52 @@ export class ConsultationProceduresComponent implements OnInit {
 
   showCreateConsultation = false;
 
+  patientData!: PatientDTO;
+
   constructor(
     private _dataTransferService: DataTransferService,
     private _router: Router,
+    private _route: ActivatedRoute,
     private _medicalConsultationDiagnosisUseCase: MedicalConsultationDiagnosisUseCase,
+    private _medicalConsultationUseCase: MedicalConsultationUseCase,
+    private _notificationService: NotificationsService
   ) { }
 
 
-  ngOnInit(): void {
-    this._dataTransferService.getData$()
-      .pipe(take(1))
-      .subscribe(consultation => {
-        if (consultation) {
-          this.consultationData = consultation;
-        } else {
-          this._dataTransferService.loadFromStorage();
-          const saved = sessionStorage.getItem('consultationData');
-          if (saved) {
-            this.consultationData = JSON.parse(saved);
-          }
-        }
+ ngOnInit(): void {
+  const idConsultation = Number(this._route.snapshot.paramMap.get('idMedicalConsultation'));
 
-        if (this.consultationData) {
-          this.loadDiagnosisConsultation(); 
-        }
-      });
+  if (!idConsultation) {
+    this._notificationService.showToastErrorMessage('ID de consulta no válido ❌');
+    this._router.navigate(['/parametrization/patients']);
+    return;
   }
 
-
+   this._medicalConsultationUseCase.GetMedicalConsultationById(idConsultation)
+     .subscribe({
+       next: (response: MedicalConsultationByIdDTO) => {
+         if (response) {
+           this.consultationData = response.main?.[0];
+           this.diagnoses = response.related ?? [];
+         }
+       },
+       error: () => {
+         this._notificationService.showToastErrorMessage(
+           'Error al cargar la consulta desde el servidor'
+         );
+       }
+     });
+}
 
   goBackToProcedures(): void {
-    // Recuperar los datos del paciente que ya guardaste en sessionStorage
-    const savedPatient = sessionStorage.getItem('patientData');
+    const idPatient = this.patientData?.idPatient ?? this.consultationData?.idPatient;
 
-    if (savedPatient) {
-      // 🔹 Volver al listado de consultas
-      this._router.navigate(['/parametrization/patient-procedures']);
+    if (idPatient) {
+      this._router.navigate([`/parametrization/patient-procedures`, idPatient]);
     } else {
-      // fallback si no hay nada guardado
-      this._router.navigate(['/parametrization/patients']);
+      this._notificationService.showToastErrorMessage(
+        'No se pudo determinar el paciente ❌'
+      );
     }
   }
 

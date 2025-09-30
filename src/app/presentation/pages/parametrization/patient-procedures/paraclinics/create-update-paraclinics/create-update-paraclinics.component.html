@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    {{ paraclinic ? 'Actualizar Paraclínico' : 'Crear Paraclínico' }}
+  </h5>
+  <button type="button" class="btn-close" (click)="onCancel()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="form" (ngSubmit)="save()">
+
+    <div class="mb-3">
+      <label>Nombre <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="name">
+    </div>
+
+    <div class="mb-3">
+      <label>Observaciones</label>
+      <textarea class="form-control" formControlName="observations"></textarea>
+    </div>
+
+    <div class="mb-3" *ngIf="!paraclinic">
+      <label>Archivo</label>
+      <input type="file" class="form-control" (change)="onFileSelected($event)">
+    </div>
+
+    <div class="text-end">
+      <button type="button" class="btn btn-light me-2" (click)="onCancel()">Cancelar</button>
+      <button type="submit" class="btn btn-primary">
+        {{ paraclinic ? 'Actualizar' : 'Crear' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,8 @@
+.dropzone .dz-text {
+    font-size: 15px !important;
+}
+
+.title-card {
+    display: flex;
+    justify-content: flex-end;
+}

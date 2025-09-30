@@ -66,4 +66,27 @@ export class PatientsUseCase {
     );
   }
 
+  /* GetPatientByIdAll(idPatient: number): Observable<TableResultDTO> {
+    return this._patientsService.GetPatientByIdAll(idPatient).pipe(
+      map((response: ResponseDTO) => {
+        if (!response.isSuccess) {
+          this._notificationService.showToastErrorMessage(response.message!);
+        }
+        return response.data;
+      })
+    );
+  } */
+
+  GetPatientByIdAll(idPatient: number): Observable<PatientDTO> {
+    return this._patientsService.GetPatientByIdAll(idPatient).pipe(
+      map((response: ResponseDTO) => {
+        if (!response.isSuccess) {
+          this._notificationService.showToastErrorMessage(response.message!);
+        }
+        return response.data as PatientDTO;
+      })
+    );
+  }
+
+
 }
