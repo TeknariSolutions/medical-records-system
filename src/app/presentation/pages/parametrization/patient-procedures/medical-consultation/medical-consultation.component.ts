@@ -92,8 +92,6 @@ export class MedicalConsultationComponent implements OnInit {
   }
 
 
-
-
   applyFilter(): void {
     this.currentPage = 1; // reset paginación
     this.loadConsults();
@@ -141,7 +139,7 @@ export class MedicalConsultationComponent implements OnInit {
     const initialState = {
       idPatient: data.idPatient,
       idMedicalConsultation: data.idMedicalConsultation,
-      patientData: this.patientData // 👈 le pasas la info completa del paciente
+      patientData: this.patientData // le pasas la info completa del paciente
     };
 
     this.modalRef = this.modalService.show(DetailsConsultationComponent, {
@@ -151,56 +149,14 @@ export class MedicalConsultationComponent implements OnInit {
   }
 
 
-/*   viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
-    // Guardar la consulta
-    this._dataTransferService.setData(consultation);
-    sessionStorage.setItem('consultationData', JSON.stringify(consultation));
-
-    // Guardar también el paciente
-    if (this.patientData) {
-      sessionStorage.setItem('patientData', JSON.stringify(this.patientData));
-    }
-
-    // ✅ Guardar flag para que al volver se abran las consultas
-    sessionStorage.setItem('pp_showConsultations', 'true');
-
-    this.router.navigate(['parametrization/consultation-procedures']);
-  } */
-
-  /* viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
-    if (!consultation.idMedicalConsultation) {
-      this._notificationService.showToastErrorMessage('No se encontró el ID de la consulta');
-      return;
-    }
-
-    this._medicalConsultationUseCase
-      .GetMedicalConsultationById(consultation.idMedicalConsultation)
-      .subscribe({
-        next: (data) => {
-          if (data) {
-            // 🔹 Guardar los datos en el DataTransferService
-            this._dataTransferService.setData({
-              consultation: data,
-              patient: this.patientData
-            });
-
-            // 🔹 Navegar a la ruta de procedimientos
-            this.router.navigate(['parametrization/consultation-procedures', consultation.idMedicalConsultation]);
-          }
-        },
-        error: (err) => {
-          console.error('Error al obtener la consulta por ID', err);
-          this._notificationService.showToastErrorMessage('Error al cargar la consulta');
-        }
-      });
-  }
- */
-
   viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
     if (!consultation.idMedicalConsultation) {
       this._notificationService.showToastErrorMessage('No se encontró el ID de la consulta');
       return;
     }
+
+    // ✅ guardamos el patientData con clave
+    this._dataTransferService.setData('patientData', this.patientData);
 
     this.router.navigate([
       'parametrization/consultation-procedures',consultation.idMedicalConsultation]);

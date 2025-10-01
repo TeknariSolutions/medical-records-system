@@ -57,4 +57,22 @@ export class UsersService implements IUserService {
       })
     );
   }
+
+  GetListDoctors(paginator: PaginatorDTO, Name?: string, LastName?: string, idCompany?: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          PageIndex: paginator.pageIndex,
+          PageSize: paginator.pageSize,
+          Name,
+          LastName,
+          idCompany
+        };
+        return this._httpService.get<ResponseDTO>(url, "api/User/GetListDoctors", params);
+      })
+    );
+  }
+
+  
+  
 }

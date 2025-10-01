@@ -1,6 +1,13 @@
-.card-title {
-  font-size: 15px;
-  text-align: center;
+.info-history {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  p {
+    font-weight: 400;
+    margin-bottom: 0;
+    font-size: 0.8rem;
+  }
 }
 
 .info-title {
@@ -8,15 +15,19 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.title-patient {
+.patient-data {
+  font-size: 14px !important;
+}
+
+/* .title-patient {
   strong {
     font-weight: 500 !important;
   }
-}
+} */
 
-h6 {
+/* h6 {
   font-size: 13px;
-}
+} */
 
 .info-row {
   display: flex;

@@ -51,10 +51,13 @@ export class ConsultationProceduresComponent implements OnInit {
 
 
  ngOnInit(): void {
+
+  this.patientData = this._dataTransferService.getData<PatientDTO>('patientData')!;
+
   const idConsultation = Number(this._route.snapshot.paramMap.get('idMedicalConsultation'));
 
   if (!idConsultation) {
-    this._notificationService.showToastErrorMessage('ID de consulta no válido ❌');
+    this._notificationService.showToastErrorMessage('ID de consulta no válido');
     this._router.navigate(['/parametrization/patients']);
     return;
   }

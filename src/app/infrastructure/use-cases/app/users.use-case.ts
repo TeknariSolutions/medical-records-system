@@ -66,4 +66,15 @@ export class UsersUseCase {
       })
     );
   }
+
+  GetListDoctors(paginator: PaginatorDTO, Name?: string, LastName?: string, idCompany?: number): Observable<TableResultDTO> {
+    return this._userService.GetListDoctors(paginator, Name, LastName, idCompany).pipe(
+      map((response: ResponseDTO) => {
+        if (!response.isSuccess) {
+          this._notificationService.showToastErrorMessage(response.message!);
+        } 
+        return response.data;
+      })
+    );
+  }
 }

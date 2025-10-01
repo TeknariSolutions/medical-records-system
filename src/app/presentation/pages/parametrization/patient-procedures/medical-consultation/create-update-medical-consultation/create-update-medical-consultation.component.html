@@ -106,21 +106,42 @@
             <textarea class="form-control mb-2" formControlName="currentIllness" rows="4"></textarea>
           </div>
 
+          <!-- Médico Tratante -->
+          <div class="col-12">
+            <div class="mb-2">
+              <label for="idUser" class="form-label">
+                Médico Tratante
+              </label>
+              <div class="input-group">
+                <select id="idUser" class="form-control" formControlName="idUser">
+                  <option [ngValue]="null" disabled selected>
+                    Seleccione un médico
+                  </option>
+                  <option *ngFor="let index of doctors" [ngValue]="index.idUser">
+                    {{ index.name }} {{ index.secondName }} {{ index.lastName }} {{ index.secondLastName }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+
           <div class="row mt-4">
+          
             <div class="col-12 col-lg-6">
               <input type="checkbox" formControlName="isFirstTime" class="form-check-input me-1" id="firstTimeCheck" />
               <label for="firstTimeCheck" class="form-check-label">Es primera vez</label>
             </div>
-
+          
             <div class="col-12 col-lg-6">
               <div class="form-check form-switch form-switch-lg mb-3">
-                <input class="form-check-input" type="checkbox" id="SwitchCheckSizelg" formControlName="status" checked
-                  disabled>
+                <input class="form-check-input" type="checkbox" id="SwitchCheckSizelg" formControlName="status" checked disabled>
                 <label class="form-check-label" for="SwitchCheckSizelg">
                   {{ form.get('basicInfo.status')?.value ? 'CERRADO' : 'PENDIENTE' }}
                 </label>
               </div>
             </div>
+          
           </div>
 
           <div class="mt-3">

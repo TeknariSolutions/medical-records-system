@@ -112,81 +112,6 @@ export class CreateUpdatePatientComponent implements OnInit {
     private _countriesUseCase: CountriesUseCase
   ) {}
 
- /*  ngOnInit(): void {
-    this.initForm();
-    
-    this.loadEPS();
-    this.loadCountries();
-
-    if (!this.isEditMode && this.patientForm.get('contactInfo.countryId')?.value) {
-      const countryId = this.patientForm.get('contactInfo.countryId')?.value;
-      this.onCountryChange(countryId);
-    }
-
-    this._dataTransferService.getData$()
-      .pipe(take(1)) 
-      .subscribe(patient => {
-        if (patient) {
-          this.isEditMode = true;
-
-          this.patientData = {
-            ...patient,
-            countryId: patient.idCountry ?? patient.countryId,
-            departmentId: patient.idDepartment ?? patient.departmentId,
-            municipalityId: patient.idMunicipality ?? patient.municipalityId,
-          };
-
-  
-          const birthDayFormatted = this.formatDate(patient.birthDay);
-
-          this.patientForm.patchValue({
-            personalInfo: {
-              firstName: patient.firstName,
-              secondName: patient.secondName,
-              firstLastName: patient.firstLastName,
-              secondLastName: patient.secondLastName,
-              documentType: patient.documentType,
-              idDocument: patient.idDocument,
-              birthDay: birthDayFormatted,
-              sex: patient.sex,
-              maritalStatus: patient.maritalStatus,
-            },
-            contactInfo: {
-              address: patient.address,
-              countryId: patient.idCountry,        
-              departmentId: patient.idDepartment,  
-              municipalityId: patient.idMunicipality, 
-
-
-              phoneNumber: patient.phoneNumber,
-              phoneNumber2: patient.phoneNumber2,
-              email: patient.email,
-
-              nameOfGuardian: patient.nameOfGuardian,
-              idDocumentGuardian: patient.idDocumentGuardian,
-              documentTypeGuradian: patient.documentTypeGuradian,
-              relationship: patient.relationship,
-              addressOfGuardian: patient.addressOfGuardian,
-              phoneNumberOfGuardian: patient.phoneNumberOfGuardian,
-              emailOfGuardian: patient.emailOfGuardian,
-            },
-            medicalInfo: {
-              isDisAbility: patient.isDisAbility,
-              disAbilityDescription: patient.disAbilityDescription,
-              bloodType: patient.bloodType?.trim() || null,
-              idEps: patient.idEps,
-              stratum: patient.stratum,
-              codRegimen: patient.codRegimen ? Number(patient.codRegimen.toString().trim()) : null,
-              regime: patient.regime,
-            },
-            aditionalInfo: {
-              job: patient.job,
-              ethnic: patient.ethnic,
-            }
-          });
-        }
-      });
-  } */
 
  ngOnInit(): void {
   this.initForm();
@@ -217,9 +142,9 @@ export class CreateUpdatePatientComponent implements OnInit {
           },
           contactInfo: {
             address: patient.address,
-            countryId: patient.countryId,         // ✅ corregido
-            departmentId: patient.departmentId,   // ✅ corregido
-            municipalityId: patient.municipalityId, // ✅ corregido
+            countryId: patient.countryId,    
+            departmentId: patient.departmentId,   
+            municipalityId: patient.municipalityId, 
             phoneNumber: patient.phoneNumber,
             phoneNumber2: patient.phoneNumber2,
             email: patient.email,
@@ -251,9 +176,9 @@ export class CreateUpdatePatientComponent implements OnInit {
 }
 
   
-  ngOnDestroy(): void {
+ /*  ngOnDestroy(): void {
     this._dataTransferService.clearData();
-  }
+  } */
 
   private initForm(): void {
     this.patientForm = this.formBuilder.group({

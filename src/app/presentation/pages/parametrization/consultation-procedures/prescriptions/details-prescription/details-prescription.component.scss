@@ -1,0 +1,127 @@
+
+.modal-content {
+    border: none !important;
+}
+
+.header {
+    width: 100%;
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 2px 8px;
+  border: 1px solid #ccc;
+}
+
+.text-end {
+  text-align: right;
+}
+
+.text-sm-end {
+  text-align: right;
+} 
+
+.card {
+  margin-bottom: 0 !important;
+}
+
+.card-body {
+    padding: 2rem 2.5rem 0 2.5rem !important;
+    
+}
+
+.date-actual {
+  //display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  margin-bottom: 10px;
+  display: none;
+
+  p {
+    margin-bottom: 5px !important;
+    text-align: right !important;
+    font-size: 11px !important;
+
+    strong {
+      font-weight: 500 !important;
+    }
+  }
+}
+
+.invoice-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.v-divider {
+  width: 100%;
+  height: .5px;
+  background-color: #003B53;
+}
+
+.info-doctors {
+   /*  position: absolute; */
+    height: 150px;
+   /*  top: -35%; */
+}
+
+.info-consultation {
+    display: flex;
+    flex-direction: column;
+  /*   top: 5rem; */
+    position: relative;
+    background: white;
+
+    h5 {
+      font-weight: 700;
+    }
+}
+
+.section-info {
+  .title-section {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  p {
+    margin-bottom: 6px !important;
+    font-size: 13px;
+  }
+}
+
+.btn-print {
+  display: flex;
+  justify-content: end;
+  padding: 1rem;
+
+  button {
+    background-color: #1AAE9F;
+    color: white;
+  }
+ 
+}
+
+
+.section-info, table, tr, td, th, h6, h5, p {
+  page-break-inside: avoid !important;
+}
+
+h6, h5 {
+  page-break-after: avoid !important;
+}
+
+/* Forzar salto */
+.page-break {
+  page-break-before: always !important;
+}
+
+
+
+
+

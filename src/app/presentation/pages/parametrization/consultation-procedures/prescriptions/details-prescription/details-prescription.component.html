@@ -1,0 +1,87 @@
+<div id="prescription-content">
+  <div class="row">
+    <div class="col-12">
+      <img src="assets/images/HEADER-PDF.png" class="header"/>
+
+      <div class="card mt-3">
+        <div class="card-body">
+
+          <h5 class="text-center mb-4">PRESCRIPCIÓN MÉDICA</h5>
+
+          <!-- Datos del paciente -->
+          <div class="table-responsive mb-3">
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <td><strong>Paciente:</strong></td>
+                  <td>{{ patientData?.firstName }} {{ patientData?.secondName }} {{ patientData?.firstLastName }} {{ patientData?.secondLastName }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Documento:</strong></td>
+                  <td>{{ patientData?.documentType }} {{ patientData?.idDocument }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Fecha de Prescripción:</strong></td>
+                  <td>{{ prescriptionData.prescriptionDate | date:'dd/MM/yyyy hh:mm a' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Detalles de medicamentos -->
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Medicamento</th>
+                  <th>Dosis</th>
+                  <th>Frecuencia</th>
+                  <th>Duración</th>
+                  <th>Cantidad</th>
+                  <th>Instrucciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for(detail of details; track $index) {
+                  <tr>
+                    <td>{{ detail.idMedicine }}</td>
+                    <td>{{ detail.dosage }}</td>
+                    <td>{{ detail.frequency }}</td>
+                    <td>{{ detail.duration }}</td>
+                    <td>{{ detail.prescribedQuantity }}</td>
+                    <td>{{ detail.instructions }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+            <!-- Firma y datos del médico -->
+            @if (doctorProfile) {
+            <div class="row mt-5 mb-5 text-center">
+                <div class="col-12">
+                    @if (doctorProfile.digitalSignature) {
+                    <img [src]="doctorProfile.digitalSignature" alt="Firma del médico" style="max-height: 100px;" class="mb-2" />
+                    }
+                    <p class="mb-0 fw-bold">
+                        {{ doctorProfile.name }} {{ doctorProfile.secondName }}
+                        {{ doctorProfile.lastName }} {{ doctorProfile.secondLastName }}
+                    </p>
+                    <p class="mb-0">{{ doctorProfile.specialityDescription }}</p>
+                    <p class="mb-0">Registro Médico: {{ doctorProfile.medicalRegistre }}</p>
+                </div>
+            </div>
+            }
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Botón para imprimir -->
+<div class="btn-print mt-3 text-end">
+  <button class="btn btn-primary" (click)="printPrescription()">
+    <i class="fa fa-print"></i> Imprimir
+  </button>
+</div>

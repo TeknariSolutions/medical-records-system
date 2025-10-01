@@ -8,4 +8,5 @@ export interface IUserService {
    UpdateUser(user: UserDTO): Observable<ResponseDTO>;
    DeleteUser(idUser: number): Observable<ResponseDTO>;
    GetListUsers(paginator: PaginatorDTO, Email?: string, idCompany?: number): Observable<ResponseDTO>;
+   GetListDoctors(paginator: PaginatorDTO, Name?: string, LastName?: string, idCompany?: number): Observable<ResponseDTO>;
 }

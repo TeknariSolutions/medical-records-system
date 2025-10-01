@@ -27,6 +27,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-case';
 
 
 
@@ -89,8 +90,6 @@ export class CreateUpdateMedicalConsultationComponent {
   pageSizeOptions = [5, 10, 25, 100];
   totalRecords: number = 0;
 
-
-
   code = '';
   description = '';
   suggestions: any[] = [];
@@ -110,10 +109,9 @@ export class CreateUpdateMedicalConsultationComponent {
   exitConditions: any[] = [];
   externalCauses: any[] = [];
 
+  doctors: any[] = [];
+
   submitted = false;
-
-
-
 
   @ViewChild('cdkStepper') stepper!: CdkStepper;
 
@@ -127,7 +125,8 @@ export class CreateUpdateMedicalConsultationComponent {
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private _notificationService: NotificationsService,
-    private _closeConsultationUseCase: CloseConsultationUseCase
+    private _closeConsultationUseCase: CloseConsultationUseCase,
+    private _usersUseCase: UsersUseCase
   ) {
 
     this.form = this.fb.group({
@@ -136,7 +135,8 @@ export class CreateUpdateMedicalConsultationComponent {
         consultationDate: this.getLocalDateTime(),
         isFirstTime: [true],
         status: [false],
-        currentIllness: ['']
+        currentIllness: [''],
+        idUser: [null]
       }),
       clinicalStates: this.fb.group({
         moodStatus: [''],
@@ -241,6 +241,7 @@ export class CreateUpdateMedicalConsultationComponent {
     this.loadExistConditions();
     this.loadExternalCauseCodes();
     this.loadConsultationFinalities();
+    this.loadDoctors();
   }
 
   private patchDiagnoses(): void {
@@ -415,7 +416,8 @@ export class CreateUpdateMedicalConsultationComponent {
         consultationDate: c.consultationDate ? new Date(c.consultationDate) : new Date(),
         isFirstTime: c.isFirstTime ?? true,
         status: c.status ?? false,
-        currentIllness: c.currentIllness ?? ''
+        currentIllness: c.currentIllness ?? '',
+        idUser: c.idUser || null,
       },
       clinicalStates: {
         hydrationStatus: c.hydrationStatus ?? '',
@@ -571,7 +573,7 @@ export class CreateUpdateMedicalConsultationComponent {
       return;
     }
 
-    const idUser = Number(localStorage.getItem('IdUser'));
+    const userLogged = Number(localStorage.getItem('IdUser'));
     const idRol = Number(localStorage.getItem('IdRol'));
 
     const formValues = this.form.value;
@@ -581,7 +583,7 @@ export class CreateUpdateMedicalConsultationComponent {
     const baseData: MedicalConsultationDTO = {
       idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
       idPatient: this.idPatient,
-      idUser: idUser,
+      idUser: formValues.basicInfo.idUser,
 
       consultationReason: formValues.basicInfo.consultationReason,
       consultationDate: isEdit
@@ -622,9 +624,9 @@ export class CreateUpdateMedicalConsultationComponent {
       idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
       idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
 
-      createdBy: isEdit ? Number(this.consultationToEdit!.createdBy) : idUser,
+      createdBy: isEdit ? Number(this.consultationToEdit!.createdBy) : userLogged,
       createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
-      updateBy: idUser,
+      updateBy: userLogged,
       updateAt: this.getLocalDateTime()
     };
 
@@ -718,7 +720,7 @@ export class CreateUpdateMedicalConsultationComponent {
     });
   }
 
-  private saveDiagnosesForExistingConsultation() {
+  /* private saveDiagnosesForExistingConsultation() {
     const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
     const now = this.getLocalDateTime();
 
@@ -771,8 +773,70 @@ export class CreateUpdateMedicalConsultationComponent {
         console.error('❌ Error al guardar diagnósticos:', err);
       }
     });
+  } */
+
+  private saveDiagnosesForExistingConsultation() {
+  const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
+  const now = this.getLocalDateTime();
+
+  const operations = this.diagnoses.controls
+    .map(control => control.value)
+    .filter(value =>
+      // solo enviar si realmente hay información
+      value.diagnosisCode || value.diagnosisDescription || value.diagnosisType
+    )
+    .map(value => {
+      const codeDiagnosisType = value.diagnosisType && typeof value.diagnosisType === 'object'
+        ? value.diagnosisType.codeDiagnosisType
+        : (value.codeDiagnosisType || '');
+
+      const diagnosisTypeText = value.diagnosisType && typeof value.diagnosisType === 'object'
+        ? value.diagnosisType.diagnosisType
+        : (value.diagnosisType || '');
+
+      const diag: MedicalDiagnosisDTO = {
+        ...value,
+        idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
+        diagnosisCode: value.diagnosisCode || '',
+        diagnosisDescription: value.diagnosisDescription || '',
+        codeDiagnosisType: codeDiagnosisType,
+        diagnosisType: diagnosisTypeText,
+        isPrincipal: value.isPrincipal || false,
+        comment: value.comment || '',
+        updatedBy: idUser,
+        createdBy: idUser,
+        createdAt: now,
+        updatedAt: now,
+        idMedicalConsultationDiagnosis: value.idMedicalConsultationDiagnosis ?? 0
+      };
+
+      if (diag.idMedicalConsultationDiagnosis && diag.idMedicalConsultationDiagnosis > 0) {
+        return this._medicalConsultationDiagnosisUseCase.UpdateMedicalConsultationDiagnosis(diag);
+      } else {
+        return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
+      }
+    });
+
+  if (operations.length === 0) {
+    // no hay diagnósticos válidos que guardar, no llamamos nada
+    return;
   }
 
+  forkJoin(operations).subscribe({
+    next: (responses) => {
+      const allSuccess = responses.every(res => res.isSuccess);
+      if (allSuccess) {
+        this.backToList.emit();
+      } else {
+        console.warn('⚠️ Algunos diagnósticos no se pudieron guardar');
+        this.backToList.emit();
+      }
+    },
+    error: (err) => {
+      console.error('❌ Error al guardar diagnósticos:', err);
+    }
+  });
+}
 
   back() {
     this.backToList.emit();
@@ -825,6 +889,17 @@ export class CreateUpdateMedicalConsultationComponent {
         this.consultationFinalities = data; // asignas el objeto directamente
       });
   }
+
+  loadDoctors(): void {
+    const idCompany = localStorage.getItem('IdCompany'); 
+    const companyId = idCompany ? Number(idCompany) : 0; 
+
+    this._usersUseCase.GetListDoctors(this.paginator, '', '', companyId)
+      .subscribe((data) => {
+        this.doctors = data.results;
+      });
+  }
+
 
   scrollStepper(offset: number) {
     if (!this.stepperWrapper) return;

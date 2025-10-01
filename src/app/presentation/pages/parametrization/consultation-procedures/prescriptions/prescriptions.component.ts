@@ -9,6 +9,8 @@ import { PrescriptionsUseCase } from 'src/app/infrastructure/use-cases/app/presc
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
 import { CreateUpdatePrescriptionComponent } from './create-update-prescription/create-update-prescription.component';
 import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
+import { DetailsPrescriptionComponent } from './details-prescription/details-prescription.component';
+import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 
 @Component({
   selector: 'app-prescriptions',
@@ -24,6 +26,7 @@ export class PrescriptionsComponent {
 
   @Input() idMedicalConsultation!: number;
   @Input() consultationData!: MedicalConsultationDTO;
+  @Input() patientData!: PatientDTO;
 
   prescriptions: PrescriptionDTO[] = [];
 
@@ -72,5 +75,20 @@ export class PrescriptionsComponent {
       }
     });
   }
+
+  viewDetailsPrescription(prescription: PrescriptionDTO): void {
+    const initialState = {
+      idPatient: prescription.idPatient,
+      idMedicalConsultation: prescription.idMedicalConsultation,
+      patientData: this.patientData,
+      prescriptionData: prescription
+    };
+
+    this.modalRef = this.modalService.show(DetailsPrescriptionComponent, {
+      class: 'modal-lg',
+      initialState
+    });
+  }
+
 
 }

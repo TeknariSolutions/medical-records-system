@@ -9,4 +9,7 @@ export interface ParaclinicsDTO {
     registeredAt?: string;
     updateByUserID?: number;
     updatedAt?: string;
+
+    imagePath?: string;
+    urlFile?: string;
 }

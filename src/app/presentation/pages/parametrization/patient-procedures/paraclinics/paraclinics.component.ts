@@ -81,6 +81,9 @@ export class ParaclinicsComponent {
     });
   }
 
-
+  openFile(url: string | null | undefined): void {
+    if (!url) return;
+    window.open(url, '_blank');
+  }
 
 }

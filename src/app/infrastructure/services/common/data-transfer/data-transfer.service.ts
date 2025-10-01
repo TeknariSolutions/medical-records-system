@@ -1,31 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataTransferService {
-  private dataSubject = new BehaviorSubject<any>(null);
+  private storage: Record<string, any> = {};
 
-
-  setData(data: any): void {
-    this.dataSubject.next(data);
-    sessionStorage.setItem('patientData', JSON.stringify(data));
+  setData(key: string, value: any): void {
+    this.storage[key] = value;
   }
 
-
-  getData$(): Observable<any> {
-    return this.dataSubject.asObservable();
+  getData<T>(key: string): T | null {
+    return this.storage[key] ?? null;
   }
 
-  clearData(): void {
-    this.dataSubject.next(null);
-  }
-
-  loadFromStorage(): void {
-    const saved = sessionStorage.getItem('patientData');
-    if (saved) {
-      this.dataSubject.next(JSON.parse(saved));
-    }
+  clearData(key: string): void {
+    delete this.storage[key];
   }
 }

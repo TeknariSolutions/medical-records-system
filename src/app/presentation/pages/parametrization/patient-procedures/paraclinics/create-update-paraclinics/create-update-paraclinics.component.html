@@ -18,9 +18,63 @@
       <textarea class="form-control" formControlName="observations"></textarea>
     </div>
 
-    <div class="mb-3" *ngIf="!paraclinic">
+    <div class="mb-3">
       <label>Archivo</label>
-      <input type="file" class="form-control" (change)="onFileSelected($event)">
+    
+      @if (filePreview) {
+      <div class="mt-2">
+        <div class="title-card d-flex justify-content-between align-items-center mb-2">
+          <!-- Botón eliminar solo en modo creación -->
+          @if (!paraclinic) {
+          <button class="btn btn-sm btn-soft-danger" (click)="removeFile()" title="Eliminar Archivo">
+            <i class="mdi mdi-delete-outline"></i>
+          </button>
+          }
+        </div>
+    
+        <!-- Unificado: ícono + nombre + descargar -->
+        <div class="d-flex align-items-center gap-2 border p-2 rounded bg-light">
+        
+          <!-- PDF -->
+          @if (filePreview.toLowerCase().endsWith('.pdf')) {
+          <i class="mdi mdi-file-pdf-box text-danger fs-3" title="Archivo PDF"></i>
+          }
+          <!-- Word -->
+          @else if (filePreview.toLowerCase().endsWith('.doc') || filePreview.toLowerCase().endsWith('.docx')) {
+          <i class="mdi mdi-file-word-box text-info fs-3" title="Documento Word"></i>
+          }
+          <!-- Excel -->
+          @else if (filePreview.toLowerCase().endsWith('.xls') || filePreview.toLowerCase().endsWith('.xlsx')) {
+          <i class="mdi mdi-file-excel-box text-success fs-3" title="Archivo Excel"></i>
+          }
+          <!-- Imagen -->
+          @else if (
+          filePreview.toLowerCase().endsWith('.png') ||
+          filePreview.toLowerCase().endsWith('.jpg') ||
+          filePreview.toLowerCase().endsWith('.jpeg') ||
+          filePreview.toLowerCase().endsWith('.gif')
+          ) {
+          <i class="mdi mdi-file-image text-info fs-3" title="Imagen"></i>
+          }
+          <!-- Otros -->
+          @else {
+          <i class="mdi mdi-file-document-outline text-secondary fs-3" title="Documento"></i>
+          }
+        
+          <span class="flex-grow-1 text-truncate">{{ fileName || (filePreview.split('/').pop()) }}</span>
+        
+          <a [href]="filePreview" download target="_blank" class="btn btn-sm btn-outline-primary">
+            <i class="mdi mdi-download"></i>
+          </a>
+        </div>
+
+      </div>
+      } @else {
+      <!-- Dropzone (si no hay archivo cargado) -->
+      <dropzone class="dropzone border rounded p-3" [config]="dropzoneConfig"
+        [message]="'Arrastra tu archivo o haz clic para subirlo'" (addedFile)="onFileAdded($event)">
+      </dropzone>
+      }
     </div>
 
     <div class="text-end">

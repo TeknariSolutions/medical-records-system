@@ -71,9 +71,11 @@
                                 <td>{{ data.name }}</td>
                                 <td>{{ data.observations }}</td>
                                 <td>
-                                    <a [href]="data.urlFile" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        Ver archivo
-                                    </a>
+                                    <button class="btn btn-sm btn-soft-primary" [title]="'Ver archivo'" [disabled]="!data.urlFile"
+                                        (click)="openFile(data.urlFile)">
+                                        <i class="mdi mdi-eye"></i>
+                                    </button>
+
                                 </td>
                                 <td class="d-flex justify-content-end">
                                     <ul class="list-unstyled hstack gap-1 mb-0">
