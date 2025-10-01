@@ -11,6 +11,10 @@
           <!-- Datos del paciente -->
           <div class="table-responsive mb-3">
             <table class="table table-bordered">
+              <colgroup>
+                <col style="width: 25%;">
+                <col style="width: 75%;">
+              </colgroup>
               <tbody>
                 <tr>
                   <td><strong>Paciente:</strong></td>
@@ -44,7 +48,7 @@
               <tbody>
                 @for(detail of details; track $index) {
                   <tr>
-                    <td>{{ detail.idMedicine }}</td>
+                    <td>{{ detail.activeIngredient }}</td>
                     <td>{{ detail.dosage }}</td>
                     <td>{{ detail.frequency }}</td>
                     <td>{{ detail.duration }}</td>

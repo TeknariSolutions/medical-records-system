@@ -74,7 +74,6 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
       .subscribe((tableResult: PrescriptionDetailDTO[]) => {
         tableResult.forEach(d => {
           this.medicineUseCase.GetMedicineById(d.idMedicine).subscribe(med => {
-            console.log(med)
             const detailGroup = this.fb.group({
               idPrescriptionDetail: [d.idPrescriptionDetail],
               idMedicine: [d.idMedicine, Validators.required],

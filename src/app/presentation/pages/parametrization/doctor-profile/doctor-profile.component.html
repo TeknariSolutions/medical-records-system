@@ -99,7 +99,7 @@
 
      <form [formGroup]="doctorForm" (ngSubmit)="saveProfile()">
 
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="documentType" class="form-label">
           Especialidad
           <span class="text-danger">*</span>
@@ -107,7 +107,27 @@
         <ng-select [items]="medicalSpecialities" bindLabel="label" bindValue="value" formControlName="idSpeciality"
           placeholder="Selecciona una especialidad">
         </ng-select>
-      </div>
+      </div> -->
+
+      <!-- Especialidad -->
+          <div class="col-12">
+            <div class="mb-2">
+              <label for="idSpeciality" class="form-label">
+                Especialidad
+              </label>
+              <div class="input-group">
+                <select id="idSpeciality" class="form-control" formControlName="idSpeciality">
+                  <option [ngValue]="null" disabled selected>
+                    Seleccione una especialidad
+                  </option>
+                  <option *ngFor="let index of specialities" [ngValue]="index.idSpeciality">
+                    {{ index.description }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
 
       
 

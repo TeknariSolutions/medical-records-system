@@ -8,6 +8,9 @@ import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/docto
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { SpecialitiesUseCase } from 'src/app/infrastructure/use-cases/app/specialities.use-case';
+import { SpecialityDTO } from 'src/app/core/DTOs/app/speciality.dto';
+import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
 
 @Component({
   standalone: true,
@@ -36,6 +39,8 @@ export class DoctorProfileComponent implements OnInit {
   idUser!: number;
   onClose: (result: string) => void = () => {};
 
+  paginator: PaginatorDTO = { pageIndex: 1, pageSize: 1000 };
+
     // Tipos de documento
   documentTypes = [
     { value: 'CC', label: 'Cédula de ciudadanía' },
@@ -53,7 +58,7 @@ export class DoctorProfileComponent implements OnInit {
   ];
 
   // Especialidades médicas
-  medicalSpecialities = [
+  /* medicalSpecialities = [
     { value: 1, label: 'Medicina General' },
     { value: 2, label: 'Cardiología' },
     { value: 3, label: 'Dermatología' },
@@ -75,12 +80,14 @@ export class DoctorProfileComponent implements OnInit {
     { value: 19, label: 'Anestesiología' },
     { value: 20, label: 'Medicina Familiar' },
     { value: 21, label: 'Odontologia' }
-  ];
+  ]; */
 
+  specialities: SpecialityDTO[] = [];
 
   constructor(
     private fb: FormBuilder,
     private _doctorProfileUseCase: DoctorProfileUseCase,
+    private _specialitiesUseCase: SpecialitiesUseCase,
     private _notificationService: NotificationsService,
     public bsModalRef: BsModalRef
   ) {}
@@ -96,7 +103,7 @@ export class DoctorProfileComponent implements OnInit {
       idDocument: [''],
     });
 
-    // 🔹 consultar si ya existe perfil
+    // consultar si ya existe perfil
     this._doctorProfileUseCase.GetDoctorProfileById(this.idUser).subscribe({
       next: (response) => {
         if (response && response.data) {
@@ -119,6 +126,20 @@ export class DoctorProfileComponent implements OnInit {
       error: () => {
         this.isEditMode = false;
         // opcional: notificación de que no existe perfil
+      }
+    });
+
+    this.loadSpecialitites();
+  }
+
+  
+  loadSpecialitites(): void {
+    this._specialitiesUseCase.GetListSpecialities(this.paginator, '').subscribe({
+      next: (data) => {
+        this.specialities = data.results;
+      },
+      error: () => {
+        console.error('Error cargando datos del paciente');
       }
     });
   }
