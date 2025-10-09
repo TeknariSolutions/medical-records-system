@@ -28,6 +28,12 @@
             <span class="step-label">Motivo de Consulta</span>
           </div>
 
+            <!-- Paso 6: Antecedentes (solo admin) -->
+          <div class="step" *ngIf="idRol !== 2" data-step="6" [class.active]="currentStep === 6" (click)="goToStep(6)">
+            <i class="ri-pencil-fill"></i>
+            <span class="step-label">Antecedentes</span>
+          </div>
+
           <!-- Paso 2 -->
           <div class="step" data-step="2" [class.active]="currentStep === 2" (click)="goToStep(2)">
             <i class="ri-pencil-fill"></i>
@@ -50,12 +56,6 @@
           <div class="step" data-step="5" [class.active]="currentStep === 5" (click)="goToStep(5)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Resultados Paraclínicos</span>
-          </div>
-
-          <!-- Paso 6: Antecedentes (solo admin) -->
-          <div class="step" *ngIf="idRol !== 2" data-step="6" [class.active]="currentStep === 6" (click)="goToStep(6)">
-            <i class="ri-pencil-fill"></i>
-            <span class="step-label">Antecedentes</span>
           </div>
 
           <!-- Paso 7: Diagnósticos (solo admin) -->
@@ -113,7 +113,8 @@
                 Médico Tratante
               </label>
               <div class="input-group">
-                <select id="idUser" class="form-control" formControlName="idUser">
+                <select id="idUser" class="form-control" formControlName="idUser" 
+                [ngClass]="{ 'is-invalid': submitted && form.get('basicInfo.idUser')?.invalid }">
                   <option [ngValue]="null" disabled selected>
                     Seleccione un médico
                   </option>
@@ -121,6 +122,14 @@
                     {{ index.name }} {{ index.secondName }} {{ index.lastName }} {{ index.secondLastName }}
                   </option>
                 </select>
+
+                @if(submitted && form.get('basicInfo.idUser')?.errors) {
+                <div class="invalid-feedback">
+                  @if(form.get('basicInfo.idUser')?.errors['required']) {
+                  <span>Este campo es obligatorio.</span>
+                  }
+                </div>
+                }
               </div>
             </div>
           </div>
@@ -293,12 +302,12 @@
               <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control"></textarea>
             </div>
             <div class="col-md-6 mb-3">
-              <label>Tórax</label>
-              <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
               <label>Corazón</label>
               <textarea formControlName="physicalExam_Heart" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Tórax</label>
+              <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Abdomen</label>

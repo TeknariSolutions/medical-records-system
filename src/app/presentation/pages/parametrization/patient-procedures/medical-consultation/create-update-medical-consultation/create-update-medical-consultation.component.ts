@@ -136,7 +136,7 @@ export class CreateUpdateMedicalConsultationComponent {
         isFirstTime: [true],
         status: [false],
         currentIllness: [''],
-        idUser: [null]
+        idUser: [null, Validators.required],
       }),
       clinicalStates: this.fb.group({
         moodStatus: [''],
@@ -157,15 +157,15 @@ export class CreateUpdateMedicalConsultationComponent {
         bmi: [0],
       }),
       physicalExam: this.fb.group({
-        physicalExam_HeadNeck: [''],
-        physicalExam_Chest: [''],
-        physicalExam_Heart: [''],
-        physicalExam_Abdomen: [''],
-        physicalExam_GU: [''],
-        physicalExam_Musculoskeletal: [''],
-        physicalExam_Neuro: [''],
-        physicalExam_Skin: [''],
-        observations: [''],
+        physicalExam_HeadNeck: ['NO APLICA'],
+        physicalExam_Chest: ['NO APLICA'],
+        physicalExam_Heart: ['NO APLICA'],
+        physicalExam_Abdomen: ['NO APLICA'],
+        physicalExam_GU: ['NO APLICA'],
+        physicalExam_Musculoskeletal: ['NO APLICA'],
+        physicalExam_Neuro: ['NO APLICA'],
+        physicalExam_Skin: ['NO APLICA'],
+        observations: ['NO APLICA'],
       }),
       paraClinicals: this.fb.group({
         paraClinicalTest: ['']
@@ -608,7 +608,7 @@ export class CreateUpdateMedicalConsultationComponent {
       heightCm: String(formValues.vitalSigns.heightCm),
       bmi: Number(formValues.vitalSigns.bmi),
 
-      physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
+      /* physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
       physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
       physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
       physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
@@ -616,7 +616,44 @@ export class CreateUpdateMedicalConsultationComponent {
       physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
       physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
       physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
-      observations: formValues.physicalExam.observations,
+      observations: formValues.physicalExam.observations, */
+
+      physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck && formValues.physicalExam.physicalExam_HeadNeck.trim() !== ''
+        ? formValues.physicalExam.physicalExam_HeadNeck.trim()
+        : 'NO APLICA',
+
+      physicalExam_Chest: formValues.physicalExam.physicalExam_Chest && formValues.physicalExam.physicalExam_Chest.trim() !== ''
+        ? formValues.physicalExam.physicalExam_Chest.trim()
+        : 'NO APLICA',
+
+      physicalExam_Heart: formValues.physicalExam.physicalExam_Heart && formValues.physicalExam.physicalExam_Heart.trim() !== ''
+        ? formValues.physicalExam.physicalExam_Heart.trim()
+        : 'NO APLICA',
+
+      physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen && formValues.physicalExam.physicalExam_Abdomen.trim() !== ''
+        ? formValues.physicalExam.physicalExam_Abdomen.trim()
+        : 'NO APLICA',
+
+      physicalExam_GU: formValues.physicalExam.physicalExam_GU && formValues.physicalExam.physicalExam_GU.trim() !== ''
+        ? formValues.physicalExam.physicalExam_GU.trim()
+        : 'NO APLICA',
+
+      physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal && formValues.physicalExam.physicalExam_Musculoskeletal.trim() !== ''
+        ? formValues.physicalExam.physicalExam_Musculoskeletal.trim()
+        : 'NO APLICA',
+
+      physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro && formValues.physicalExam.physicalExam_Neuro.trim() !== ''
+        ? formValues.physicalExam.physicalExam_Neuro.trim()
+        : 'NO APLICA',
+
+      physicalExam_Skin: formValues.physicalExam.physicalExam_Skin && formValues.physicalExam.physicalExam_Skin.trim() !== ''
+        ? formValues.physicalExam.physicalExam_Skin.trim()
+        : 'NO APLICA',
+
+      observations: formValues.physicalExam.observations && formValues.physicalExam.observations.trim() !== ''
+        ? formValues.physicalExam.observations.trim()
+        : 'NO APLICA',
+
 
       paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
 
