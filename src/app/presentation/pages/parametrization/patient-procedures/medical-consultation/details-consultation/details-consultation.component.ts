@@ -464,7 +464,7 @@ export class DetailsConsultationComponent implements OnInit {
       margin: [0, 30, 0, 0],
       stack: [
         this.doctorProfile?.digitalSignature
-          ? { image: this.doctorProfile.digitalSignature, width: 100, alignment: 'center', margin: [0, 10, 0, 5] }
+          ? { image: this.doctorProfile.digitalSignature, width: 90, alignment: 'center', margin: [0, 10, 0, 5] }
           : {},
         {
           text: `${name}\n${this.nullAsNA(this.doctorProfile?.specialityDescription)}\nRegistro Médico: ${this.nullAsNA(this.doctorProfile?.medicalRegistre)}`,

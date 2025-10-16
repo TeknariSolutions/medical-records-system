@@ -45,4 +45,7 @@ export interface MedicalConsultationDTO {
   idExitCondition: number;
   idExternalCauseCode: number;
   externalCauseName?: string;
+
+  analysisOrConcept: string;
+  treatment: string;
 }

@@ -168,15 +168,6 @@ export class CreateUpdateOrderComponent implements OnInit {
   }
 
 
-  /* selectCups(cups: any, index: number) {
-    this.details.at(index).patchValue({
-      idCupsCode: cups.idCupsCode,
-      cupsName: cups.name,
-      procedureDescription: cups.description
-    });
-    this.showCupsDropdown[index] = false;
-  } */
-
   selectCups(cups: any, index: number) {
     this.details.at(index).patchValue({
       idCupsCode: cups.idCupsCode,
@@ -203,75 +194,7 @@ export class CreateUpdateOrderComponent implements OnInit {
     }
   }
 
- /*
-  onSubmit() {
-    if (this.orderForm.invalid) {
-      this.orderForm.markAllAsTouched();
-      return;
-    }
 
-    const orderData: OrderDTO = {
-      idOrder: this.orderToEdit ? this.orderToEdit.idOrder : 0,
-      idMedicalConsultation: this.consultationData.idMedicalConsultation,
-      idPatient: this.consultationData.idPatient,
-      idUser: this.consultationData.idUser,
-      orderDate: DateTimeHelper.getLocalDateTimeWithOffset(),
-      generalObservations: this.orderForm.value.generalObservations,
-      isActive: true
-    };
-
-    if (this.orderToEdit) {
-      // actualizar orden + sus detalles
-      this.ordersUseCase.UpdateOrders(orderData).subscribe({
-        next: (res) => {
-          if (res.isSuccess) {
-            this.onClose.emit('refresh');
-            this.bsModalRef.hide();
-          }
-        }
-      });
-      return;
-    }
-
-    // Crear nueva orden
-    this.ordersUseCase.CreateOrders(orderData).subscribe({
-      next: (res) => {
-        if (res.isSuccess) {
-          const createdOrderId = res.data.idOrder || res.data; // según backend
-
-          const details: OrderDetailsDTO[] = this.details.value.map((d: any) => ({
-            idOrderDetail: 0,
-            idOrder: createdOrderId,
-            idCupsCode: d.idCupsCode,
-            procedureDescription: d.procedureDescription,
-            quantity: d.quantity,
-            instructions: d.instructions,
-            registeredByUser: this.consultationData.idUser,
-            registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
-            updatedByUserId: this.consultationData.idUser,
-            updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
-          }));
-
-          const requests = details.map(detail =>
-            detail.idOrderDetail
-              ? this.orderDetailsUseCase.UpdateOrderDetails(detail)
-              : this.orderDetailsUseCase.CreateOrderDetails(detail)
-          );
-
-          
-          forkJoin(requests).subscribe({
-            next: () => {
-              this.onClose.emit('refresh');
-              this.bsModalRef.hide();
-            },
-            error: (err) => console.error('Error creando detalles', err)
-          });
-        }
-      }
-    });
-  } 
- */
- 
  onSubmit() {
   if (this.orderForm.invalid) {
     this.orderForm.markAllAsTouched();

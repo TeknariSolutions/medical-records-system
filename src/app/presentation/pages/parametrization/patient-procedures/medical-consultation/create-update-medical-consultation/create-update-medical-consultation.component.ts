@@ -175,6 +175,11 @@ export class CreateUpdateMedicalConsultationComponent {
         idExitCondition: [null],
         idExternalCauseCode: [null],
       }),
+      analysisOrConcept: this.fb.group({
+        analysisOrConcept: [null],
+        treatment: [null]
+      }),
+
 
       diagnoses: this.fb.array([]) // solo admin
     });
@@ -450,11 +455,14 @@ export class CreateUpdateMedicalConsultationComponent {
       paraClinicals: {
         paraClinicalTest: c.paraClinicalTest ?? ''
       },
+      analysisOrConcept: {
+        analysisOrConcept: c.analysisOrConcept ?? '',
+        treatment: c.treatment ?? '',
+      },
       closeConsultation: {
         idConsultationFinality: c.idConsultationFinality || null,
         idExitCondition: c.idExitCondition || null,
         idExternalCauseCode: c.idExternalCauseCode || null,
-
       },
     };
   }
@@ -657,9 +665,14 @@ export class CreateUpdateMedicalConsultationComponent {
 
       paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
 
+      analysisOrConcept: formValues.analysisOrConcept.analysisOrConcept,
+      treatment: formValues.analysisOrConcept.treatment,
+
       idConsultationFinality: formValues.closeConsultation.idConsultationFinality ?? null,
       idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
       idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
+
+      
 
       createdBy: isEdit ? Number(this.consultationToEdit!.createdBy) : userLogged,
       createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición

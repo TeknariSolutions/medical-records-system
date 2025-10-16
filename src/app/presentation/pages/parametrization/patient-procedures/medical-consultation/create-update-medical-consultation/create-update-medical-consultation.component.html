@@ -22,50 +22,57 @@
 
       <div class="stepper-wrapper" #stepperWrapper>
         <div class="custom-stepper">
-          <!-- Paso 1 -->
+          <!-- Motivo de Consulta -->
           <div class="step" data-step="1" [class.active]="currentStep === 1" (click)="goToStep(1)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Motivo de Consulta</span>
           </div>
 
-            <!-- Paso 6: Antecedentes (solo admin) -->
-          <div class="step" *ngIf="idRol !== 2" data-step="6" [class.active]="currentStep === 6" (click)="goToStep(6)">
+            <!-- Antecedentes (solo admin) -->
+          <div class="step" *ngIf="idRol !== 2" data-step="2" [class.active]="currentStep === 2" (click)="goToStep(2)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Antecedentes</span>
           </div>
 
-          <!-- Paso 2 -->
-          <div class="step" data-step="2" [class.active]="currentStep === 2" (click)="goToStep(2)">
+          <!-- Estado General -->
+          <div class="step" data-step="3" [class.active]="currentStep === 3" (click)="goToStep(3)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Estado General</span>
           </div>
 
-          <!-- Paso 3 -->
-          <div class="step" data-step="3" [class.active]="currentStep === 3" (click)="goToStep(3)">
+          <!-- Signos Vitales -->
+          <div class="step" data-step="4" [class.active]="currentStep === 4" (click)="goToStep(4)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Signos Vitales</span>
           </div>
 
-          <!-- Paso 4 -->
-          <div class="step" data-step="4" [class.active]="currentStep === 4" (click)="goToStep(4)">
+          <!-- Examen Físico -->
+          <div class="step" data-step="5" [class.active]="currentStep === 5" (click)="goToStep(5)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Examen Físico</span>
           </div>
 
-          <!-- Paso 5: Paraclínicos -->
-          <div class="step" data-step="5" [class.active]="currentStep === 5" (click)="goToStep(5)">
+          <!-- Paraclínicos -->
+          <div class="step" data-step="6" [class.active]="currentStep === 6" (click)="goToStep(6)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Resultados Paraclínicos</span>
           </div>
 
-          <!-- Paso 7: Diagnósticos (solo admin) -->
+          <!-- Diagnósticos (solo admin) -->
           <div class="step" *ngIf="idRol !== 2" data-step="7" [class.active]="currentStep === 7" (click)="goToStep(7)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Diagnósticos</span>
           </div>
 
-          <!-- Paso 8: Cierre -->
+          <!-- Analisis o Concepto -->
           <div class="step" data-step="8" [class.active]="currentStep === 8" (click)="goToStep(8)">
+            <i class="ri-pencil-fill"></i>
+            <span class="step-label">Análisis o Concepto</span>
+          </div>
+
+
+          <!-- Cierre -->
+          <div class="step" data-step="9" [class.active]="currentStep === 9" (click)="goToStep(9)">
             <i class="ri-pencil-fill"></i>
             <span class="step-label">Cierre de Consulta</span>
           </div>
@@ -82,7 +89,7 @@
 
       <form [formGroup]="form" [class.readonly-form]="consultationToEdit?.status">
 
-        <!-- Paso 1: Motivo -->
+        <!-- Motivo -->
         <div *ngIf="currentStep === 1" formGroupName="basicInfo">
           <div class="col-12 mb-3">
             <label>Motivo de Consulta
@@ -153,213 +160,13 @@
           
           </div>
 
-          <div class="mt-3">
+          <!-- <div class="mt-3">
             <button type="button" class="btn btn-primary" (click)="goToStep(2)">Siguiente</button>
-          </div>
+          </div> -->
         </div>
 
-        <!-- Paso 2: Estados clínicos -->
-        <div *ngIf="currentStep === 2" formGroupName="clinicalStates">
-
-          <div class="row mt-4">
-
-            <div class="col-12 col-md-6 col-lg-6 mb-3">
-              <label>Estado de Hidratación</label>
-
-              <select id="hydrationStatus" name="hydrationStatus" class="form-control" formControlName="hydrationStatus"
-                placeholder="Selecciona una opción">
-                <option value="Hidratado">Hidratado</option>
-                <option value="Deshidratado">Deshidratado</option>
-              </select>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-6 mb-3">
-              <label>Nivel de Glasgow</label>
-              <select id="glasgowScore" name="glasgowScore" class="form-control" formControlName="glasgowScore"
-                placeholder="Selecciona una opción">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row mt-4">
-            <div class="col-12 col-md-4 col-lg-4 mb-3">
-              <label>Estado de Conciencia</label>
-
-              <select id="consciousnessStatus" name="consciousnessStatus" class="form-control"
-                formControlName="consciousnessStatus" placeholder="Selecciona una opción">
-                <option value="Alerta">Alerta</option>
-                <option value="Letargo">Letargo</option>
-                <option value="Obnubilación">Obnubilación</option>
-                <option value="Estupor">Estupor</option>
-                <option value="Coma">Coma</option>
-              </select>
-            </div>
-
-            <div class="col-12 col-md-4 col-lg-4 mb-3">
-              <label>Estado de Respiración</label>
-              <input class="form-control" type="text" formControlName="respiratoryStatus" />
-            </div>
-
-            <div class="col-12 col-md-4 col-lg-4 mb-3">
-              <label>Estado General</label>
-              <input class="form-control" type="text" formControlName="generalStatus" />
-            </div>
-          </div>
-
-
-
-          <div class="mt-3">
-            <button type="button" class="btn btn-light me-2" (click)="goToStep(1)">Atrás</button>
-            <button type="button" class="btn btn-primary" (click)="goToStep(3)">Siguiente</button>
-          </div>
-        </div>
-
-        <!-- Paso 3: Signos Vitales -->
-        <div *ngIf="currentStep === 3" formGroupName="vitalSigns">
-          <div class="row mt-4">
-              <div class="col-md-4 mb-3">
-                <label>Presión Arterial</label>
-                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
-              </div>
-
-              <div class="col-md-4 mb-3">
-                <label>Frecuencia Cardíaca</label>
-                <input formControlName="vitalSigns_HR" type="number" class="form-control" />
-              </div>
-
-              <div class="col-md-4 mb-3">
-                <label>Frecuencia Respiratoria</label>
-                <input formControlName="vitalSigns_RR" type="number" class="form-control" />
-              </div>
-
-              <div class="col-12 col-lg-6 mb-3">
-                <label>Temperatura</label>
-                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
-              </div>
-
-              <div class="col-12 col-lg-6 mb-3">
-                <label>Saturación de Oxígeno SpO2</label>
-                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
-              </div>
-
-               <div class="col-md-4 mb-3">
-                <label>Peso (Kg)</label>
-                <input class="form-control" type="number" formControlName="weightKg" />
-              </div>
-
-             
-              <div class="col-md-4 mb-3">
-                <label>Estatura (cm) <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" formControlName="heightCm"
-                  [ngClass]="{ 'is-invalid': (submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.invalid }">
-              
-                @if((submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.errors) {
-                <div class="invalid-feedback">
-                  @if(form.get('vitalSigns.heightCm')?.errors['notInteger']) {
-                  <span>Ingrese la estatura en centímetros sin decimales (ej: 175, no 1.75).</span>
-                  }
-                  @if(form.get('vitalSigns.heightCm')?.errors['outOfRange']) {
-                  <span>Ingrese una estatura válida entre 30 cm y 300 cm.</span>
-                  }
-                </div>
-                }
-              </div>
-
-
-              <div class="col-md-4 mb-3">
-                <label>IMC</label>
-                <input class="form-control" type="number" formControlName="bmi" readonly />
-              </div>
-          </div>
-
-          <div class="mt-3">
-            <button type="button" class="btn btn-light me-2" (click)="goToStep(2)">Atrás</button>
-            <button type="button" class="btn btn-primary" (click)="goToStep(4)">Siguiente</button>
-          </div>
-        </div>
-
-        <!-- Paso 4: Examen Físico -->
-        <div *ngIf="currentStep === 4" formGroupName="physicalExam">
-          <div class="row">
-
-            <div class="col-md-6 mb-3">
-              <label>Cabeza y Cuello</label>
-              <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Corazón</label>
-              <textarea formControlName="physicalExam_Heart" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Tórax</label>
-              <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Abdomen</label>
-              <textarea formControlName="physicalExam_Abdomen" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Genitourinario GU</label>
-              <textarea formControlName="physicalExam_GU" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Musculoesquelético</label>
-              <textarea formControlName="physicalExam_Musculoskeletal" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Neurológico</label>
-              <textarea formControlName="physicalExam_Neuro" type="text" class="form-control"></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Piel</label>
-              <textarea formControlName="physicalExam_Skin" type="text" class="form-control"></textarea>
-            </div>
-          </div>
-
-          <!-- Observaciones -->
-          <div class="mb-3">
-            <label>Observaciones</label>
-            <textarea formControlName="observations" type="text" class="form-control" rows="3"></textarea>
-          </div>
-
-          <div class="mt-3">
-            <button type="button" class="btn btn-light me-2" (click)="goToStep(3)">Atrás</button>
-            <button type="button" class="btn btn-primary" (click)="goToStep(5)">Siguiente</button>
-          </div>
-        </div>
-
-        <!-- Paso 5: Paraclínicos -->
-        <div *ngIf="currentStep === 5" formGroupName="paraClinicals">
-          <div class="col-12">
-            <label>Paraclínicos</label>
-            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5"></textarea>
-          </div>
-
-          <div class="mt-3">
-            <button type="button" class="btn btn-light me-2" (click)="goToStep(4)">Atrás</button>
-            <button type="button" class="btn btn-primary" (click)="idRol !== 2 ? goToStep(6) : goToStep(7)">
-              Siguiente
-            </button>
-          </div>
-        </div>
-
-        <!-- Paso 6: Antecedentes (solo admin) -->
-        <div *ngIf="currentStep === 6 && idRol !== 2">
+        <!-- Antecedentes (solo admin) -->
+        <div *ngIf="currentStep === 2 && idRol !== 2">
           <div *ngIf="lastMedicalHistory; else noData">
           
             <div *ngIf="lastMedicalHistory; else noData">
@@ -439,13 +246,212 @@
             </button>
           </div>
 
-          <div class="mt-3">
+         <!--  <div class="mt-3">
               <button type="button" class="btn btn-light me-2" (click)="goToStep(5)">Atrás</button>
               <button type="button" class="btn btn-primary" (click)="goToStep(7)">Siguiente</button>
-          </div>
+          </div> -->
         </div>
 
-        <!-- Paso 7: Diagnósticos (solo admin) -->
+        <!-- Estados clínicos -->
+        <div *ngIf="currentStep === 3" formGroupName="clinicalStates">
+
+          <div class="row mt-4">
+
+            <div class="col-12 col-md-6 col-lg-6 mb-3">
+              <label>Estado de Hidratación</label>
+
+              <select id="hydrationStatus" name="hydrationStatus" class="form-control" formControlName="hydrationStatus"
+                placeholder="Selecciona una opción">
+                <option value="Hidratado">Hidratado</option>
+                <option value="Deshidratado">Deshidratado</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-6 mb-3">
+              <label>Nivel de Glasgow</label>
+              <select id="glasgowScore" name="glasgowScore" class="form-control" formControlName="glasgowScore"
+                placeholder="Selecciona una opción">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12 col-md-4 col-lg-4 mb-3">
+              <label>Estado de Conciencia</label>
+
+              <select id="consciousnessStatus" name="consciousnessStatus" class="form-control"
+                formControlName="consciousnessStatus" placeholder="Selecciona una opción">
+                <option value="Alerta">Alerta</option>
+                <option value="Letargo">Letargo</option>
+                <option value="Obnubilación">Obnubilación</option>
+                <option value="Estupor">Estupor</option>
+                <option value="Coma">Coma</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-4 mb-3">
+              <label>Estado de Respiración</label>
+              <input class="form-control" type="text" formControlName="respiratoryStatus" />
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-4 mb-3">
+              <label>Estado General</label>
+              <input class="form-control" type="text" formControlName="generalStatus" />
+            </div>
+          </div>
+
+         <!--  <div class="mt-3">
+            <button type="button" class="btn btn-light me-2" (click)="goToStep(1)">Atrás</button>
+            <button type="button" class="btn btn-primary" (click)="goToStep(3)">Siguiente</button>
+          </div> -->
+        </div>
+
+        <!-- Signos Vitales -->
+        <div *ngIf="currentStep === 4" formGroupName="vitalSigns">
+          <div class="row mt-4">
+              <div class="col-md-4 mb-3">
+                <label>Presión Arterial</label>
+                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Frecuencia Cardíaca</label>
+                <input formControlName="vitalSigns_HR" type="number" class="form-control" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label>Frecuencia Respiratoria</label>
+                <input formControlName="vitalSigns_RR" type="number" class="form-control" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label>Temperatura</label>
+                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label>Saturación de Oxígeno SpO2</label>
+                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
+              </div>
+
+               <div class="col-md-4 mb-3">
+                <label>Peso (Kg)</label>
+                <input class="form-control" type="number" formControlName="weightKg" />
+              </div>
+
+             
+              <div class="col-md-4 mb-3">
+                <label>Estatura (cm) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" formControlName="heightCm"
+                  [ngClass]="{ 'is-invalid': (submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.invalid }">
+              
+                @if((submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.errors) {
+                <div class="invalid-feedback">
+                  @if(form.get('vitalSigns.heightCm')?.errors['notInteger']) {
+                  <span>Ingrese la estatura en centímetros sin decimales (ej: 175, no 1.75).</span>
+                  }
+                  @if(form.get('vitalSigns.heightCm')?.errors['outOfRange']) {
+                  <span>Ingrese una estatura válida entre 30 cm y 300 cm.</span>
+                  }
+                </div>
+                }
+              </div>
+
+
+              <div class="col-md-4 mb-3">
+                <label>IMC</label>
+                <input class="form-control" type="number" formControlName="bmi" readonly />
+              </div>
+          </div>
+
+          <!-- <div class="mt-3">
+            <button type="button" class="btn btn-light me-2" (click)="goToStep(2)">Atrás</button>
+            <button type="button" class="btn btn-primary" (click)="goToStep(4)">Siguiente</button>
+          </div> -->
+        </div>
+
+        <!-- Examen Físico -->
+        <div *ngIf="currentStep === 5" formGroupName="physicalExam">
+          <div class="row">
+
+            <div class="col-md-6 mb-3">
+              <label>Cabeza y Cuello</label>
+              <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Corazón</label>
+              <textarea formControlName="physicalExam_Heart" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Tórax</label>
+              <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Abdomen</label>
+              <textarea formControlName="physicalExam_Abdomen" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Genitourinario GU</label>
+              <textarea formControlName="physicalExam_GU" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Musculoesquelético</label>
+              <textarea formControlName="physicalExam_Musculoskeletal" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Neurológico</label>
+              <textarea formControlName="physicalExam_Neuro" type="text" class="form-control"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Piel</label>
+              <textarea formControlName="physicalExam_Skin" type="text" class="form-control"></textarea>
+            </div>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="mb-3">
+            <label>Observaciones</label>
+            <textarea formControlName="observations" type="text" class="form-control" rows="3"></textarea>
+          </div>
+
+          <!-- <div class="mt-3">
+            <button type="button" class="btn btn-light me-2" (click)="goToStep(3)">Atrás</button>
+            <button type="button" class="btn btn-primary" (click)="goToStep(5)">Siguiente</button>
+          </div> -->
+        </div>
+
+        <!-- Paraclínicos -->
+        <div *ngIf="currentStep === 6" formGroupName="paraClinicals">
+          <div class="col-12">
+            <label>Paraclínicos</label>
+            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5"></textarea>
+          </div>
+
+          <!-- <div class="mt-3">
+            <button type="button" class="btn btn-light me-2" (click)="goToStep(4)">Atrás</button>
+            <button type="button" class="btn btn-primary" (click)="idRol !== 2 ? goToStep(6) : goToStep(7)">
+              Siguiente
+            </button>
+          </div> -->
+        </div>
+
+        
+        <!-- Diagnósticos (solo admin) -->
 
         @if(currentStep === 7 && (idRol === 1 || idRol === 3) && diagnoses?.controls){
           <div formArrayName="diagnoses">
@@ -521,15 +527,35 @@
             }
           
           
-            <div class="mt-3">
+          <!--   <div class="mt-3">
               <button type="button" class="btn btn-light me-2" (click)="goToStep(idRol !== 2 ? 6 : 5)">Atrás</button>
               <button type="button" class="btn btn-primary" (click)="goToStep(8)">Siguiente</button>
-            </div>
+            </div> -->
           </div>
         }
 
-        <!-- Paso 8: Cierre -->
-        <div *ngIf="currentStep === 8" formGroupName="closeConsultation">
+        <!-- Análisis o Concepto -->
+        <div *ngIf="currentStep === 8" formGroupName="analysisOrConcept">
+          <div class="col-12">
+            <label>Análisis o Concepto </label>
+            <textarea class="form-control mb-2" formControlName="analysisOrConcept" rows="5"></textarea>
+          </div>
+
+          <div class="col-12">
+            <label>Tratamiento</label>
+            <textarea class="form-control mb-2" formControlName="treatment" rows="5"></textarea>
+          </div>
+
+        <!--   <div class="mt-3">
+            <button type="button" class="btn btn-light me-2" (click)="goToStep(4)">Atrás</button>
+            <button type="button" class="btn btn-primary" (click)="idRol !== 2 ? goToStep(6) : goToStep(7)">
+              Siguiente
+            </button>
+          </div> -->
+        </div>
+
+        <!-- Cierre -->
+        <div *ngIf="currentStep === 9" formGroupName="closeConsultation">
           <div class="row">
             <!-- Condición de Salida  -->
             <div class="col-12 col-lg-4 col-md-4">

@@ -1,16 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { OrderDTO } from 'src/app/core/DTOs/app/order.dto';
+import { OrderDetailsDTO } from 'src/app/core/DTOs/app/order-details.dto';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DoctorProfileResponseDTO } from 'src/app/core/DTOs/app/doctor-profile-dto';
+
 import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/doctor-profile-use-case';
 import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
+import { OrderDetailsUseCase } from 'src/app/infrastructure/use-cases/app/order-details.use-case';
+import { CupsCodeUseCase } from 'src/app/infrastructure/use-cases/common/cups-code.use.case';
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
+
+interface OrderDetailWithCode extends OrderDetailsDTO {
+  cupsCodeText?: string; // "Código - Nombre" del CUPS
+}
 
 @Component({
   selector: 'app-details-orden',
@@ -25,10 +33,13 @@ export class DetailsOrdenComponent implements OnInit {
   @Input() patientData!: PatientDTO;
 
   doctorProfile: DoctorProfileResponseDTO | null = null;
+  orderDetails: OrderDetailWithCode[] = [];
 
   constructor(
     private _doctorProfileUseCase: DoctorProfileUseCase,
     private _patientsUseCase: PatientsUseCase,
+    private _orderDetailsUseCase: OrderDetailsUseCase,
+    private _cupsCodeUseCase: CupsCodeUseCase,
     private _notificationService: NotificationsService
   ) {}
 
@@ -36,8 +47,6 @@ export class DetailsOrdenComponent implements OnInit {
     await this.generatePDF();
   }
 
-  // ===============================
-  // 📸 Cargar imagen de encabezado
   // ===============================
   private async loadImageAsBase64(path: string): Promise<string> {
     const response = await fetch(path);
@@ -51,10 +60,8 @@ export class DetailsOrdenComponent implements OnInit {
   }
 
   // ===============================
-  // 📥 Cargar datos antes de generar PDF
-  // ===============================
   private async ensureDataLoaded(): Promise<void> {
-    // 👨‍⚕️ Cargar perfil del médico
+    // 👨‍⚕️ Médico
     if (this.orderData.idUser) {
       const doctor = await firstValueFrom(
         this._doctorProfileUseCase.GetDoctorProfileById(this.orderData.idUser)
@@ -62,21 +69,42 @@ export class DetailsOrdenComponent implements OnInit {
       this.doctorProfile = doctor?.data ?? null;
     }
 
-    // 👤 Cargar datos del paciente
+    // 👤 Paciente
     if (this.idPatient) {
       const patient = await firstValueFrom(this._patientsUseCase.GetPatientByIdAll(this.idPatient));
       this.patientData = patient;
     }
+
+    // 📋 Detalles de la orden
+    if (this.orderData.idOrder) {
+      const detailsResp = await firstValueFrom(
+        this._orderDetailsUseCase.GetListOrderDetailsByOrder(this.orderData.idOrder)
+      );
+      const details = detailsResp.results || [];
+
+      // 📌 Traer info CUPS en paralelo
+      const cupsRequests = details.map(d =>
+        firstValueFrom(this._cupsCodeUseCase.GetCUPSCodeById(d.idCupsCode))
+          .then(cups => ({
+            ...d,
+            cupsCodeText: `${cups.code} - ${cups.name}`
+          }))
+          .catch(() => ({
+            ...d,
+            cupsCodeText: 'N/A'
+          }))
+      );
+
+      this.orderDetails = await Promise.all(cupsRequests);
+    }
   }
 
-  // ===============================
-  // 🧾 Generar PDF
   // ===============================
   async generatePDF(): Promise<void> {
     try {
       this._notificationService.showInfoMessage('Generando orden médica, por favor espere...');
       await this.ensureDataLoaded();
-      const logo = await this.loadImageAsBase64('assets/images/HEADER-HISTORIA3.png');
+      const logo = await this.loadImageAsBase64('assets/images/HEADER-HISTORIA4.png');
 
       const docDefinition = this.buildDocDefinition(logo);
 
@@ -100,8 +128,6 @@ export class DetailsOrdenComponent implements OnInit {
     }
   }
 
-  // ===============================
-  // 📑 Definición del documento
   // ===============================
   private buildDocDefinition(logoBase64: string) {
     return {
@@ -132,18 +158,11 @@ export class DetailsOrdenComponent implements OnInit {
         },
 
         this.buildPatientInfoTable(),
+        //this.buildOrderInfoTable(),
 
-        {
-          table: {
-            widths: ['30%', '70%'],
-            body: [
-              [{ text: 'Fecha de Orden', style: 'tableHeader' }, this.formatDate(this.orderData.orderDate)],
-              [{ text: 'Número de Orden', style: 'tableHeader' }, `${this.orderData.idOrder}`]
-            ]
-          },
-          layout: 'lightHorizontalLines',
-          margin: [0, 0, 0, 15]
-        },
+        { text: 'DETALLE DE ORDENES', style: 'sectionHeader' },
+
+        ...(this.orderDetails.length > 0 ? [this.buildOrderDetailsTable()] : []),
 
         { text: 'OBSERVACIONES:', style: 'sectionHeader' },
         { text: this.nullAsNA(this.orderData.generalObservations), margin: [0, 5, 0, 20] },
@@ -163,8 +182,6 @@ export class DetailsOrdenComponent implements OnInit {
   }
 
   // ===============================
-  // 👤 Datos del paciente
-  // ===============================
   private buildPatientInfoTable() {
     const fullName = `${this.patientData.firstName ?? ''} ${this.patientData.secondName ?? ''} ${this.patientData.firstLastName ?? ''} ${this.patientData.secondLastName ?? ''}`.trim();
 
@@ -175,7 +192,8 @@ export class DetailsOrdenComponent implements OnInit {
           [{ text: 'Paciente', style: 'tableHeader' }, fullName || 'N/A'],
           [{ text: 'Documento', style: 'tableHeader' }, `${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`],
           [{ text: 'Teléfono', style: 'tableHeader' }, this.nullAsNA(this.patientData.phoneNumber)],
-          [{ text: 'Dirección', style: 'tableHeader' }, this.nullAsNA(this.patientData.address)]
+          [{ text: 'Dirección', style: 'tableHeader' }, this.nullAsNA(this.patientData.address)],
+          [{ text: 'Fecha de Orden', style: 'tableHeader' }, this.formatDate(this.orderData.orderDate)],
         ]
       },
       layout: 'lightHorizontalLines',
@@ -183,9 +201,47 @@ export class DetailsOrdenComponent implements OnInit {
     };
   }
 
-  // ===============================
-  // ✍️ Firma del médico
-  // ===============================
+/*   private buildOrderInfoTable() {
+    return {
+      table: {
+        widths: ['30%', '70%'],
+        body: [
+          [{ text: 'Fecha de Orden', style: 'tableHeader' }, this.formatDate(this.orderData.orderDate)],
+          [{ text: 'Número de Orden', style: 'tableHeader' }, `${this.orderData.idOrder}`]
+        ]
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 15]
+    };
+  } */
+
+  // 📋 Tabla con detalles CUPS
+  private buildOrderDetailsTable() {
+    const body = [
+      [
+        { text: 'Código CUPS', style: 'tableHeader' },
+        //{ text: 'Descripción del Procedimiento', style: 'tableHeader' },
+        { text: 'Cantidad', style: 'tableHeader' },
+        { text: 'Instrucciones', style: 'tableHeader' }
+      ],
+      ...this.orderDetails.map(d => [
+        this.nullAsNA(d.cupsCodeText),
+        //this.nullAsNA(d.procedureDescription),
+        this.nullAsNA(d.quantity),
+        this.nullAsNA(d.instructions)
+      ])
+    ];
+
+    return {
+      table: {
+        widths: ['35%', '15%', '50%'],
+        body
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 20]
+    };
+  }
+
   private buildDoctorSignature() {
     const name = `${this.doctorProfile?.name ?? ''} ${this.doctorProfile?.secondName ?? ''} ${this.doctorProfile?.lastName ?? ''} ${this.doctorProfile?.secondLastName ?? ''}`.trim();
 
@@ -194,7 +250,7 @@ export class DetailsOrdenComponent implements OnInit {
       margin: [0, 40, 0, 0],
       stack: [
         this.doctorProfile?.digitalSignature
-          ? { image: this.doctorProfile.digitalSignature, width: 100, alignment: 'center', margin: [0, 10, 0, 5] }
+          ? { image: this.doctorProfile.digitalSignature, width: 90, alignment: 'center', margin: [0, 10, 0, 5] }
           : {},
         {
           text: `${name}\n${this.nullAsNA(this.doctorProfile?.specialityDescription)}\nRegistro Médico: ${this.nullAsNA(this.doctorProfile?.medicalRegistre)}`,
@@ -204,9 +260,6 @@ export class DetailsOrdenComponent implements OnInit {
     };
   }
 
-  // ===============================
-  // 🛠 Helpers
-  // ===============================
   private formatDate(date: string | Date): string {
     if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('es-CO');

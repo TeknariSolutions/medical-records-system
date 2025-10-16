@@ -12,6 +12,8 @@ import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.u
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 import { DetailsOrdenComponent } from './details-orden/details-orden.component';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
+import { OrderDetailsUseCase } from 'src/app/infrastructure/use-cases/app/order-details.use-case';
+import { CupsCodeUseCase } from 'src/app/infrastructure/use-cases/common/cups-code.use.case';
 
 @Component({
   selector: 'app-orders',
@@ -39,6 +41,8 @@ export class OrdersComponent {
     private _ordersUseCase: OrdersUseCase,
     private _doctorProfileUseCase: DoctorProfileUseCase,
     private _patientsUseCase: PatientsUseCase,
+    private _orderDetailsUseCase: OrderDetailsUseCase,   // 👈 nuevo
+    private _cupsCodeUseCase: CupsCodeUseCase,  
     private _notificationService: NotificationsService) {
   }
 
@@ -76,37 +80,22 @@ export class OrdersComponent {
       }
     });
   }
-/* 
+
+
   onDownloadPDF(order: OrderDTO) {
     const component = new DetailsOrdenComponent(
-      this._ordersUseCase,
       this._doctorProfileUseCase,
       this._patientsUseCase,
+      this._orderDetailsUseCase,
+      this._cupsCodeUseCase,
       this._notificationService
     );
 
     component.idPatient = order.idPatient;
-    component.idMedicalConsultation = this.idMedicalConsultation;
     component.orderData = order;
-    component.patientData = this.patientData; // o como lo estés trayendo
-    component.consultationData = this.consultationData;
-
+    component.patientData = this.patientData;
     component.generatePDF();
-  } */
-
-  onDownloadPDF(order: OrderDTO) {
-  const component = new DetailsOrdenComponent(
-    this._doctorProfileUseCase,
-    this._patientsUseCase,
-    this._notificationService
-  );
-
-  component.idPatient = order.idPatient;
-  component.orderData = order;
-  component.patientData = this.patientData; // o la forma en que tienes el paciente
-  component.generatePDF();
-}
-
+  }
 
 
 }

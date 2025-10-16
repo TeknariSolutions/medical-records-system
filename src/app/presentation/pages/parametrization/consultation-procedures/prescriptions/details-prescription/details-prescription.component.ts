@@ -89,7 +89,7 @@ export class DetailsPrescriptionComponent implements OnInit {
       this._notificationService.showInfoMessage('Generando prescripción, por favor espere...');
       await this.ensureDataLoaded();
 
-      const logo = await this.loadImageAsBase64('assets/images/HEADER-HISTORIA3.png');
+      const logo = await this.loadImageAsBase64('assets/images/HEADER-HISTORIA4.png');
       const docDefinition = this.buildDocDefinition(logo);
 
       const fullName = `
@@ -147,7 +147,7 @@ export class DetailsPrescriptionComponent implements OnInit {
 
         this.buildPatientInfoSection(),
 
-        { text: 'DETALLES DE MEDICAMENTOS', style: 'sectionHeader' },
+        { text: 'DETALLE DE MEDICAMENTOS', style: 'sectionHeader' },
         this.buildPrescriptionTable(),
 
         ...(this.doctorProfile ? [this.buildDoctorSignature()] : [])
@@ -328,7 +328,7 @@ export class DetailsPrescriptionComponent implements OnInit {
       margin: [0, 40, 0, 0],
       stack: [
         this.doctorProfile?.digitalSignature
-          ? { image: this.doctorProfile.digitalSignature, width: 100, alignment: 'center', margin: [0, 10, 0, 5] }
+          ? { image: this.doctorProfile.digitalSignature, width: 90, alignment: 'center', margin: [0, 10, 0, 5] }
           : {},
         {
           text: `${name}\n${this.nullAsNA(this.doctorProfile?.specialityDescription)}\nRegistro Médico: ${this.nullAsNA(this.doctorProfile?.medicalRegistre)}`,
