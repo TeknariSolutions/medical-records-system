@@ -40,7 +40,9 @@
               "@ckeditor/ckeditor5-build-classic",
               "raf",
               "rgbcolor",
-              "html2pdf.js"
+              "html2pdf.js",
+              "pdfmake/build/pdfmake",
+              "pdfmake/build/vfs_fonts"
             ],
             "outputPath": "dist/skote",
             "index": "src/index.html",

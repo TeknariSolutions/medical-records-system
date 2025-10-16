@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
@@ -11,6 +11,10 @@ import { CreateUpdatePrescriptionComponent } from './create-update-prescription/
 import { ResponseDTO } from 'src/app/core/DTOs/common/response/response.dto';
 import { DetailsPrescriptionComponent } from './details-prescription/details-prescription.component';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
+import { PrescriptionDetailsUseCase } from 'src/app/infrastructure/use-cases/app/prescription-details.use-case';
+import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/doctor-profile-use-case';
+import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
+import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 
 @Component({
   selector: 'app-prescriptions',
@@ -34,9 +38,16 @@ export class PrescriptionsComponent {
 
   modalRef?: BsModalRef;
 
+  @ViewChild(DetailsPrescriptionComponent) detailsComponent!: DetailsPrescriptionComponent;
+
   constructor(private router: Router,
     private modalService: BsModalService,
-    private _prescriptionsUseCase: PrescriptionsUseCase) {
+    private _prescriptionsUseCase: PrescriptionsUseCase,
+    private _prescriptionDetailsUseCase: PrescriptionDetailsUseCase,
+    private _doctorProfileUseCase: DoctorProfileUseCase,
+    private _patientsUseCase: PatientsUseCase,
+    private _notificationService: NotificationsService
+  ) {
   }
 
   ngOnInit(): void {
@@ -88,6 +99,22 @@ export class PrescriptionsComponent {
       class: 'modal-lg',
       initialState
     });
+  }
+
+  onDownloadPDF(prescription: PrescriptionDTO) {
+    const component = new DetailsPrescriptionComponent(
+      this._prescriptionDetailsUseCase,
+      this._doctorProfileUseCase,
+      this._patientsUseCase,
+      this._notificationService
+    );
+
+    component.idPatient = prescription.idPatient;
+    component.idMedicalConsultation = prescription.idMedicalConsultation;
+    component.prescriptionData = prescription;
+    component.patientData = this.patientData;
+
+    component.generatePDF();
   }
 
 

@@ -12,4 +12,5 @@ export interface PrescriptionDetailDTO {
     registeredByUser: number;
     registeredAt: string; // ISO date string
     idMedicalEquipment: number;
+    activeIngredient: string;
 }

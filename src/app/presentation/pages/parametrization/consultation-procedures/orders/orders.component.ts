@@ -7,6 +7,11 @@ import { OrdersUseCase } from 'src/app/infrastructure/use-cases/app/orders.use-c
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
 import { CreateUpdateOrderComponent } from './create-update-order/create-update-order.component';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
+import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/doctor-profile-use-case';
+import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
+import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
+import { DetailsOrdenComponent } from './details-orden/details-orden.component';
+import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 
 @Component({
   selector: 'app-orders',
@@ -22,6 +27,7 @@ export class OrdersComponent {
 
   @Input() idMedicalConsultation!: number;
   @Input() consultationData!: MedicalConsultationDTO;
+  @Input() patientData!: PatientDTO;
 
   orders: OrderDTO[] = [];
 
@@ -30,7 +36,10 @@ export class OrdersComponent {
 
   constructor(private router: Router,
     private modalService: BsModalService,
-    private _ordersUseCase: OrdersUseCase) {
+    private _ordersUseCase: OrdersUseCase,
+    private _doctorProfileUseCase: DoctorProfileUseCase,
+    private _patientsUseCase: PatientsUseCase,
+    private _notificationService: NotificationsService) {
   }
 
   ngOnInit(): void {
@@ -67,5 +76,37 @@ export class OrdersComponent {
       }
     });
   }
+/* 
+  onDownloadPDF(order: OrderDTO) {
+    const component = new DetailsOrdenComponent(
+      this._ordersUseCase,
+      this._doctorProfileUseCase,
+      this._patientsUseCase,
+      this._notificationService
+    );
+
+    component.idPatient = order.idPatient;
+    component.idMedicalConsultation = this.idMedicalConsultation;
+    component.orderData = order;
+    component.patientData = this.patientData; // o como lo estés trayendo
+    component.consultationData = this.consultationData;
+
+    component.generatePDF();
+  } */
+
+  onDownloadPDF(order: OrderDTO) {
+  const component = new DetailsOrdenComponent(
+    this._doctorProfileUseCase,
+    this._patientsUseCase,
+    this._notificationService
+  );
+
+  component.idPatient = order.idPatient;
+  component.orderData = order;
+  component.patientData = this.patientData; // o la forma en que tienes el paciente
+  component.generatePDF();
+}
+
+
 
 }

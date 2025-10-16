@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
 import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
@@ -14,6 +14,8 @@ import { DetailsConsultationComponent } from './details-consultation/details-con
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/doctor-profile-use-case';
+import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medical-history.use-case';
 
 @Component({
   selector: 'app-medical-consultation',
@@ -53,10 +55,14 @@ export class MedicalConsultationComponent implements OnInit {
 
   filterConsultationDate: string = '';
 
+  @ViewChild(DetailsConsultationComponent) detailsComponent!: DetailsConsultationComponent;
+
   constructor(
     private router: Router,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
+    private _doctorProfileUseCase: DoctorProfileUseCase,
     private _notificationService: NotificationsService,
+    private _medicalHistoryUseCase: MedicalHistoryUseCase ,
     private modalService: BsModalService,
     private _dataTransferService: DataTransferService
   ) { }
@@ -65,6 +71,7 @@ export class MedicalConsultationComponent implements OnInit {
     if (this.idPatient) {
       this.loadConsults();
     }
+    
   }
 
   loadConsults() {
@@ -135,7 +142,7 @@ export class MedicalConsultationComponent implements OnInit {
   }
 
 
-  viewDetailsMedicalConsultation(data: MedicalConsultationDTO): void {
+ /*  viewDetailsMedicalConsultation(data: MedicalConsultationDTO): void {
     const initialState = {
       idPatient: data.idPatient,
       idMedicalConsultation: data.idMedicalConsultation,
@@ -146,7 +153,62 @@ export class MedicalConsultationComponent implements OnInit {
       class: 'modal-lg',
       initialState
     });
+  } */
+
+  /* viewDetailsMedicalConsultation(data: MedicalConsultationDTO): void {
+    const initialState = {
+      idPatient: data.idPatient,
+      idMedicalConsultation: data.idMedicalConsultation,
+      patientData: this.patientData
+    };
+
+    this.modalRef = this.modalService.show(DetailsConsultationComponent, {
+      class: 'modal-lg',
+      initialState
+    });
   }
+
+  onDownloadPDF(consultation: MedicalConsultationDTO) {
+    this.viewDetailsMedicalConsultation(consultation);
+  } */
+/* 
+  onDownloadPDF(consultation: MedicalConsultationDTO) {
+    const component = new DetailsConsultationComponent(
+      this._medicalConsultationUseCase,
+      this._doctorProfileUseCase
+    );
+
+    component.idPatient = consultation.idPatient;
+    component.idMedicalConsultation = consultation.idMedicalConsultation;
+    component.patientData = this.patientData;
+
+    component.generatePDF();
+  }
+ */
+
+  onDownloadPDF(consultation: MedicalConsultationDTO) {
+    const component = new DetailsConsultationComponent(
+      this._medicalConsultationUseCase,
+      this._doctorProfileUseCase,
+      this._notificationService,
+      this._medicalHistoryUseCase,
+    );
+
+    component.idPatient = consultation.idPatient;
+    component.idMedicalConsultation = consultation.idMedicalConsultation;
+    component.patientData = this.patientData;
+
+    component.generatePDF();
+  }
+
+
+
+
+/*   onDownloadPDF(consultation: MedicalConsultationDTO) {
+    // Puedes asignar aquí los datos necesarios al hijo si es que no están cargados aún
+    this.detailsComponent.dataConsultation = consultation;
+    this.detailsComponent.generatePDF();
+  } */
 
 
   viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
