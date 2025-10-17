@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { MedicalHistoryDTO } from 'src/app/core/DTOs/app/medical-history.dto';
 import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medical-history.use-case';
+import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
+
 
 @Component({
   standalone: true,
@@ -20,6 +22,8 @@ export class CreateUpdateMedicalHistoryComponent {
   @Input() lastMedicalHistory!: MedicalHistoryDTO;
   @Input() idPatient!: number;
   @Input() idUser!: number;
+  @Input() isReadOnly: boolean = false;
+
 
   form!: FormGroup;
 
@@ -35,7 +39,7 @@ export class CreateUpdateMedicalHistoryComponent {
     private _medicalHistoryUseCase: MedicalHistoryUseCase
   ) { }
 
-  ngOnInit(): void {
+ /*  ngOnInit(): void {
 
     this.form = this.fb.group({
       pathologicalHistory: [this.lastMedicalHistory?.pathologicalHistory || ''],
@@ -95,6 +99,51 @@ export class CreateUpdateMedicalHistoryComponent {
         });
       }
     });
+  } */
+
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      pathologicalHistory: [this.lastMedicalHistory?.pathologicalHistory || ''],
+      surgicalHistory: [this.lastMedicalHistory?.surgicalHistory || ''],
+      allergicHistory: [this.lastMedicalHistory?.allergicHistory || ''],
+      pharmacologicalHistory: [this.lastMedicalHistory?.pharmacologicalHistory || ''],
+      familyHistory: [this.lastMedicalHistory?.familyHistory || ''],
+      gynecoObstetricHistory: [this.lastMedicalHistory?.gynecoObstetricHistory || ''],
+      occupationalHistory: [this.lastMedicalHistory?.occupationalHistory || ''],
+      psychiatricHistory: [this.lastMedicalHistory?.psychiatricHistory || ''],
+      traumaticHistory: [this.lastMedicalHistory?.traumaticHistory || ''],
+      immunologicalHistory: [this.lastMedicalHistory?.immunologicalHistory || ''],
+      observations: [this.lastMedicalHistory?.observations || ''],
+      smoker: [this.lastMedicalHistory?.smoker || false],
+      smokingYears: [this.lastMedicalHistory?.smokingYears || 0],
+      cigarettesPerDay: [this.lastMedicalHistory?.cigarettesPerDay || 0],
+      smokingIndex: [this.lastMedicalHistory?.smokingIndex || 0],
+      smokigDevice: [this.lastMedicalHistory?.smokigDevice || ''],
+      alcoholConsumer: [this.lastMedicalHistory?.alcoholConsumer || false],
+      alcoholFrequency: [this.lastMedicalHistory?.alcoholFrequency || ''],
+      drugUse: [this.lastMedicalHistory?.drugUse || false],
+      drugDetails: [this.lastMedicalHistory?.drugDetails || '']
+    });
+
+    // 👉 Si viene en modo solo lectura, deshabilitamos todo
+    if (this.isReadOnly) {
+      this.form.disable();
+    }
+
+    // Flags iniciales
+    this.isSmoker = this.form.get('smoker')?.value;
+    this.isAlcoholConsumer = this.form.get('alcoholConsumer')?.value;
+    this.isDrugUser = this.form.get('drugUse')?.value;
+
+    // Suscripciones condicionales solo si NO está en read-only
+    if (!this.isReadOnly) {
+      this.form.get('smoker')?.valueChanges.subscribe(value => this.isSmoker = value);
+      this.form.get('alcoholConsumer')?.valueChanges.subscribe(value => this.isAlcoholConsumer = value);
+      this.form.get('drugUse')?.valueChanges.subscribe(value => this.isDrugUser = value);
+
+      this.form.get('smokingYears')?.valueChanges.subscribe(() => this.calculateSmokingIndex());
+      this.form.get('cigarettesPerDay')?.valueChanges.subscribe(() => this.calculateSmokingIndex());
+    }
   }
 
   private calculateSmokingIndex(): void {
@@ -105,7 +154,7 @@ export class CreateUpdateMedicalHistoryComponent {
     this.form.get('smokingIndex')?.setValue(ipa, { emitEvent: false });
   }
 
-  save(): void {
+ /*  save(): void {
     if (this.form.invalid) return;
 
     const dto: MedicalHistoryDTO = {
@@ -129,7 +178,27 @@ export class CreateUpdateMedicalHistoryComponent {
         this.bsModalRef.hide();
       });
     }
+  } */
+
+  save(): void {
+    if (this.form.invalid) return;
+
+    // ⚡ Importante: al crear desde último antecedente NO reutilizamos el ID
+    const dto: MedicalHistoryDTO = {
+      ...this.form.value,
+      idMedicalHistory: 0, // 👈 siempre nuevo
+      idPatient: this.idPatient,
+      createdBy: this.idUser,
+      createdAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+      updateAt: DateTimeHelper.getLocalDateTimeWithOffset(),
+      updatedBy: this.idUser,
+    };
+
+    this._medicalHistoryUseCase.CreateMedicalHistory(dto).subscribe(() => {
+      this.bsModalRef.hide();
+    });
   }
+
 
   cancel(): void {
     this.bsModalRef.hide();
