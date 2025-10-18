@@ -29,6 +29,7 @@ export class CupsCodeUseCase {
             })
         );
     }
+    
 
     GetCUPSCodeById(idCUPSCode: number): Observable<any> {
         return this._CUPSCodeService.GetCUPSCodeById(idCUPSCode).pipe(

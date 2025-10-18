@@ -770,61 +770,7 @@ export class CreateUpdateMedicalConsultationComponent {
     });
   }
 
-  /* private saveDiagnosesForExistingConsultation() {
-    const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
-    const now = this.getLocalDateTime();
-
-    const operations = this.diagnoses.controls.map(control => {
-      const value = control.value || {};
-
-      // Si diagnosisType es objeto -> extraer código y texto
-      const codeDiagnosisType = value.diagnosisType && typeof value.diagnosisType === 'object'
-        ? value.diagnosisType.codeDiagnosisType
-        : (value.codeDiagnosisType || '');
-
-      const diagnosisTypeText = value.diagnosisType && typeof value.diagnosisType === 'object'
-        ? value.diagnosisType.diagnosisType
-        : (value.diagnosisType || '');
-
-      const diag: MedicalDiagnosisDTO = {
-        ...value,
-        idMedicalConsultation: this.consultationToEdit!.idMedicalConsultation,
-        diagnosisType: value.diagnosisType?.diagnosisType,
-        codeDiagnosisType: value.diagnosisType?.codeDiagnosisType,
-        updatedBy: idUser,
-        createdBy: idUser,
-        createdAt: DateTimeHelper.getLocalDateTimeWithOffset(),
-        updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
-        idMedicalConsultationDiagnosis: value.idMedicalConsultationDiagnosis ?? 0
-      };
-
-      if (diag.idMedicalConsultationDiagnosis && diag.idMedicalConsultationDiagnosis > 0) {
-        // EXISTE -> actualizar
-        return this._medicalConsultationDiagnosisUseCase.UpdateMedicalConsultationDiagnosis(diag);
-      } else {
-        // NUEVO -> crear
-        diag.createdBy = idUser;
-        diag.createdAt = now;
-        return this._medicalConsultationDiagnosisUseCase.CreateMedicalConsultationDiagnosis(diag);
-      }
-    });
-
-    forkJoin(operations).subscribe({
-      next: (responses) => {
-        const allSuccess = responses.every(res => res.isSuccess);
-        if (allSuccess) {
-          this.backToList.emit();
-        } else {
-          console.warn('⚠️ Algunos diagnósticos no se pudieron guardar');
-          this.backToList.emit();
-        }
-      },
-      error: (err) => {
-        console.error('❌ Error al guardar diagnósticos:', err);
-      }
-    });
-  } */
-
+ 
   private saveDiagnosesForExistingConsultation() {
   const idUser = parseInt(localStorage.getItem('IdUser') || '0', 10);
   const now = this.getLocalDateTime();

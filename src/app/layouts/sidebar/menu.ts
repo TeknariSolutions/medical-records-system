@@ -43,7 +43,7 @@ export const MENU: MenuItem[] = [
 
     },
     
-     {
+    {
         id: 2,
         label: 'Codigos CIE10',
         icon: 'bx bx-book-content',
@@ -54,6 +54,23 @@ export const MENU: MenuItem[] = [
                 label: 'Listado de Códigos',
                 link: '/codes/list-CIE10',
                 parentId: 2,
+                roleAuthenticated: [1,3]
+            }
+        ]
+
+    },
+
+     {
+        id: 3,
+        label: 'CUPS',
+        icon: 'bx bx-list-ul',
+        roleAuthenticated: [1,3],
+        subItems: [
+            {
+                id: 3,
+                label: 'Listado de Códigos CUPS',
+                link: '/cups/list-cups',
+                parentId: 3,
                 roleAuthenticated: [1,3]
             }
         ]
