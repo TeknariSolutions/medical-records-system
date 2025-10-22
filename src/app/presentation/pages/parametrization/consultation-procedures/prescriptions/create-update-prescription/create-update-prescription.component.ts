@@ -81,7 +81,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
               dosage: [d.dosage, Validators.required],
               frequency: [d.frequency, Validators.required],
               duration: [d.duration, Validators.required],
-              prescribedQuantity: [d.prescribedQuantity, Validators.required],
+              //prescribedQuantity: [d.prescribedQuantity, Validators.required],
               instructions: [d.instructions],
               idMedicalEquipment: 1
             });
@@ -117,7 +117,7 @@ searchMedicineById(idMedicine: number): Observable<any | undefined> {
     dosage: ['', Validators.required],
     frequency: ['', Validators.required],
     duration: ['', Validators.required],
-    prescribedQuantity: [0, Validators.required],
+    //prescribedQuantity: [0, Validators.required],
     instructions: ['']
   });
   this.details.push(detail);

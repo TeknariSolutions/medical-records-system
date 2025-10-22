@@ -7,10 +7,10 @@ export interface MedicalEquipmentDTO {
   minimumStock: number;
   unitPrice: number;
   supplier: string;
-  acquisitionDate: string;  // ISO 8601
-  expirationDate: string;   // ISO 8601
+  acquisitionDate: string; 
+  expirationDate: string; 
   isActive: boolean;
-  registrationDate: string; // ISO 8601
+  registrationDate: string;
   registeredByUser: number;
   idCompany: number;
 }

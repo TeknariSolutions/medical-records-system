@@ -436,23 +436,6 @@ export class CreateUpdatePatientComponent implements OnInit {
 
   // Actualizar Regimen
 
-  /* onRegimeChange(event: Event) {
-    const selectedCode = +(event.target as HTMLSelectElement).value;
-    const selected = this.regimes.find(r => r.code === selectedCode);
-
-    if (selected) {
-      this.patientForm.get('medicalInfo')?.patchValue({
-        codRegimen: selected.code,
-        regime: selected.description
-      });
-    } else {
-      this.patientForm.get('medicalInfo')?.patchValue({
-        codRegimen: null,
-        regime: ''
-      });
-    }
-  } */
-
   onRegimeChange(event: Event) {
     const selectedCode = +(event.target as HTMLSelectElement).value;
     const selected = this.regimes.find(r => r.code === selectedCode);
@@ -463,7 +446,7 @@ export class CreateUpdatePatientComponent implements OnInit {
         regime: selected.description
       });
 
-      // 🆕 Filtrar EPS por el régimen seleccionado
+      // Filtrar EPS por el régimen seleccionado
       this._epsUseCase.GetEps(selected.description).subscribe({
         next: (data) => {
           this.epsList = data;

@@ -28,7 +28,7 @@
         <div class="card-body">
           <div class="row mt-1 mb-1">
 
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <div class="mb-3">
                 <label for="name" class="form-label">Nombre Comercial</label>
                 <div class="input-group">
@@ -38,9 +38,9 @@
                     <input type="text" class="form-control" id="commercialName" [(ngModel)]="filterCommercialName"/>
                 </div>
               </div>
-            </div>
+            </div> -->
 
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="mb-3">
                 <label for="name" class="form-label">Ingrediente Activo</label>
                 <div class="input-group">
@@ -52,7 +52,7 @@
               </div>
             </div>
 
-            <div class="col-md-4 d-flex justify-content-end align-items-center gap-3">
+            <div class="col-md-6 d-flex justify-content-end align-items-center gap-3">
                 
               <div class="mb-0">
                 <button type="button" class="btn btn-light px-5" title="Limpiar" (click)="clearFilters()">
@@ -102,7 +102,7 @@
                     <table class="table table-centered table-nowrap mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col">Nombre Comercial</th>
+                                <!-- <th scope="col">Nombre Comercial</th> -->
                                 <th scope="col">Ingrediento Activo</th> 
                                 <th scope="col">Concentración</th>
                                 <th scope="col" class="align-middle text-center" style="width: 10%;">
@@ -114,7 +114,7 @@
                             @for(data of medicines; track $index){
 
                                 <tr>
-                                <td>{{ data.commercialName }}</td>
+                                <!-- <td>{{ data.commercialName }}</td> -->
                                 <td>{{ data.activeIngredient }}</td> 
                                  <td>{{ data.concentration }}</td> 
                               

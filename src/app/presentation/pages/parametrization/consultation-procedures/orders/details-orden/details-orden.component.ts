@@ -131,7 +131,7 @@ export class DetailsOrdenComponent implements OnInit {
   // ===============================
   private buildDocDefinition(logoBase64: string) {
     return {
-      pageSize: 'LETTER',
+      /* pageSize: 'LETTER',
       pageMargins: [30, 110, 30, 30],
 
       header: {
@@ -147,6 +147,27 @@ export class DetailsOrdenComponent implements OnInit {
         alignment: 'right',
         margin: [0, 0, 40, 20],
         fontSize: 9
+      }), */
+
+      // Media carta horizontal (Landscape)
+      pageSize: { width: 612, height: 396 },
+      pageMargins: [25, 90, 25, 30], //  Márgenes más compactos
+
+      // Encabezado con logo
+      header: {
+        image: logoBase64,
+        width: 550, // ajustado al ancho de media carta horizontal
+        height: 90,
+        alignment: 'center',
+        margin: [0, 10, 0, 20]
+      },
+
+      // Pie de página con número
+      footer: (currentPage: number, pageCount: number) => ({
+        text: `${currentPage} / ${pageCount}`,
+        alignment: 'right',
+        margin: [0, 0, 20, 10],
+        fontSize: 8
       }),
 
       content: [

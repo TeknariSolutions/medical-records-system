@@ -117,7 +117,7 @@ export class DetailsPrescriptionComponent implements OnInit {
   // ===============================
   // 🧾 Definición de documento
   // ===============================
-  private buildDocDefinition(logoBase64: string) {
+ /*  private buildDocDefinition(logoBase64: string) {
     return {
       pageSize: 'LETTER',
       pageMargins: [30, 120, 30, 40],
@@ -160,24 +160,26 @@ export class DetailsPrescriptionComponent implements OnInit {
       },
       defaultStyle: { fontSize: 9 }
     };
-  }  
+  }   */
 
-/*   private buildDocDefinition(logoBase64: string) {
+  private buildDocDefinition(logoBase64: string) {
     return {
-      // 📄 Media carta horizontal (Landscape)
+      // Media carta horizontal (Landscape)
       pageSize: { width: 612, height: 396 },
-      pageMargins: [25, 90, 25, 30], // 👈 Márgenes más compactos
+      pageMargins: [25, 90, 25, 30], //  Márgenes más compactos
 
-      // 🖼️ Encabezado con logo
+      // Encabezado con logo
       header: {
         image: logoBase64,
-        width: 550, // 👈 ajustado al ancho de media carta horizontal
+        width: 550, // ajustado al ancho de media carta horizontal
         height: 90,
         alignment: 'center',
         margin: [0, 10, 0, 20]
       },
 
-      // 📄 Pie de página con número
+      headerMargin: [0, 0, 0, 30], 
+
+      // Pie de página con número
       footer: (currentPage: number, pageCount: number) => ({
         text: `${currentPage} / ${pageCount}`,
         alignment: 'right',
@@ -185,7 +187,7 @@ export class DetailsPrescriptionComponent implements OnInit {
         fontSize: 8
       }),
 
-      // 📑 Contenido
+      // Contenido
       content: [
         {
           text: 'PRESCRIPCIÓN MÉDICA',
@@ -201,7 +203,7 @@ export class DetailsPrescriptionComponent implements OnInit {
         ...(this.doctorProfile ? [this.buildDoctorSignature()] : [])
       ],
 
-      // ✨ Estilos globales
+      // Estilos globales
       styles: {
         header: { fontSize: 12, bold: true },
         sectionHeader: { fontSize: 10, bold: true, margin: [0, 10, 0, 8] },
@@ -213,7 +215,7 @@ export class DetailsPrescriptionComponent implements OnInit {
         fontSize: 9
       }
     };
-  } */
+  } 
 
   // ===============================
   // 👤 Datos del paciente
@@ -224,10 +226,18 @@ export class DetailsPrescriptionComponent implements OnInit {
     return {
       table: {
         widths: ['30%', '70%'],
-        body: [
+       /*  body: [
           [{ text: 'Paciente', style: 'tableHeader' }, fullName || 'N/A'],
           [{ text: 'Documento', style: 'tableHeader' }, `${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`],
           [{ text: 'Fecha de Prescripción', style: 'tableHeader' }, this.formatDateTime(this.prescriptionData.prescriptionDate)]
+        ] */
+
+        body: [
+          [{ text: 'Paciente', style: 'tableHeader' }, fullName || 'N/A'],
+          [{ text: 'Documento', style: 'tableHeader' }, `${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`],
+          [{ text: 'Teléfono', style: 'tableHeader' }, this.nullAsNA(this.patientData.phoneNumber)],
+          [{ text: 'Dirección', style: 'tableHeader' }, this.nullAsNA(this.patientData.address)],
+          [{ text: 'Fecha de Prescripción', style: 'tableHeader' }, this.formatDate(this.prescriptionData.prescriptionDate)],
         ]
       },
       layout: 'lightHorizontalLines',
@@ -238,17 +248,16 @@ export class DetailsPrescriptionComponent implements OnInit {
   // ===============================
   // 💊 Tabla de medicamentos
   // ===============================
-  private buildPrescriptionTable() {
+  /* private buildPrescriptionTable() {
     return {
       table: {
-        widths: ['30%', '10%', '15%', '10%', '10%', '25%'],
+        widths: ['30%', '10%', '15%', '15%', '30%'],
         body: [
           [
             { text: 'Medicamento', style: 'tableHeader' },
             { text: 'Dosis', style: 'tableHeader' },
             { text: 'Frecuencia', style: 'tableHeader' },
             { text: 'Duración', style: 'tableHeader' },
-            { text: 'Cantidad', style: 'tableHeader' },
             { text: 'Instrucciones', style: 'tableHeader' }
           ],
           ...this.details.map(d => [
@@ -256,7 +265,6 @@ export class DetailsPrescriptionComponent implements OnInit {
             this.nullAsNA(d.dosage),
             this.nullAsNA(d.frequency),
             this.nullAsNA(d.duration),
-            this.nullAsNA(d.prescribedQuantity),
             this.nullAsNA(d.instructions)
           ])
         ]
@@ -264,7 +272,35 @@ export class DetailsPrescriptionComponent implements OnInit {
       layout: 'lightHorizontalLines',
       margin: [0, 0, 0, 15]
     };
-  } 
+  }  */
+
+  private buildPrescriptionTable() {
+    return {
+      table: {
+        widths: ['30%', '15%', '15%', '15%', '25%'],
+        dontBreakRows: true,
+        body: [
+          [
+            { text: 'Medicamento', style: 'tableHeader' },
+            { text: 'Dosis', style: 'tableHeader' },
+            { text: 'Frecuencia', style: 'tableHeader' },
+            { text: 'Duración', style: 'tableHeader' },
+            { text: 'Instrucciones', style: 'tableHeader' }
+          ],
+          ...this.details.map(d => [
+            this.nullAsNA(d.activeIngredient),
+            this.nullAsNA(d.dosage),
+            this.nullAsNA(d.frequency),
+            this.nullAsNA(d.duration),
+            this.nullAsNA(d.instructions)
+          ])
+        ]
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 15]
+    };
+  }
+
 
  /*  private buildPrescriptionTable() {
     // Si no hay detalles, retornamos un texto informativo
@@ -274,7 +310,7 @@ export class DetailsPrescriptionComponent implements OnInit {
 
     const body: any[] = [];
 
-    // 🔸 Cabecera principal
+    // Cabecera principal
     body.push([
       { text: 'Medicamento', style: 'tableHeader' },
       { text: 'Dosis', style: 'tableHeader' },
@@ -283,13 +319,13 @@ export class DetailsPrescriptionComponent implements OnInit {
       { text: 'Cantidad', style: 'tableHeader' }
     ]);
 
-    // 🔸 Cabecera secundaria para instrucciones (fila aparte)
+    // Cabecera secundaria para instrucciones (fila aparte)
     body.push([
       { text: 'Instrucciones', style: 'tableHeader', colSpan: 5, alignment: 'left' },
       {}, {}, {}, {}
     ]);
 
-    // 🔸 Filas dinámicas de medicamentos
+    // Filas dinámicas de medicamentos
     this.details.forEach((d) => {
       // Fila principal
       body.push([
@@ -309,7 +345,7 @@ export class DetailsPrescriptionComponent implements OnInit {
 
     return {
       table: {
-        widths: ['30%', '15%', '15%', '15%', '25%'], // 👈 más espacio a Medicamento y Cantidad
+        widths: ['30%', '15%', '15%', '15%', '25%'], // más espacio a Medicamento y Cantidad
         body
       },
       layout: 'lightHorizontalLines',
@@ -318,7 +354,7 @@ export class DetailsPrescriptionComponent implements OnInit {
   } */
 
   // ===============================
-  // ✍️ Firma del médico
+  // Firma del médico
   // ===============================
   private buildDoctorSignature() {
     const name = `${this.doctorProfile?.name ?? ''} ${this.doctorProfile?.secondName ?? ''} ${this.doctorProfile?.lastName ?? ''} ${this.doctorProfile?.secondLastName ?? ''}`.trim();

@@ -714,7 +714,7 @@ export class CreateUpdateMedicalConsultationComponent {
       
 
       createdBy: isEdit ? Number(this.consultationToEdit!.createdBy) : userLogged,
-      createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // ✅ no tocar en edición
+      createdAt: isEdit ? this.consultationToEdit!.createdAt : this.getLocalDateTime(), // no tocar en edición
       updateBy: userLogged,
       updateAt: this.getLocalDateTime()
     };
