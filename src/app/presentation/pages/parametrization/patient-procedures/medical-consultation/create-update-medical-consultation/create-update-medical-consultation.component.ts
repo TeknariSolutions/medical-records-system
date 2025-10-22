@@ -28,6 +28,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-case';
+import { CupsCodeUseCase } from 'src/app/infrastructure/use-cases/common/cups-code.use.case';
+import { MedicalServicesUseCase } from 'src/app/infrastructure/use-cases/app/medical-services.use-case';
+import { ModalityAttentionUseCase } from 'src/app/infrastructure/use-cases/common/modality-attention.use-case';
 
 
 
@@ -74,10 +77,28 @@ export class CreateUpdateMedicalConsultationComponent {
     { codeDiagnosisType: '03', diagnosisType: 'Confirmado repetido' }
   ];
 
+
+   groupServices = [
+    { code: '01', description: 'Consulta externa' },
+    { code: '02', description: 'Apoyo diagnostico y complementación terapéutica' },
+    { code: '03', description: 'Internación' },
+    { code: '04', description: 'Quirúrgico' },
+    { code: '05', description: 'Atención inmediata' }
+  ];
+
   // Para guardar resultados de la búsqueda
   cie10Results$: Observable<any[]>[] = [];
   cie10Suggestions: any[][] = [];
   searchTerms = new Subject<string>();
+
+  // CUPS
+  cupsCodes: any[][] = [];
+
+  //  Servicios medicos
+  medicalServices: any[][] = [];
+
+  // Modalidades de Atencion
+  modalitiesAttention: any[][] = [];
 
   lastMedicalHistory?: MedicalHistoryDTO;
 
@@ -126,7 +147,10 @@ export class CreateUpdateMedicalConsultationComponent {
     private cdr: ChangeDetectorRef,
     private _notificationService: NotificationsService,
     private _closeConsultationUseCase: CloseConsultationUseCase,
-    private _usersUseCase: UsersUseCase
+    private _usersUseCase: UsersUseCase,
+    private _cupsCodeUseCase: CupsCodeUseCase,
+    private _medicalServicesUseCase: MedicalServicesUseCase,
+    private _modalityAttentionUseCase: ModalityAttentionUseCase
   ) {
 
     this.form = this.fb.group({
@@ -137,6 +161,10 @@ export class CreateUpdateMedicalConsultationComponent {
         status: [false],
         currentIllness: [''],
         idUser: [null, Validators.required],
+        idCupsCode: [0],
+        idMedicalServices: [0],
+        idModalityAttention: [0],
+        groupServiceCode: ['']
       }),
       clinicalStates: this.fb.group({
         moodStatus: [''],
@@ -247,6 +275,9 @@ export class CreateUpdateMedicalConsultationComponent {
     this.loadExternalCauseCodes();
     this.loadConsultationFinalities();
     this.loadDoctors();
+    this.loadCupsCodes();
+    this.loadMedicalServices();
+    this.loadModalityAttention();
   }
 
   private patchDiagnoses(): void {
@@ -423,6 +454,10 @@ export class CreateUpdateMedicalConsultationComponent {
         status: c.status ?? false,
         currentIllness: c.currentIllness ?? '',
         idUser: c.idUser || null,
+        idCupsCode: c.idCupsCode || null,
+        idMedicalServices: c.idMedicalServices || null,
+        idModalityAttention: c.idModalityAttention != null ? Number(c.idModalityAttention) : 0,
+        groupServiceCode: c.groupServiceCode || '',
       },
       clinicalStates: {
         hydrationStatus: c.hydrationStatus ?? '',
@@ -592,6 +627,10 @@ export class CreateUpdateMedicalConsultationComponent {
       idMedicalConsultation: isEdit ? this.consultationToEdit!.idMedicalConsultation : 0,
       idPatient: this.idPatient,
       idUser: formValues.basicInfo.idUser,
+      idCupsCode: formValues.basicInfo.idCupsCode,
+      idMedicalServices: formValues.basicInfo.idMedicalServices,
+      idModalityAttention: Number(formValues.basicInfo.idModalityAttention),
+      groupServiceCode: formValues.basicInfo.groupServiceCode,
 
       consultationReason: formValues.basicInfo.consultationReason,
       consultationDate: isEdit
@@ -896,6 +935,29 @@ export class CreateUpdateMedicalConsultationComponent {
       });
   }
 
+
+  loadCupsCodes(): void {
+    this._cupsCodeUseCase.GetCupsConsultationneumology()
+      .subscribe((data) => {
+        this.cupsCodes = data;
+      });
+  }
+
+  loadMedicalServices(): void {
+    this._medicalServicesUseCase.GetMedicalServicesNeumology()
+      .subscribe((data) => {
+        this.medicalServices = data;
+      });
+  }
+
+  loadModalityAttention(): void {
+    this._modalityAttentionUseCase.GetListModalityAttention()
+      .subscribe((data) => {
+        this.modalitiesAttention = data;
+      });
+  }
+
+  
 
   scrollStepper(offset: number) {
     if (!this.stepperWrapper) return;

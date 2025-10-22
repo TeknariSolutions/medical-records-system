@@ -113,34 +113,110 @@
             <textarea class="form-control mb-2" formControlName="currentIllness" rows="4"></textarea>
           </div>
 
-          <!-- Médico Tratante -->
-          <div class="col-12">
-            <div class="mb-2">
-              <label for="idUser" class="form-label">
-                Médico Tratante
-              </label>
-              <div class="input-group">
-                <select id="idUser" class="form-control" formControlName="idUser" 
-                [ngClass]="{ 'is-invalid': submitted && form.get('basicInfo.idUser')?.invalid }">
-                  <option [ngValue]="null" disabled selected>
-                    Seleccione un médico
-                  </option>
-                  <option *ngFor="let index of doctors" [ngValue]="index.idUser">
-                    {{ index.name }} {{ index.secondName }} {{ index.lastName }} {{ index.secondLastName }}
-                  </option>
-                </select>
-
-                @if(submitted && form.get('basicInfo.idUser')?.errors) {
-                <div class="invalid-feedback">
-                  @if(form.get('basicInfo.idUser')?.errors['required']) {
-                  <span>Este campo es obligatorio.</span>
+            <!-- Médico Tratante -->
+            <div class="col-12">
+              <div class="mb-2">
+                <label for="idUser" class="form-label">
+                  Médico Tratante
+                </label>
+                <div class="input-group">
+                  <select id="idUser" class="form-control" formControlName="idUser"
+                    [ngClass]="{ 'is-invalid': submitted && form.get('basicInfo.idUser')?.invalid }">
+                    <option [ngValue]="null" disabled selected>
+                      Seleccione un médico
+                    </option>
+                    <option *ngFor="let index of doctors" [ngValue]="index.idUser">
+                      {{ index.name }} {{ index.secondName }} {{ index.lastName }} {{ index.secondLastName }}
+                    </option>
+                  </select>
+            
+                  @if(submitted && form.get('basicInfo.idUser')?.errors) {
+                  <div class="invalid-feedback">
+                    @if(form.get('basicInfo.idUser')?.errors['required']) {
+                    <span>Este campo es obligatorio.</span>
+                    }
+                  </div>
                   }
                 </div>
-                }
+              </div>
+            </div>
+
+          <div class="row mt-4">
+          
+            <!--  Codigo CUPS  -->
+            <div class="col-12 col-lg-6 col-md-6">
+              <div class="mb-2">
+                <label for="idExitCondition" class="form-label">
+                  Codigo CUPS
+                </label>
+                <div class="input-group">
+                  <select id="idCupsCode" class="form-control" formControlName="idCupsCode">
+                    <option [ngValue]="null" disabled selected>
+                      Seleccione una opción
+                    </option>
+                    <option *ngFor="let index of cupsCodes" [ngValue]="index.idCupsCode">
+                      {{ index.name }}
+                    </option>
+                  </select>
+          
+                </div>
+              </div>
+            </div>
+
+             <!--  Servicios Medicos  -->
+            <div class="col-12 col-lg-6 col-md-6">
+              <div class="mb-2">
+                <label for="idExitCondition" class="form-label">
+                  Servicio Medico
+                </label>
+                <div class="input-group">
+                  <select id="idMedicalServices" class="form-control" formControlName="idMedicalServices">
+                    <option [ngValue]="null" disabled selected>
+                      Seleccione una opción
+                    </option>
+                    <option *ngFor="let index of medicalServices" [ngValue]="index.idMedicalServices">
+                      {{ index.serviceName }} - {{ index.serviceDescription }}
+                    </option>
+                  </select>
+          
+                </div>
               </div>
             </div>
           </div>
 
+          <div class="row mt-4">
+            <!-- Grupo Servicios -->
+            <div class="col-12 col-lg-6 col-md-6">
+              <label>Grupo de Servicios</label>
+              <select formControlName="groupServiceCode" class="form-control">
+                <option [ngValue]="null" disabled selected>
+                  Seleccione una opción
+                </option>
+                <option *ngFor="let index of groupServices" [ngValue]="index.code">{{ index.description }}</option>
+              </select>
+            </div>
+
+            <!--  Modalidades de Atención  -->
+            <div class="col-12 col-lg-6 col-md-6">
+              <div class="mb-2">
+                <label for="idExitCondition" class="form-label">
+                  Modalidad de Atención
+                </label>
+                <div class="input-group">
+                  <select id="idModalityAttention" class="form-control" formControlName="idModalityAttention">
+                    <option [ngValue]="null" disabled selected>
+                      Seleccione una opción
+                    </option>
+                    <option *ngFor="let index of modalitiesAttention" [ngValue]="index.idModalityAttention">
+                      {{ index.modalityAttentionName }}
+                    </option>
+                  </select>
+          
+                </div>
+              </div>
+            </div>
+
+          </div>
 
           <div class="row mt-4">
           

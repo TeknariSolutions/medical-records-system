@@ -23,6 +23,7 @@ export interface PatientDTO {
   countryId: number;
   departmentId: number;
   municipalityId: number;
+  territorialZoneCode: string;
   codRegimen: number;
   job: string;
   bloodType: string;

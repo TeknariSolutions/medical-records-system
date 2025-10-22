@@ -11,9 +11,11 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { take } from 'rxjs';
 import { LocationService } from 'src/app/infrastructure/services/common/location/location.service';
-import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS-Colombia/eps-colombia.service';
+//import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS/eps-colombia.service';
 import { CountriesUseCase } from 'src/app/infrastructure/use-cases/app/countries.use-case';
 import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
+import { EpsUseCase } from 'src/app/infrastructure/use-cases/common/eps.use-case';
+//import { Eps } from 'src/app/infrastructure/services/common/EPS/eps.service';
 
 
 @Component({
@@ -44,7 +46,7 @@ export class CreateUpdatePatientComponent implements OnInit {
   cities: any[] = [];
 
   // EPS
-  epsList: Eps[] = [];
+  epsList: any[] = [];
 
   // Tipos de documento
   documentTypes = [
@@ -92,14 +94,20 @@ export class CreateUpdatePatientComponent implements OnInit {
 
   // Regimenes
   regimes = [
-    { code: 1, description: 'Régimen contributivo' },
-    { code: 2, description: 'Régimen subsidiado' },
+    { code: 1, description: 'Contributivo' },
+    { code: 2, description: 'Subsidiado' },
     { code: 3, description: 'Vinculado' },
     { code: 4, description: 'Particular' },
-    { code: 5, description: 'Otros (planes voluntarios, regímenes especiales, ARL, SOAT)' }
+    { code: 5, description: 'Otros' }
   ];
 
- 
+  // Zonas territoriales
+  territorialZoneCodes = [
+    { code: '01', description: 'Urbana' },
+    { code: '02', description: 'Rural' },
+  ];
+
+
   constructor(
     private formBuilder: FormBuilder,
     private _patientsUseCase: PatientsUseCase,
@@ -108,7 +116,7 @@ export class CreateUpdatePatientComponent implements OnInit {
     public bsModalRef: BsModalRef,
     private _dataTransferService: DataTransferService,
     private locationService: LocationService,
-    private _epsService: EpsColombiaService,
+    private _epsUseCase: EpsUseCase,
     private _countriesUseCase: CountriesUseCase
   ) {}
 
@@ -144,7 +152,8 @@ export class CreateUpdatePatientComponent implements OnInit {
             address: patient.address,
             countryId: patient.countryId,    
             departmentId: patient.departmentId,   
-            municipalityId: patient.municipalityId, 
+            municipalityId: patient.municipalityId,
+            territorialZoneCode: patient.territorialZoneCode, 
             phoneNumber: patient.phoneNumber,
             phoneNumber2: patient.phoneNumber2,
             email: patient.email,
@@ -199,6 +208,7 @@ export class CreateUpdatePatientComponent implements OnInit {
         countryId: [48],
         departmentId: [null],
         municipalityId: [null],
+        territorialZoneCode : [null],
         codRegimen: [null],
         phoneNumber: ['', Validators.required],
         phoneNumber2: [''],
@@ -264,13 +274,13 @@ export class CreateUpdatePatientComponent implements OnInit {
   }
 
   loadEPS(): void {
-    this._epsService.getEpsList().subscribe(data => {
+    this._epsUseCase.GetEps('').subscribe(data => {
       this.epsList = data;
     });
   }
 
   
-  // Cargar países (primer paso)
+  // Cargar países 
   
   loadCountries() {
     this._countriesUseCase
@@ -279,11 +289,17 @@ export class CreateUpdatePatientComponent implements OnInit {
         next: (res) => {
           this.countries = res.results;
 
-          // Si estoy en edición y ya tengo countryId
+          // Si estamos creando (no editando) y queremos precargar departamentos de Colombia
+          if (!this.isEditMode) {
+            const defaultCountryId = this.patientForm.get('contactInfo.countryId')?.value;
+            if (defaultCountryId) {
+              this.onCountryChange(defaultCountryId);
+            }
+          }
+
+          // Si estamos editando, ya manejas esta lógica aparte
           if (this.isEditMode && this.patientData?.countryId) {
             this.patientForm.get('contactInfo.countryId')?.setValue(this.patientData.countryId);
-
-            // Llamo al siguiente paso (cargar departamentos)
             this.onCountryChange(this.patientData.countryId);
           }
         },
@@ -293,6 +309,7 @@ export class CreateUpdatePatientComponent implements OnInit {
       });
   }
 
+  
   // Cargar departamentos al seleccionar país
   onCountryChange(IdCountry: number) {
     this.departments = [];
@@ -366,6 +383,7 @@ export class CreateUpdatePatientComponent implements OnInit {
         countryId: Number(formValue.contactInfo.countryId),
         departmentId: Number(formValue.contactInfo.departmentId),
         municipalityId: Number(formValue.contactInfo.municipalityId),
+        territorialZoneCode: formValue.contactInfo.territorialZoneCode,
         phoneNumber: String(formValue.contactInfo.phoneNumber),
         phoneNumber2: String(formValue.contactInfo.phoneNumber2 || ''),
         email: formValue.contactInfo.email,
@@ -418,7 +436,7 @@ export class CreateUpdatePatientComponent implements OnInit {
 
   // Actualizar Regimen
 
-  onRegimeChange(event: Event) {
+  /* onRegimeChange(event: Event) {
     const selectedCode = +(event.target as HTMLSelectElement).value;
     const selected = this.regimes.find(r => r.code === selectedCode);
 
@@ -433,7 +451,39 @@ export class CreateUpdatePatientComponent implements OnInit {
         regime: ''
       });
     }
+  } */
+
+  onRegimeChange(event: Event) {
+    const selectedCode = +(event.target as HTMLSelectElement).value;
+    const selected = this.regimes.find(r => r.code === selectedCode);
+
+    if (selected) {
+      this.patientForm.get('medicalInfo')?.patchValue({
+        codRegimen: selected.code,
+        regime: selected.description
+      });
+
+      // 🆕 Filtrar EPS por el régimen seleccionado
+      this._epsUseCase.GetEps(selected.description).subscribe({
+        next: (data) => {
+          this.epsList = data;
+          // Limpio el valor de la EPS seleccionada si el régimen cambió
+          this.patientForm.get('medicalInfo.idEps')?.setValue(null);
+        },
+        error: (err) => {
+          console.error('Error al cargar EPS por régimen', err);
+          this.epsList = [];
+        }
+      });
+    } else {
+      this.patientForm.get('medicalInfo')?.patchValue({
+        codRegimen: null,
+        regime: ''
+      });
+      this.epsList = [];
+    }
   }
+
 
   goBackToPatients(): void {
   this.router.navigate(['/parametrization/patients']);

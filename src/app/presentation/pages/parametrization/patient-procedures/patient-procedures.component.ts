@@ -5,8 +5,9 @@ import { take } from 'rxjs';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { MedicalConsultationComponent } from './medical-consultation/medical-consultation.component';
-import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS-Colombia/eps-colombia.service';
+//import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS/eps-colombia.service';
 import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
+import { EpsUseCase } from 'src/app/infrastructure/use-cases/common/eps.use-case';
 
 @Component({
   selector: 'app-patient-procedures',
@@ -30,7 +31,8 @@ export class PatientProceduresComponent implements OnInit {
   constructor(
     private _dataTransferService: DataTransferService,
     private _patientsUseCase: PatientsUseCase,
-    private _epsService: EpsColombiaService,
+    //private _epsService: EpsColombiaService,
+    private _epsUseCase: EpsUseCase,
     private _router: Router,
     private _route: ActivatedRoute
   ) { }

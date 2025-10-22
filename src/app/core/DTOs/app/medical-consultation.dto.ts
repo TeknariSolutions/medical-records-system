@@ -48,4 +48,9 @@ export interface MedicalConsultationDTO {
 
   analysisOrConcept: string;
   treatment: string;
+
+  idCupsCode: number;
+  idMedicalServices: number;
+  idModalityAttention: number;
+  groupServiceCode: string;
 }

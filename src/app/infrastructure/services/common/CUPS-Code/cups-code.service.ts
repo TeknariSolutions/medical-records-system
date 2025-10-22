@@ -43,4 +43,14 @@ export class CUPSCodeService {
     );
   }
 
+  
+  GetCupsConsultationneumology(): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+
+        return this._httpService.get<ResponseDTO>(url, "GetCupsConsultationneumology");
+      })
+    );
+  }
+
 }

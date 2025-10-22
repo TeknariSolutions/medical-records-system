@@ -290,7 +290,7 @@
 
 
                                                 <!-- País -->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="col-12 col-lg-6 col-md-6">
                                                     <div class="mb-2">
                                                         <label for="countryId" class="form-label">
                                                             País <span class="text-danger">*</span>
@@ -318,7 +318,7 @@
 
 
                                                 <!-- Departamento -->
-                                                <div class="col-12 col-lg-4 col-md-4">
+                                                <div class="col-12 col-lg-6 col-md-4">
                                                     <div class="mb-2">
                                                         <label for="countryId" class="form-label">
                                                             Departamento <span class="text-danger">*</span>
@@ -345,7 +345,7 @@
                                                 </div>
 
                                                 <!-- Ciudad -->
-                                                 <div class="col-12 col-lg-4 col-md-4">
+                                                 <div class="col-12 col-lg-6 col-md-6">
                                                     <div class="mb-2">
                                                         <label for="municipalityId" class="form-label">
                                                             Ciudad 
@@ -366,6 +366,20 @@
                                                             </div>
                                                             }
                                                         </div>
+                                                    </div>
+                                                </div>
+
+                                             
+                                                <!-- Zona Territorial -->
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="mb-2">
+                                                        <label for="territorialZoneCode" class="form-label">
+                                                            Zona Territorial
+                                                        </label>
+                                                      
+                                                        <ng-select [items]="territorialZoneCodes" bindLabel="description" bindValue="code" formControlName="territorialZoneCode"
+                                                            placeholder="Selecciona una zona territorial">
+                                                        </ng-select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -600,6 +614,32 @@
                                             </div>
 
                                             <div class="row mb-3">
+                                                <!-- Régimen -->
+                                                <div class="col-12 col-lg-4 col-md-4">
+                                                    <div class="mb-2">
+                                                        <label for="regime" class="form-label">
+                                                            Régimen <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <select id="regime" class="form-control" formControlName="codRegimen" (change)="onRegimeChange($event)"
+                                                                [ngClass]="{'is-invalid': submitted && patientForm.get('medicalInfo.codRegimen')?.invalid}">
+                                                                <option value="">Selecciona una opción</option>
+                                                                <option *ngFor="let r of regimes" [value]="r.code">
+                                                                    {{ r.description }}
+                                                                </option>
+                                                            </select>
+
+
+                                                            @if(submitted && (patientForm.get('medicalInfo.regime')?.errors ||
+                                                            patientForm.get('medicalInfo.codRegimen')?.errors)) {
+                                                            <div class="invalid-feedback">
+                                                                <span>Este campo es obligatorio.</span>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
                                                 <!--EPS-->
                                                 <div class="col-12 col-lg-4 col-md-4">
                                                     <div class="mb-2">
@@ -612,7 +652,7 @@
                                                                 placeholder="Selecciona una opción"
                                                                 [ngClass]="{ 'is-invalid': submitted && patientForm.get('medicalInfo.idEps')?.invalid }">
                                                                 <option *ngFor="let eps of epsList" [value]="eps.idEps">
-                                                                    {{ eps.nombre }}
+                                                                    {{ eps.epsName }}
                                                                 </option>
                                                             </select>
                                                             @if(submitted && patientForm.get('medicalInfo.idEps')?.errors) {
@@ -649,33 +689,6 @@
                                                                 @if(patientForm.get('medicalInfo.stratum')?.errors['required']) {
                                                                 <span>Este campo es obligatorio.</span>
                                                                 }
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            
-                                                <!-- Régimen -->
-                                                <div class="col-12 col-lg-4 col-md-4">
-                                                    <div class="mb-2">
-                                                        <label for="regime" class="form-label">
-                                                            Régimen <span class="text-danger">*</span>
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <select id="regime" class="form-control" formControlName="codRegimen" (change)="onRegimeChange($event)"
-                                                                [ngClass]="{'is-invalid': submitted && patientForm.get('medicalInfo.codRegimen')?.invalid}">
-                                                                <option value="">Selecciona una opción</option>
-                                                                <option *ngFor="let r of regimes" [value]="r.code">
-                                                                    {{ r.description }}
-                                                                </option>
-                                                            </select>
-
-
-                                                            @if(submitted && (patientForm.get('medicalInfo.regime')?.errors ||
-                                                            patientForm.get('medicalInfo.codRegimen')?.errors)) {
-                                                            <div class="invalid-feedback">
-                                                                <span>Este campo es obligatorio.</span>
                                                             </div>
                                                             }
                                                         </div>
