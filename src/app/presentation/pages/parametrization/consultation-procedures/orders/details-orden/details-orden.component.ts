@@ -129,157 +129,126 @@ export class DetailsOrdenComponent implements OnInit {
   }
 
   // ===============================
-  private buildDocDefinition(logoBase64: string) {
-    return {
-      /* pageSize: 'LETTER',
-      pageMargins: [30, 110, 30, 30],
+ private buildDocDefinition(logoBase64: string) {
+  return {
+    // 🧾 Media carta horizontal (Landscape)
+    pageSize: { width: 612, height: 396 },
+    pageMargins: [16, 55, 16, 16], // 🔸 márgenes más pequeños
 
-      header: {
-        image: logoBase64,
-        width: 575,
-        height: 90,
+    header: {
+      image: logoBase64,
+      width: 520,
+      height: 70,
+      alignment: 'center',
+      margin: [0, 2, 0, 8] // 🔸 más cerca del contenido
+    },
+
+    footer: (currentPage: number, pageCount: number) => ({
+      text: `${currentPage} / ${pageCount}`,
+      alignment: 'right',
+      margin: [0, 0, 15, 6],
+      fontSize: 7
+    }),
+
+    content: [
+      {
+        text: 'ORDEN MÉDICA',
+        style: 'header',
         alignment: 'center',
-        margin: [20, 15, 0, 30]
+        margin: [0, 2, 0, 6]
       },
 
-      footer: (currentPage: number, pageCount: number) => ({
-        text: `${currentPage} / ${pageCount}`,
-        alignment: 'right',
-        margin: [0, 0, 40, 20],
-        fontSize: 9
-      }), */
+      this.buildPatientInfoTable(),
 
-      // Media carta horizontal (Landscape)
-      pageSize: { width: 612, height: 396 },
-      pageMargins: [25, 90, 25, 30], //  Márgenes más compactos
+      { text: 'DETALLE DE ÓRDENES', style: 'sectionHeader', margin: [0, 0, 0, 2] },
 
-      // Encabezado con logo
-      header: {
-        image: logoBase64,
-        width: 550, // ajustado al ancho de media carta horizontal
-        height: 90,
-        alignment: 'center',
-        margin: [0, 10, 0, 20]
-      },
+      ...(this.orderDetails.length > 0 ? [this.buildOrderDetailsTable()] : []),
 
-      // Pie de página con número
-      footer: (currentPage: number, pageCount: number) => ({
-        text: `${currentPage} / ${pageCount}`,
-        alignment: 'right',
-        margin: [0, 0, 20, 10],
-        fontSize: 8
-      }),
+      { text: 'OBSERVACIONES:', style: 'sectionHeader', margin: [0, 3, 0, 2] },
+      { text: this.nullAsNA(this.orderData.generalObservations), margin: [0, 0, 0, 8], fontSize: 7.3 },
 
-      content: [
-        {
-          text: 'ORDEN MÉDICA',
-          style: 'header',
-          alignment: 'center',
-          margin: [0, 0, 0, 20]
-        },
+      ...(this.doctorProfile ? [this.buildDoctorSignature()] : [])
+    ],
 
-        this.buildPatientInfoTable(),
-        //this.buildOrderInfoTable(),
-
-        { text: 'DETALLE DE ORDENES', style: 'sectionHeader' },
-
-        ...(this.orderDetails.length > 0 ? [this.buildOrderDetailsTable()] : []),
-
-        { text: 'OBSERVACIONES:', style: 'sectionHeader' },
-        { text: this.nullAsNA(this.orderData.generalObservations), margin: [0, 5, 0, 20] },
-
-        ...(this.doctorProfile ? [this.buildDoctorSignature()] : [])
-      ],
-
-      styles: {
-        header: { fontSize: 12, bold: true },
-        sectionHeader: { fontSize: 10, bold: true, margin: [0, 15, 0, 8] },
-        tableHeader: { bold: true, fillColor: '#f2f2f2' }
-      },
-      defaultStyle: {
-        fontSize: 9
-      }
-    };
-  }
+    styles: {
+      header: { fontSize: 10, bold: true },
+      sectionHeader: { fontSize: 8.5, bold: true },
+      tableHeader: { bold: true, fillColor: '#f2f2f2', fontSize: 7.5 }
+    },
+    defaultStyle: {
+      fontSize: 7.3,
+      lineHeight: 1.0
+    }
+  };
+}
 
   // ===============================
   private buildPatientInfoTable() {
-    const fullName = `${this.patientData.firstName ?? ''} ${this.patientData.secondName ?? ''} ${this.patientData.firstLastName ?? ''} ${this.patientData.secondLastName ?? ''}`.trim();
+  const fullName = `${this.patientData.firstName ?? ''} ${this.patientData.secondName ?? ''} ${this.patientData.firstLastName ?? ''} ${this.patientData.secondLastName ?? ''}`.trim();
 
-    return {
-      table: {
-        widths: ['30%', '70%'],
-        body: [
-          [{ text: 'Paciente', style: 'tableHeader' }, fullName || 'N/A'],
-          [{ text: 'Documento', style: 'tableHeader' }, `${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`],
-          [{ text: 'Teléfono', style: 'tableHeader' }, this.nullAsNA(this.patientData.phoneNumber)],
-          [{ text: 'Dirección', style: 'tableHeader' }, this.nullAsNA(this.patientData.address)],
-          [{ text: 'Fecha de Orden', style: 'tableHeader' }, this.formatDate(this.orderData.orderDate)],
-        ]
-      },
-      layout: 'lightHorizontalLines',
-      margin: [0, 0, 0, 15]
-    };
-  }
-
-/*   private buildOrderInfoTable() {
-    return {
-      table: {
-        widths: ['30%', '70%'],
-        body: [
-          [{ text: 'Fecha de Orden', style: 'tableHeader' }, this.formatDate(this.orderData.orderDate)],
-          [{ text: 'Número de Orden', style: 'tableHeader' }, `${this.orderData.idOrder}`]
-        ]
-      },
-      layout: 'lightHorizontalLines',
-      margin: [0, 0, 0, 15]
-    };
-  } */
-
-  // 📋 Tabla con detalles CUPS
-  private buildOrderDetailsTable() {
-    const body = [
-      [
-        { text: 'Código CUPS', style: 'tableHeader' },
-        //{ text: 'Descripción del Procedimiento', style: 'tableHeader' },
-        { text: 'Cantidad', style: 'tableHeader' },
-        { text: 'Instrucciones', style: 'tableHeader' }
-      ],
-      ...this.orderDetails.map(d => [
-        this.nullAsNA(d.cupsCodeText),
-        //this.nullAsNA(d.procedureDescription),
-        this.nullAsNA(d.quantity),
-        this.nullAsNA(d.instructions)
-      ])
-    ];
-
-    return {
-      table: {
-        widths: ['35%', '15%', '50%'],
-        body
-      },
-      layout: 'lightHorizontalLines',
-      margin: [0, 0, 0, 20]
-    };
-  }
-
-  private buildDoctorSignature() {
-    const name = `${this.doctorProfile?.name ?? ''} ${this.doctorProfile?.secondName ?? ''} ${this.doctorProfile?.lastName ?? ''} ${this.doctorProfile?.secondLastName ?? ''}`.trim();
-
-    return {
-      unbreakable: true,
-      margin: [0, 40, 0, 0],
-      stack: [
-        this.doctorProfile?.digitalSignature
-          ? { image: this.doctorProfile.digitalSignature, width: 90, alignment: 'center', margin: [0, 10, 0, 5] }
-          : {},
-        {
-          text: `${name}\n${this.nullAsNA(this.doctorProfile?.specialityDescription)}\nRegistro Médico: ${this.nullAsNA(this.doctorProfile?.medicalRegistre)}`,
-          alignment: 'center'
-        }
+  return {
+    table: {
+      widths: ['30%', '70%'],
+      body: [
+        [{ text: 'Paciente', style: 'tableHeader' }, fullName || 'N/A'],
+        [{ text: 'Documento', style: 'tableHeader' }, `${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`],
+        [{ text: 'Teléfono', style: 'tableHeader' }, this.nullAsNA(this.patientData.phoneNumber)],
+        [{ text: 'Dirección', style: 'tableHeader' }, this.nullAsNA(this.patientData.address)],
+        [{ text: 'Fecha de Orden', style: 'tableHeader' }, this.formatDate(this.orderData.orderDate)]
       ]
-    };
-  }
+    },
+    layout: 'lightHorizontalLines',
+    margin: [0, 0, 0, 8] 
+  };
+}
+
+
+
+  // Tabla con detalles CUPS
+ private buildOrderDetailsTable() {
+  const body = [
+    [
+      { text: 'Código CUPS', style: 'tableHeader' },
+      { text: 'Cantidad', style: 'tableHeader' },
+      { text: 'Instrucciones', style: 'tableHeader' }
+    ],
+    ...this.orderDetails.map(d => [
+      this.nullAsNA(d.cupsCodeText),
+      this.nullAsNA(d.quantity),
+      this.nullAsNA(d.instructions)
+    ])
+  ];
+
+  return {
+    table: {
+      widths: ['35%', '15%', '50%'],
+      body
+    },
+    layout: 'lightHorizontalLines',
+    margin: [0, 0, 0, 8] // 🔸 más pegado a Observaciones
+  };
+}
+
+
+private buildDoctorSignature() {
+  const name = `${this.doctorProfile?.name ?? ''} ${this.doctorProfile?.secondName ?? ''} ${this.doctorProfile?.lastName ?? ''} ${this.doctorProfile?.secondLastName ?? ''}`.trim();
+
+  return {
+    unbreakable: true,
+    margin: [0, 8, 0, 0],
+    stack: [
+      this.doctorProfile?.digitalSignature
+        ? { image: this.doctorProfile.digitalSignature, width: 60, alignment: 'center', margin: [0, 6, 0, 2] }
+        : {},
+      {
+        text: `${name}\n${this.nullAsNA(this.doctorProfile?.specialityDescription)}\nRegistro Médico: ${this.nullAsNA(this.doctorProfile?.medicalRegistre)}`,
+        alignment: 'center',
+        fontSize: 7.5
+      }
+    ]
+  };
+}
+
 
   private formatDate(date: string | Date): string {
     if (!date) return 'N/A';

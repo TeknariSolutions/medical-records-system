@@ -1,86 +1,104 @@
 <div class="modal-header">
   <h5 class="modal-title">
-    {{ prescriptionToEdit ? 'Actualizar Prescripción Médica' : 'Crear Prescripción  Médica' }}
+    {{ prescriptionToEdit ? 'Actualizar Prescripción Médica' : 'Crear Prescripción Médica' }}
   </h5>
-
   <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
 </div>
 
 <div class="modal-body">
   <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()">
 
-    <!-- Detalles -->
+    <!-- Toolbar: agregar ítems -->
+    <div class="d-flex gap-2 mb-3">
+      <button type="button" class="btn btn-outline-primary" (click)="addMedicationDetail()">
+        <i class="mdi mdi-plus"></i> Agregar Medicamento
+      </button>
+
+      <button type="button" class="btn btn-outline-secondary" (click)="addEquipmentDetail()">
+        <i class="mdi mdi-plus"></i> Agregar Equipo Médico
+      </button>
+    </div>
+
+    <!-- Lista de detalles (mezclados) -->
     <div formArrayName="details">
       <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="card-custom border p-2 mb-4 rounded">
 
-         <!-- Título  -->
-        <div class="title-card">
-          <h5 class="mb-3">Medicamento {{ i + 1 }}</h5>
-
-          @if(!prescriptionToEdit) {
-            <button class="btn btn-sm btn-soft-danger" (click)="removeDetail(i)" *ngIf="details.length > 1" data-bs-toggle="tooltip"
-              data-bs-placement="top" title="Eliminar">
-              <i class="mdi mdi-delete-outline"></i>
-            </button>
-          }
-        </div>
-    
-        <!-- Autocomplete de medicamentos -->
-        <div class="mb-2 position-relative">
-          <label>Medicamento</label>
-        
-          <input type="text" class="form-control" [formControlName]="'medicineName'" placeholder="Busque un medicamento"
-              (input)="onMedicineInput($event.target.value, i)" (keydown.enter)="$event.preventDefault()" />
-
-          <!-- Sugerencias -->
-          <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
-            <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">
-              {{ med.commercialName }} - {{ med.activeIngredient }}
-            </li>
-          
-            <li class="li-custom d-flex justify-content-between align-items-center">
-              <button type="button" class="btn btn-sm btn-light" (click)="previousPage(i)"
-                [disabled]="medicinesPaginator[i].pageIndex === 1">Anterior</button>
-          
-              <!-- Usamos el arreglo paralelo totalPagesByDetail -->
-              <span>Página {{ medicinesPaginator[i].pageIndex }} de {{ totalPagesByDetail[i] || 1 }}</span>
-          
-              <button type="button" class="btn btn-sm btn-light" (click)="nextPage(i)"
-                [disabled]="medicinesPaginator[i].pageIndex >= (totalPagesByDetail[i] || 1)">Siguiente</button>
-            </li>
-          </ul>
+        <div class="title-card d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            {{ detail.get('type')?.value === 'medicine' ? 'Medicamento' : 'Equipo Médico' }} {{ i + 1 }}
+          </h5>
+          <button class="btn btn-sm btn-soft-danger" type="button" (click)="removeDetail(i)" *ngIf="details.length > 0">
+            <i class="mdi mdi-delete-outline"></i>
+          </button>
         </div>
 
-        <div class="row g-2">
-          <div class="col-12 col-md-4">
-            <label>Dosis</label>
-            <input type="text" formControlName="dosage" class="form-control">
+        <!-- BLOQUE: Medicamento -->
+        <ng-container *ngIf="detail.get('type')?.value === 'medicine'">
+          <!-- Autocomplete medicamentos -->
+          <div class="mb-2 position-relative">
+            <label>Medicamento</label>
+            <input type="text"
+                   class="form-control"
+                   formControlName="medicineName"
+                   placeholder="Busque un medicamento"
+                   (input)="onMedicineInput($event.target.value, i)"
+                   (keydown.enter)="$event.preventDefault()" />
+            <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
+              <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">
+                {{ med.commercialName }} - {{ med.activeIngredient }}
+              </li>
+              <li class="li-custom d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-sm btn-light" (click)="previousPage(i)"
+                        [disabled]="medicinesPaginator[i].pageIndex === 1">Anterior</button>
+                <span>Página {{ medicinesPaginator[i].pageIndex }} de {{ totalPagesByDetail[i] || 1 }}</span>
+                <button type="button" class="btn btn-sm btn-light" (click)="nextPage(i)"
+                        [disabled]="medicinesPaginator[i].pageIndex >= (totalPagesByDetail[i] || 1)">Siguiente</button>
+              </li>
+            </ul>
           </div>
-          <div class="col-12 col-md-4">
-            <label>Frecuencia</label>
-            <input type="text" formControlName="frequency" class="form-control">
+
+          <div class="row g-2">
+            <div class="col-12 col-md-4">
+              <label>Dosis</label>
+              <input type="text" formControlName="dosage" class="form-control">
+            </div>
+            <div class="col-12 col-md-4">
+              <label>Frecuencia</label>
+              <input type="text" formControlName="frequency" class="form-control">
+            </div>
+            <div class="col-12 col-md-4">
+              <label>Duración</label>
+              <input type="text" formControlName="duration" class="form-control">
+            </div>
           </div>
-          <div class="col-12 col-md-4">
-            <label>Duración</label>
-            <input type="text" formControlName="duration" class="form-control">
+        </ng-container>
+
+        <!-- BLOQUE: Equipo médico -->
+        <ng-container *ngIf="detail.get('type')?.value === 'equipment'">
+          <div class="mb-2 position-relative">
+            <label>Equipo Médico</label>
+            <input type="text"
+                   class="form-control"
+                   formControlName="equipmentName"
+                   placeholder="Busque un equipo médico"
+                   (input)="onEquipmentInput($event.target.value, i)"
+                   (keydown.enter)="$event.preventDefault()" />
+            <ul class="list-group position-absolute w-100" *ngIf="showEquipmentsDropdown[i]">
+              <li class="list-group-item" *ngFor="let eq of equipmentSuggestions[i]" (click)="selectEquipment(eq, i)">
+                {{ eq.equipmentName }} - {{ eq.brand }}
+              </li>
+            </ul>
           </div>
-         <!--  <div class="col-12 col-md-3">
-            <label>Cantidad</label>
-            <input type="number" formControlName="prescribedQuantity" class="form-control">
-          </div> -->
-        </div>
-    
+        </ng-container>
+
+        <!-- Común -->
         <div class="mt-2">
           <label>Instrucciones</label>
-          <textarea formControlName="instructions" class="form-control"></textarea>
+          <textarea formControlName="instructions" class="form-control" rows="2"></textarea>
         </div>
+
       </div>
     </div>
-
-    <button type="button" class="btn btn-primary mt-2" (click)="addDetail()">
-      <i class="mdi mdi-plus mr-1"></i>
-      Agregar
-    </button>
 
   </form>
 </div>
