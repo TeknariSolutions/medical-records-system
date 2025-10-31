@@ -152,7 +152,10 @@ export class CreateUpdateMedicalConsultationComponent {
     private _medicalServicesUseCase: MedicalServicesUseCase,
     private _modalityAttentionUseCase: ModalityAttentionUseCase
   ) {
+    // ✅ Obtener el rol inmediatamente (antes de ngOnChanges)
+    this.idRol = Number(localStorage.getItem('IdRol')) || 0;
 
+    // ✅ Inicializar el formulario
     this.form = this.fb.group({
       basicInfo: this.fb.group({
         consultationReason: ['', Validators.required],
@@ -207,63 +210,40 @@ export class CreateUpdateMedicalConsultationComponent {
         analysisOrConcept: [null],
         treatment: [null]
       }),
-
-
-      diagnoses: this.fb.array([]) // solo admin
+      diagnoses: this.fb.array([]) // solo admin y médico
     });
 
     // Escuchar cambios para recalcular BMI
     this.form.get('vitalSigns.weightKg')?.valueChanges.subscribe(() => this.updateBMI());
     this.form.get('vitalSigns.heightCm')?.valueChanges.subscribe(() => this.updateBMI());
-
   }
 
-
   ngOnInit(): void {
-    const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-    this.idRol = idRol;
+    const idRol = this.idRol;
 
-   /*  // Si el rol es admin, asegúrate de que el FormArray exista desde el inicio
-    if (idRol === 1 && !this.form.contains('diagnoses')) {
-      this.form.addControl('diagnoses', this.fb.array([]));
-    } */
-
-    // Si el rol es admin o médico → habilitar diagnósticos
+    // Habilitar diagnósticos solo para admin (1) y médico (3)
     if ((idRol === 1 || idRol === 3) && !this.form.contains('diagnoses')) {
       this.form.addControl('diagnoses', this.fb.array([]));
     }
 
-
-    const weightControl = this.form.get('weightKg');
-    const heightControl = this.form.get('heightCm');
-
-    if (weightControl && heightControl) {
-      weightControl.valueChanges.subscribe(() => this.updateBMI());
-      heightControl.valueChanges.subscribe(() => this.updateBMI());
-    }
-
-    // Si es auxiliar (rolId 2): forzar status a false y deshabilitar
+    // Forzar switch "status" a false y deshabilitar solo si es auxiliar (2)
     if (idRol === 2) {
       this.form.get('basicInfo.status')?.setValue(false);
       this.form.get('basicInfo.status')?.disable();
     }
 
-    this.loadLastMedicalHistory();
-    this.patchDiagnoses();
-
-    // 🔒 Si la consulta ya está cerrada, bloqueamos edición
-    if (this.consultationToEdit?.status) {
-      this.form.disable();
+    // 🔒 Si la consulta está cerrada y el rol es 2 o 3 → deshabilitar todo
+    if (this.consultationToEdit?.status && (idRol === 2 || idRol === 3)) {
+      this.form.disable({ emitEvent: false });
     } else {
-      // 👉 Solo suscribirse si la consulta NO está cerrada
+      // ⚠️ Advertencia solo para roles 2 y 3
       this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
-        if (value) {
+        if (value && (idRol === 2 || idRol === 3)) {
           const confirmed = await this._notificationService.confirm(
             'Advertencia',
             'Si marca la consulta como CERRADA y la guarda ya no podrá editarla después.',
             'warning'
           );
-
           if (!confirmed) {
             this.form.get('basicInfo.status')?.setValue(false, { emitEvent: false });
           }
@@ -271,6 +251,9 @@ export class CreateUpdateMedicalConsultationComponent {
       });
     }
 
+    // 🔄 Cargar listas
+    this.loadLastMedicalHistory();
+    this.patchDiagnoses();
     this.loadExistConditions();
     this.loadExternalCauseCodes();
     this.loadConsultationFinalities();
@@ -278,6 +261,67 @@ export class CreateUpdateMedicalConsultationComponent {
     this.loadCupsCodes();
     this.loadMedicalServices();
     this.loadModalityAttention();
+  }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['consultationToEdit'] && this.consultationToEdit) {
+      const normalized = this.normalizeConsultationData(this.consultationToEdit);
+      this.form.patchValue(normalized);
+
+      // ✅ Aplicar bloqueo dinámico solo si rol = 2 o 3 y está cerrada
+      if (this.consultationToEdit.status && (this.idRol === 2 || this.idRol === 3)) {
+        this.form.disable({ emitEvent: false });
+      } else {
+        this.form.enable({ emitEvent: false });
+      }
+
+      // Diagnósticos solo para admin y médico
+      if (this.idRol === 1 || this.idRol === 3) {
+        if (!this.form.contains('diagnoses')) {
+          this.form.addControl('diagnoses', this.fb.array([]));
+        }
+
+        const array = this.form.get('diagnoses') as FormArray;
+        array.clear();
+
+        if (this.consultationToEdit.idMedicalConsultation) {
+          this._medicalConsultationDiagnosisUseCase
+            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(
+              this.consultationToEdit.idMedicalConsultation
+            )
+            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
+              if (diagnoses?.length) {
+                diagnoses.forEach(d => {
+                  const group = this.createDiagnosisGroup();
+
+                  const matchedType = this.diagnosisTypes.find(t =>
+                    String(t.codeDiagnosisType) === String(d.codeDiagnosisType) ||
+                    t.diagnosisType === d.diagnosisType
+                  );
+
+                  group.patchValue({
+                    idMedicalConsultationDiagnosis: d.idMedicalConsultationDiagnosis ?? 0,
+                    idMedicalConsultation: d.idMedicalConsultation ?? this.consultationToEdit?.idMedicalConsultation ?? 0,
+                    diagnosisCode: d.diagnosisCode ?? '',
+                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription ?? ''),
+                    codeDiagnosisType: d.codeDiagnosisType ?? '',
+                    comment: d.comment || '',
+                    isPrincipal: d.isPrincipal || false,
+                    diagnosisType: matchedType ?? (d.diagnosisType || '')
+                  });
+
+                  array.push(group);
+                });
+              } else {
+                this.addDiagnosis();
+              }
+            });
+        } else {
+          this.addDiagnosis();
+        }
+      }
+    }
   }
 
   private patchDiagnoses(): void {
@@ -296,7 +340,6 @@ export class CreateUpdateMedicalConsultationComponent {
       });
     }
   }
-
 
 
   // helper getter para el FormArray
@@ -383,62 +426,6 @@ export class CreateUpdateMedicalConsultationComponent {
     return html.replace(/<[^>]+>/g, '');
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['consultationToEdit'] && this.consultationToEdit) {
-     
-
-      const normalized = this.normalizeConsultationData(this.consultationToEdit);
-     
-      this.form.patchValue(normalized);
-
-      const idRol = parseInt(localStorage.getItem('IdRol') || '0', 10);
-      if (idRol === 1 || idRol === 3) {
-        if (!this.form.contains('diagnoses')) {
-          this.form.addControl('diagnoses', this.fb.array([]));
-        }
-        const array = this.form.get('diagnoses') as FormArray;
-        array.clear();
-
-        if (this.consultationToEdit.idMedicalConsultation) {
-        
-          this._medicalConsultationDiagnosisUseCase
-            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(this.consultationToEdit.idMedicalConsultation)
-            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
-              if (diagnoses && diagnoses.length) {
-                diagnoses.forEach(d => {
-                  const group = this.createDiagnosisGroup();
-
-                  // Buscar el objeto tipo correspondiente por código o por texto
-                  const matchedType = this.diagnosisTypes.find(t =>
-                    String(t.codeDiagnosisType) === String(d.codeDiagnosisType) ||
-                    t.diagnosisType === d.diagnosisType
-                  );
-
-                  group.patchValue({
-                    idMedicalConsultationDiagnosis: d.idMedicalConsultationDiagnosis ?? 0,
-                    idMedicalConsultation: d.idMedicalConsultation ?? this.consultationToEdit?.idMedicalConsultation ?? 0,
-                    diagnosisCode: d.diagnosisCode ?? '',
-                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription ?? ''),
-                    codeDiagnosisType: d.codeDiagnosisType ?? '',
-                    comment: d.comment || '',
-                    isPrincipal: d.isPrincipal || false,
-                    // Si hay match, guardamos el objeto; si no, guardamos el texto (fallback)
-                    diagnosisType: matchedType ?? (d.diagnosisType || '')
-                  });
-
-                  array.push(group);
-                });
-              } else {
-                this.addDiagnosis();
-              }
-            });
-
-        } else {
-          this.addDiagnosis();
-        }
-      }
-    }
-  }
 
 
   goToNextStep() {

@@ -156,3 +156,11 @@
   margin-top: 10px;
 }
 
+/*-- INFO ESTADO CONSULTA --*/
+.info-status-consultation {
+  font-size: 14px;
+  color: #888;
+  display: flex;
+  justify-content: flex-end;
+}
+
