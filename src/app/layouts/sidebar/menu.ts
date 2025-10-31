@@ -16,7 +16,7 @@ export const MENU: MenuItem[] = [
                 label: 'Usuarios',
                 link: '/parametrization/users',
                 parentId: 2,
-                roleAuthenticated: [1,3] 
+                roleAuthenticated: [1] 
             },
             {
                 id: 3,
