@@ -1,0 +1,12 @@
+.invalid-feedback {
+  font-size: 0.8rem;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+}
+
+textarea {
+  resize: none;
+}

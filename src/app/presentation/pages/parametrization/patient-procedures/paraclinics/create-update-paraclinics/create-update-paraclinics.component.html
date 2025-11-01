@@ -13,6 +13,52 @@
       <input type="text" class="form-control" formControlName="name">
     </div>
 
+    <!-- CUPS Autocomplete -->
+    <div class="mb-3 position-relative">
+      <label>CUPS</label>
+      <input type="text" class="form-control" placeholder="Busque un CUPS"
+             formControlName="cupsName"
+             (input)="onCupsInput($event.target.value)" (keydown.enter)="$event.preventDefault()">
+
+      <ul class="list-group position-absolute w-100 z-3"
+          *ngIf="showCupsDropdown && cupsSuggestions?.length > 0">
+        <li class="list-group-item" *ngFor="let c of cupsSuggestions" (click)="selectCups(c)">
+          {{ c.code }} - {{ c.name }}
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <button type="button" class="btn btn-sm btn-light" (click)="previousCupsPage()" [disabled]="cupsPaginator.pageIndex === 1">Anterior</button>
+          <span>Página {{ cupsPaginator.pageIndex }} de {{ totalCupsPages || 1 }}</span>
+          <button type="button" class="btn btn-sm btn-light" (click)="nextCupsPage()" [disabled]="cupsPaginator.pageIndex >= (totalCupsPages || 1)">Siguiente</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="row">
+      <!-- Modalidad de Atención -->
+      <div class="col-12 col-lg-6 col-md-6">
+        <div class="mb-3">
+          <label for="idModalityAttention" class="form-label">Modalidad de Atención</label>
+          <div class="input-group">
+            <select id="idModalityAttention" class="form-control" formControlName="idModalityAttention">
+              <option [ngValue]="null" disabled selected>Seleccione una opción</option>
+              <option *ngFor="let index of modalitiesAttention" [ngValue]="index.idModalityAttention">
+                {{ index.modalityAttentionName }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Código Vía de Ingreso< -->
+      <div class="col-12 col-lg-6 col-md-6">
+        <div class="mb-3">
+          <label>Código Vía de Ingreso</label>
+          <input type="text" class="form-control" formControlName="codViaIngreso">
+        </div>
+      </div>
+
+    </div>
+
     <div class="mb-3">
       <label>Observaciones</label>
       <textarea class="form-control" formControlName="observations"></textarea>
@@ -20,68 +66,35 @@
 
     <div class="mb-3">
       <label>Archivo</label>
-    
       @if (filePreview) {
-      <div class="mt-2">
-        <div class="title-card d-flex justify-content-between align-items-center mb-2">
-          <!-- Botón eliminar solo en modo creación -->
-          @if (!paraclinic) {
-          <button class="btn btn-sm btn-soft-danger" (click)="removeFile()" title="Eliminar Archivo">
-            <i class="mdi mdi-delete-outline"></i>
-          </button>
-          }
-        </div>
-    
-        <!-- Unificado: ícono + nombre + descargar -->
-        <div class="d-flex align-items-center gap-2 border p-2 rounded bg-light">
-        
-          <!-- PDF -->
-          @if (filePreview.toLowerCase().endsWith('.pdf')) {
-          <i class="mdi mdi-file-pdf-box text-danger fs-3" title="Archivo PDF"></i>
-          }
-          <!-- Word -->
-          @else if (filePreview.toLowerCase().endsWith('.doc') || filePreview.toLowerCase().endsWith('.docx')) {
-          <i class="mdi mdi-file-word-box text-info fs-3" title="Documento Word"></i>
-          }
-          <!-- Excel -->
-          @else if (filePreview.toLowerCase().endsWith('.xls') || filePreview.toLowerCase().endsWith('.xlsx')) {
-          <i class="mdi mdi-file-excel-box text-success fs-3" title="Archivo Excel"></i>
-          }
-          <!-- Imagen -->
-          @else if (
-          filePreview.toLowerCase().endsWith('.png') ||
-          filePreview.toLowerCase().endsWith('.jpg') ||
-          filePreview.toLowerCase().endsWith('.jpeg') ||
-          filePreview.toLowerCase().endsWith('.gif')
-          ) {
-          <i class="mdi mdi-file-image text-info fs-3" title="Imagen"></i>
-          }
-          <!-- Otros -->
-          @else {
-          <i class="mdi mdi-file-document-outline text-secondary fs-3" title="Documento"></i>
-          }
-        
-          <span class="flex-grow-1 text-truncate">{{ fileName || (filePreview.split('/').pop()) }}</span>
-        
+        <div class="mt-2 border rounded p-2 bg-light">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-truncate">{{ fileName || (filePreview.split('/').pop()) }}</span>
+            <button *ngIf="!paraclinic" class="btn btn-sm btn-soft-danger" (click)="removeFile()" title="Eliminar">
+              <i class="mdi mdi-delete-outline"></i>
+            </button>
+          </div>
           <a [href]="filePreview" download target="_blank" class="btn btn-sm btn-outline-primary">
-            <i class="mdi mdi-download"></i>
+            <i class="mdi mdi-download"></i> Descargar
           </a>
         </div>
-
-      </div>
       } @else {
-      <!-- Dropzone (si no hay archivo cargado) -->
-      <dropzone class="dropzone border rounded p-3" [config]="dropzoneConfig"
-        [message]="'Arrastra tu archivo o haz clic para subirlo'" (addedFile)="onFileAdded($event)">
-      </dropzone>
+        <dropzone class="dropzone border rounded p-3"
+                  [config]="dropzoneConfig"
+                  [message]="'Arrastra tu archivo o haz clic para subirlo'"
+                  (addedFile)="onFileAdded($event)">
+        </dropzone>
       }
+    </div>
+
+    <div class="form-check mb-3">
+      <input type="checkbox" class="form-check-input" id="isExternal" formControlName="isExternal">
+      <label class="form-check-label" for="isExternal">Es Externo</label>
     </div>
 
     <div class="text-end">
       <button type="button" class="btn btn-light me-2" (click)="onCancel()">Cancelar</button>
-      <button type="submit" class="btn btn-primary">
-        {{ paraclinic ? 'Actualizar' : 'Crear' }}
-      </button>
+      <button type="submit" class="btn btn-primary">{{ paraclinic ? 'Actualizar' : 'Crear' }}</button>
     </div>
   </form>
 </div>

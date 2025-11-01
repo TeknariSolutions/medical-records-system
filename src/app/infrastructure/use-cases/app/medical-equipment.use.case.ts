@@ -42,6 +42,19 @@ export class MedicalEquipmentsUseCase {
         );
     }
 
+    DeleteMedicalEquipment(idMedicalEquipment: number, idCompany: number): Observable<boolean> {
+        return this._medicalEquipmentService.DeleteMedicalEquipment(idMedicalEquipment, idCompany).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                } else {
+                    this._notificationService.showToastSuccessMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    }
+
     GetListMedicalEquipment(paginator: PaginatorDTO): Observable<any> {
         return this._medicalEquipmentService.GetListMedicalEquipment(paginator).pipe(
             map((response: ResponseDTO) => {

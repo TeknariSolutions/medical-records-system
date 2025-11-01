@@ -16,7 +16,7 @@ export const MENU: MenuItem[] = [
                 label: 'Usuarios',
                 link: '/parametrization/users',
                 parentId: 2,
-                roleAuthenticated: [1] 
+                roleAuthenticated: [1]
             },
             {
                 id: 3,
@@ -30,53 +30,69 @@ export const MENU: MenuItem[] = [
         id: 2,
         label: 'Medicamentos',
         icon: 'bx-band-aid',
-        roleAuthenticated: [1,3],
+        roleAuthenticated: [1, 3],
         subItems: [
             {
                 id: 3,
                 label: 'Listado de Medicamentos',
                 link: '/medicines/list-medicines',
                 parentId: 2,
-                roleAuthenticated: [1,3]
+                roleAuthenticated: [1, 3]
             }
         ]
 
     },
-    
+
     {
         id: 2,
         label: 'Codigos CIE10',
         icon: 'bx bx-book-content',
-        roleAuthenticated: [1,3],
+        roleAuthenticated: [1, 3],
         subItems: [
             {
                 id: 3,
                 label: 'Listado de Códigos',
                 link: '/codes/list-CIE10',
                 parentId: 2,
-                roleAuthenticated: [1,3]
+                roleAuthenticated: [1, 3]
             }
         ]
 
     },
 
-     {
+    {
         id: 3,
         label: 'CUPS',
         icon: 'bx bx-list-ul',
-        roleAuthenticated: [1,3],
+        roleAuthenticated: [1, 3],
         subItems: [
             {
                 id: 3,
                 label: 'Listado de Códigos CUPS',
                 link: '/cups/list-cups',
                 parentId: 3,
-                roleAuthenticated: [1,3]
+                roleAuthenticated: [1, 3]
             }
         ]
 
     },
-  
+    
+     {
+        id: 4,
+        label: 'Equipos Médicos',
+        icon: 'bx bx-dna',
+        roleAuthenticated: [1, 3],
+        subItems: [
+            {
+                id: 3,
+                label: 'Listado de Equipos Médicos',
+                link: '/equipments/list-equipments',
+                parentId: 3,
+                roleAuthenticated: [1, 3]
+            }
+        ]
+
+    },
 
 ];
 

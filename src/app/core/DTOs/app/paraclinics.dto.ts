@@ -1,15 +1,21 @@
 export interface ParaclinicsDTO {
-    idParaclinics?: number;
-    idPatient: number;
-    name: string;
-    datePerformen: string;
-    file?: File;
-    observations?: string;
-    registeredByUserID?: number;
-    registeredAt?: string;
-    updateByUserID?: number;
-    updatedAt?: string;
+  idParaclinics?: number;
+  idPatient: number;
+  name: string;
+  datePerformen: string;
+  file?: File;
+  observations?: string;
 
-    imagePath?: string;
-    urlFile?: string;
+  idCupsCode?: number;
+  idModalityAttention?: number;
+  isExternal?: boolean;
+  codViaIngreso?: string;
+
+  registeredByUserID?: number;
+  registeredAt?: string;
+  updateByUserID?: number;
+  updatedAt?: string;
+
+  imagePath?: string;
+  urlFile?: string;
 }

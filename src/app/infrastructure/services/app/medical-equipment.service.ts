@@ -33,6 +33,19 @@ export class MedicalEquipmentService {
     );
   }
 
+  DeleteMedicalEquipment(idMedicalEquipment: number, idCompany: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idMedicalEquipment,
+          idCompany
+
+        }
+        return this._httpService.delete(url, "DeleteMedicalEquipment", params);
+      })
+    );
+  }
+
   GetListMedicalEquipment(paginator: PaginatorDTO): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {

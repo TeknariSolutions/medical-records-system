@@ -1,0 +1,111 @@
+<!-- Loading State -->
+@if(isLoading) {
+  <app-loading message="Cargando Equipos Médicos"></app-loading>
+}
+
+<div class="container-fluid">
+
+  <!-- Breadcrumb -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex align-items-center justify-content-between">
+        <span class="mb-0">Inventario</span>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+              <a href="javascript:void(0);">Equipos Médicos</a>
+            </li>
+            <li class="breadcrumb-item active">Listado</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón Nuevo -->
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary" (click)="openCreateEquipmentModal()">
+      <i class="mdi mdi-plus me-1"></i> Nuevo Equipo
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-4">
+            <h5 class="mb-0 flex-grow-1">
+              Listado de Equipos Médicos
+            </h5>
+          </div>
+
+          <!-- No Data -->
+          @if(!isLoading && medicalEquipments.length === 0) {
+            <div class="no-data-container d-flex justify-content-center">
+              <p>No hay equipos médicos registrados.</p>
+            </div>
+          }
+
+          <!-- Table with data -->
+          @if(!isLoading && medicalEquipments.length > 0) {
+            <div class="table-responsive">
+              <table class="table table-centered table-nowrap mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Proveedor</th>
+                    <th>Fecha Adquisición</th>
+                    <th>Activo</th>
+                    <th class="text-center" style="width: 12%;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of medicalEquipments; track $index) {
+                    <tr>
+                      <td>{{ item.equipmentName }}</td>
+                      <td>{{ item.brand }}</td>
+                      <td>{{ item.supplier }}</td>
+                      <td>{{ item.acquisitionDate | date:'dd/MM/yyyy' }}</td>
+                      <td>
+                        <span class="badge"
+                          [ngClass]="{
+                            'badge-soft-success': item.isActive,
+                            'badge-soft-danger': !item.isActive
+                          }">
+                          {{ item.isActive ? 'ACTIVO' : 'INACTIVO' }}
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-soft-info me-1" title="Editar"
+                          (click)="editEquipment(item)">
+                          <i class="mdi mdi-pencil-outline"></i>
+                        </button>
+                        <button class="btn btn-sm btn-soft-danger" title="Eliminar"
+                          (click)="deleteEquipment(item.idMedicalEquipment)">
+                          <i class="mdi mdi-delete-outline"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <app-pagination
+              [currentPage]="currentPage"
+              [pageSize]="pageSize"
+              [totalRecords]="totalRecords"
+              [pageSizeOptions]="pageSizeOptions"
+              (pageChange)="onPageChange($event)"
+              (pageSizeChange)="onPageSizeChange($event)">
+            </app-pagination>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
