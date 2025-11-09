@@ -23,7 +23,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 export class RipsListComponent implements OnInit {
 
   isLoading: boolean = false;
-
   form!: FormGroup;
   epsList: any[] = [];
   today: string = new Date().toISOString().split('T')[0]; // yyyy-MM-dd
@@ -52,12 +51,12 @@ export class RipsListComponent implements OnInit {
     });
   }
 
-  
-  // Convierte un string yyyy-MM-dd a formato dd-MM-yyyy
- 
+  /**
+   * Convierte un string yyyy-MM-dd a formato yyyy/MM/dd
+   */
   private formatDateForApi(dateStr: string): string {
     const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+    return `${year}/${month}/${day}`;
   }
 
   generateRips(): void {
@@ -83,6 +82,7 @@ export class RipsListComponent implements OnInit {
       return;
     }
 
+    // ✅ Formato correcto para backend: yyyy/MM/dd
     const formattedStart = this.formatDateForApi(startDate);
     const formattedEnd = this.formatDateForApi(endDate);
 
@@ -94,7 +94,6 @@ export class RipsListComponent implements OnInit {
 
         const message = response?.message ?? 'Error desconocido';
 
-        // Si el backend indica error o no hay data
         if (!response?.isSuccess || !response?.data) {
           this._notificationService.showToastErrorMessage(message);
           return;
@@ -117,7 +116,7 @@ export class RipsListComponent implements OnInit {
 
           this._notificationService.showToastSuccessMessage(message);
 
-          // Limpiar formulario después de generar el archivo
+          // ✅ Limpia los campos tras generar correctamente
           this.form.reset();
           this.form.markAsPristine();
           this.form.markAsUntouched();
@@ -134,7 +133,4 @@ export class RipsListComponent implements OnInit {
       }
     });
   }
-
-
-
 }

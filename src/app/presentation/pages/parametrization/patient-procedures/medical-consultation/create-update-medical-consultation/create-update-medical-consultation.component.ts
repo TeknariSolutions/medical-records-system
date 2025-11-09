@@ -164,9 +164,9 @@ export class CreateUpdateMedicalConsultationComponent {
         status: [false],
         currentIllness: [''],
         idUser: [null, Validators.required],
-        idCupsCode: [0],
-        idMedicalServices: [0],
-        idModalityAttention: [0],
+        idCupsCode: [null],
+        idMedicalServices: [null],
+        idModalityAttention: [null],
         groupServiceCode: ['']
       }),
       clinicalStates: this.fb.group({
@@ -236,7 +236,7 @@ export class CreateUpdateMedicalConsultationComponent {
     if (this.consultationToEdit?.status && (idRol === 2 || idRol === 3)) {
       this.form.disable({ emitEvent: false });
     } else {
-      // ⚠️ Advertencia solo para roles 2 y 3
+      // Advertencia solo para roles 2 y 3
       this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
         if (value && (idRol === 2 || idRol === 3)) {
           const confirmed = await this._notificationService.confirm(
@@ -443,7 +443,7 @@ export class CreateUpdateMedicalConsultationComponent {
         idUser: c.idUser || null,
         idCupsCode: c.idCupsCode || null,
         idMedicalServices: c.idMedicalServices || null,
-        idModalityAttention: c.idModalityAttention != null ? Number(c.idModalityAttention) : 0,
+        idModalityAttention: c.idModalityAttention != null ? Number(c.idModalityAttention) : null,
         groupServiceCode: c.groupServiceCode || '',
       },
       clinicalStates: {
@@ -616,7 +616,7 @@ export class CreateUpdateMedicalConsultationComponent {
       idUser: formValues.basicInfo.idUser,
       idCupsCode: formValues.basicInfo.idCupsCode,
       idMedicalServices: formValues.basicInfo.idMedicalServices,
-      idModalityAttention: Number(formValues.basicInfo.idModalityAttention),
+      idModalityAttention: formValues.basicInfo.idModalityAttention,
       groupServiceCode: formValues.basicInfo.groupServiceCode,
 
       consultationReason: formValues.basicInfo.consultationReason,
