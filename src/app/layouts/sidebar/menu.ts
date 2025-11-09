@@ -76,8 +76,8 @@ export const MENU: MenuItem[] = [
         ]
 
     },
-    
-     {
+
+    {
         id: 4,
         label: 'Equipos Médicos',
         icon: 'bx bx-dna',
@@ -93,6 +93,24 @@ export const MENU: MenuItem[] = [
         ]
 
     },
+
+    {
+        id: 5,
+        label: 'RIPS',
+        icon: 'bx bx-file',
+        roleAuthenticated: [1, 3],
+        subItems: [
+            {
+                id: 3,
+                label: 'Generador de RIPS',
+                link: '/rips/list-RIPS',
+                parentId: 3,
+                roleAuthenticated: [1, 3]
+            }
+        ]
+
+    },
+
 
 ];
 

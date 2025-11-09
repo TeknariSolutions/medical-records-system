@@ -17,40 +17,8 @@ export class ParaclinicsService implements IParaclinicsService {
     private _configService: ConfigService
   ) { }
 
+
   /* CreateParaclinics(paraclinics: ParaclinicsDTO, file?: File): Observable<ResponseDTO> {
-    return this._configService.getUrl().pipe(
-      switchMap(url => {
-        const formData = new FormData();
-
-        if (paraclinics.idParaclinics) {
-          formData.append('IdParaclinics', paraclinics.idParaclinics.toString());
-        }
-
-        formData.append('IdPatient', paraclinics.idPatient.toString());
-        formData.append('Name', paraclinics.name);
-        formData.append('DatePerformen', paraclinics.datePerformen);
-        formData.append('Observations', paraclinics.observations || '');
-        formData.append('RegisteredByUserID', paraclinics.registeredByUserID?.toString() || '0');
-        formData.append('RegisteredAt', paraclinics.registeredAt || new Date().toISOString());
-
-        if (paraclinics.updateByUserID) {
-          formData.append('UpdateByUserID', paraclinics.updateByUserID.toString());
-        }
-        if (paraclinics.updatedAt) {
-          formData.append('UpdatedAt', paraclinics.updatedAt);
-        }
-
-        if (file) {
-          formData.append('File', file);
-        }
-
-        // Aquí el cambio: params = null, body = formData
-        return this._httpService.post(url, 'CreateParaclinics', null, formData) as Observable<ResponseDTO>;
-      })
-    );
-  } */
-
-  CreateParaclinics(paraclinics: ParaclinicsDTO, file?: File): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {
         const formData = new FormData();
@@ -91,8 +59,69 @@ export class ParaclinicsService implements IParaclinicsService {
         return this._httpService.post(url, 'CreateParaclinics', null, formData) as Observable<ResponseDTO>;
       })
     );
+  } */
+
+ CreateParaclinics(paraclinics: ParaclinicsDTO, file?: File): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        const formData = new FormData();
+
+        // Campos principales
+        if (paraclinics.idParaclinics)
+          formData.append('IdParaclinics', paraclinics.idParaclinics.toString());
+
+        formData.append('IdPatient', paraclinics.idPatient.toString());
+        formData.append('Name', paraclinics.name);
+        formData.append('DatePerformen', paraclinics.datePerformen);
+        formData.append('Observations', paraclinics.observations || '');
+
+        // 🔹 Campos existentes
+        if (paraclinics.idCupsCode)
+          formData.append('IdCupsCode', paraclinics.idCupsCode.toString());
+
+        if (paraclinics.idModalityAttention)
+          formData.append('IdModalityAttention', paraclinics.idModalityAttention.toString());
+
+        formData.append('IsExternal', paraclinics.isExternal ? 'true' : 'false');
+
+        if (paraclinics.codViaIngreso)
+          formData.append('CodViaIngreso', paraclinics.codViaIngreso);
+
+        // 🆕 Nuevos campos del endpoint
+        if (paraclinics.idUser)
+          formData.append('IdUser', paraclinics.idUser.toString());
+
+        if (paraclinics.idConsultationFinality)
+          formData.append('IdConsultationFinality', paraclinics.idConsultationFinality.toString());
+
+        if (paraclinics.groupServiceCode)
+          formData.append('GroupServiceCode', paraclinics.groupServiceCode);
+
+        if (paraclinics.idCieCode)
+          formData.append('IdCIECode', paraclinics.idCieCode.toString());
+
+        // 🧑‍💻 Datos de registro y actualización
+        formData.append('RegisteredByUserID', paraclinics.registeredByUserID?.toString() || '0');
+        formData.append('RegisteredAt', paraclinics.registeredAt || new Date().toISOString());
+
+        if (paraclinics.updateByUserID)
+          formData.append('UpdateByUserID', paraclinics.updateByUserID.toString());
+
+        if (paraclinics.updatedAt)
+          formData.append('UpdatedAt', paraclinics.updatedAt);
+
+        // 📎 Archivo adjunto (opcional)
+        if (file)
+          formData.append('File', file);
+
+        // Llamada al endpoint
+        return this._httpService.post(url, 'CreateParaclinics', null, formData) as Observable<ResponseDTO>;
+      })
+    );
   }
 
+  
+    
   UpdateParaclinics(paraclinics: ParaclinicsDTO): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap(url => {

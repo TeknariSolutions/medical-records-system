@@ -91,7 +91,7 @@ export class ParaclinicsComponent implements OnInit {
     const initialState = { idPatient: this.idPatient };
     this.modalRef = this.modalService.show(CreateUpdateParaclinicsComponent, {
       initialState,
-      class: 'modal-lg'
+      class: 'modal-xl'
     });
 
     (this.modalRef.content as CreateUpdateParaclinicsComponent).saved.subscribe(() => {

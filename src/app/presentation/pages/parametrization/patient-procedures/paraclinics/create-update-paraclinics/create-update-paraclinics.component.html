@@ -59,6 +59,74 @@
 
     </div>
 
+
+    <div class="row">
+      <!-- Médico Tratante -->
+      <div class="col-12 col-lg-6 col-md-6">
+        <div class="mb-3">
+          <label>Médico Tratante <span class="text-danger">*</span></label>
+          <select class="form-control" formControlName="idUser">
+            <option [ngValue]="null" disabled selected>Seleccione un médico</option>
+            <option *ngFor="let doc of doctors" [ngValue]="doc.idUser">
+              {{ doc.name }} {{ doc.lastName }}
+            </option>
+          </select>
+        </div>
+      </div>
+    
+      <!-- Finalidad de Consulta -->
+      <div class="col-12 col-lg-6 col-md-6">
+        <div class="mb-3">
+          <label>Finalidad de Consulta <span class="text-danger">*</span></label>
+          <select class="form-control" formControlName="idConsultationFinality">
+            <option [ngValue]="null" disabled selected>Seleccione una opción</option>
+            <option *ngFor="let item of consultationFinalities" [ngValue]="item.idConsultationFinality">
+              {{ item.consultationFinalityName }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grupo de Servicios -->
+    <div class="mb-3">
+      <label>Grupo de Servicios <span class="text-danger">*</span></label>
+      <select class="form-control" formControlName="groupServiceCode">
+        <option [ngValue]="null" disabled selected>Seleccione una opción</option>
+        <option *ngFor="let group of groupServices" [ngValue]="group.code">{{ group.description }}</option>
+      </select>
+    </div>
+
+    <!-- Código CIE10 -->
+    <div class="row">
+      <div class="col-md-4 mb-3 position-relative">
+        <label>Código CIE10</label>
+        <input type="text" class="form-control" formControlName="cie10Code" (input)="onCieCodeInput($event.target.value)"
+          autocomplete="off" />
+        <ul class="list-group position-absolute w-100" *ngIf="showCodeDropdown"
+          style="z-index: 10; max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let item of codeSuggestions" class="list-group-item list-group-item-action"
+            (mousedown)="selectCie10(item)">
+            {{ item.codigo }}
+          </li>
+        </ul>
+      </div>
+    
+      <div class="col-md-8 mb-3 position-relative">
+        <label>Nombre CIE10</label>
+        <input type="text" class="form-control" formControlName="cie10Description"
+          (input)="onCieDescriptionInput($event.target.value)" autocomplete="off" />
+        <ul class="list-group position-absolute w-100" *ngIf="showDescriptionDropdown"
+          style="z-index: 10; max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let item of descriptionSuggestions" class="list-group-item list-group-item-action"
+            (mousedown)="selectCie10(item)">
+            {{ item.nombre }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    
     <div class="mb-3">
       <label>Observaciones</label>
       <textarea class="form-control" formControlName="observations"></textarea>

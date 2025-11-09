@@ -1,0 +1,73 @@
+<!-- Loading State -->
+@if(isLoading) {
+  <app-loading message="Generando RIPS"></app-loading>
+}
+
+<div class="container-fluid">
+  <!-- Breadcrumb -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex align-items-center justify-content-between">
+        <span class="mb-0">RIPS</span>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item active">Generar RIPS</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generator RIPS -->
+  <div class="mt-2">
+    <h4>
+        Generar RIPS
+    </h4>
+    <h5 class="mb-4">"Registros Individuales de Prestación de Servicios de Salud"</h5>
+
+    <form [formGroup]="form" (ngSubmit)="generateRips()">
+      <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- EPS -->
+                        <div class="col-md-6 mb-3">
+                            <label for="idEps" class="form-label">EPS <span class="text-danger">*</span></label>
+                        
+                            <ng-select id="idEps" formControlName="idEps" [items]="epsList" bindLabel="epsName" bindValue="idEps"
+                                placeholder="Seleccione o escriba para buscar EPS" [searchable]="true" [clearable]="true" [loading]="isLoading"
+                                notFoundText="No se encontraron resultados">
+                            </ng-select>
+                        </div>
+
+                    
+                        <!-- Fecha inicio -->
+                        <div class="col-md-3 mb-3">
+                            <label for="startDate" class="form-label">Fecha Inicio <span class="text-danger">*</span></label>
+                            <input id="startDate" type="date" class="form-control" formControlName="startDate" [max]="today">
+                        </div>
+                    
+                        <!-- Fecha fin -->
+                        <div class="col-md-3 mb-3">
+                            <label for="endDate" class="form-label">Fecha Fin <span class="text-danger">*</span></label>
+                            <input id="endDate" type="date" class="form-control" formControlName="endDate" [max]="today">
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i class="mdi mdi-file-download-outline mr-1"></i>
+          Generar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -21,7 +21,6 @@ export class RolesUseCase {
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {
                     this._notificationService.showToastErrorMessage(response.message!);
-                    console.log("error");
                 }
                 return response.data;
             })

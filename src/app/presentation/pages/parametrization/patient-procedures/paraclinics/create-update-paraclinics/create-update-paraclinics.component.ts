@@ -11,6 +11,10 @@ import { PaginatorDTO } from 'src/app/core/DTOs/common/paginator/paginator.dto';
 import { TableResultDTO } from 'src/app/core/DTOs/common/table-result/table-result.dto';
 import { CupsCodeUseCase } from 'src/app/infrastructure/use-cases/common/cups-code.use.case';
 import { ModalityAttentionUseCase } from 'src/app/infrastructure/use-cases/common/modality-attention.use-case';
+import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-case';
+import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
+//import { MedicalServicesUseCase } from 'src/app/infrastructure/use-cases/app/medical-services.use-case';
+import { Cie10UseCase } from 'src/app/infrastructure/use-cases/common/cie10.use-case';
 
 @Component({
   standalone: true,
@@ -31,10 +35,10 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
   filePreview: string | null = null;
   isImage = true;
 
-  // 🔹 Listas para selects
+  // Listas para selects
   modalitiesAttention: any[] = [];
 
-  // 🔹 Autocomplete de CUPS
+  // Autocomplete de CUPS
   cupsSuggestions: any[] = [];
   showCupsDropdown = false;
   cupsPaginator: PaginatorDTO = { pageIndex: 1, pageSize: 10 };
@@ -50,17 +54,44 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
     maxFiles: 1
   };
 
+  doctors: any[] = [];
+  consultationFinalities: any[] = [];
+  groupServices = [
+    { code: '01', description: 'Consulta externa' },
+    { code: '02', description: 'Apoyo diagnóstico y complementación terapéutica' },
+    { code: '03', description: 'Internación' },
+    { code: '04', description: 'Quirúrgico' },
+    { code: '05', description: 'Atención inmediata' }
+  ];
+
+  cie10Suggestions: any[] = [];
+  showCie10Dropdown = false;
+
+
+  codeSuggestions: any[] = [];
+  descriptionSuggestions: any[] = [];
+  showCodeDropdown = false;
+  showDescriptionDropdown = false;
+  paginator: PaginatorDTO = { pageIndex: 1, pageSize: 1000 };
+
+
   constructor(
     private fb: FormBuilder,
     private bsModalRef: BsModalRef,
     private paraclinicsUseCase: ParaclinicsUseCase,
     private _cupsCodeUseCase: CupsCodeUseCase,
     private _modalityAttentionUseCase: ModalityAttentionUseCase,
+    private _usersUseCase: UsersUseCase,
+    private _closeConsultationUseCase: CloseConsultationUseCase,
+    //private _medicalServicesUseCase: MedicalServicesUseCase,
+    private _cie10UseCase: Cie10UseCase,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
+
 
   
   ngOnInit(): void {
+   
     this.form = this.fb.group({
       name: [this.paraclinic?.name || '', Validators.required],
       observations: [this.paraclinic?.observations || ''],
@@ -68,8 +99,18 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
       cupsName: [''],
       idModalityAttention: [this.paraclinic?.idModalityAttention || null, Validators.required],
       isExternal: [this.paraclinic?.isExternal || false],
-      codViaIngreso: [this.paraclinic?.codViaIngreso || '']
+      codViaIngreso: [this.paraclinic?.codViaIngreso || ''],
+
+      idUser: [null, Validators.required],
+      idConsultationFinality: [null, Validators.required],
+      groupServiceCode: [null, Validators.required],
+      /* idCieCode: [null],
+      cie10Description: ['']  */
+      cie10Code: [''],             // ← código visible (J45.9)
+      cie10Description: [''],      // ← descripción visible (ASMA BRONQUIAL)
+      idCieCode: [null],           // ← ID numérico para backend
     });
+
 
     // Precargar archivo si existe
     if (this.paraclinic && (this.paraclinic as any).urlFile) {
@@ -78,8 +119,21 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
       this.isImage = lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.gif');
     }
 
+    if (this.paraclinic) {
+      this.preloadForm();
+    }
+
+    // precargar cie10 si existe
+  
+    this.preLoadCie10();
+
+
     // Cargar lista de modalidades
     this.loadModalityAttention();
+
+    this.loadDoctors();
+    this.loadConsultationFinalities();
+
 
     // Si hay un CUPS asignado, obtener su descripción
     if (this.paraclinic?.idCupsCode) {
@@ -97,7 +151,30 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
     }
   }
 
-  
+  private preloadForm(): void {
+
+    const paraclinic = this.paraclinic;
+
+    this.form.patchValue({
+      name: paraclinic?.name || '',
+      observations: paraclinic?.observations || '',
+      idCupsCode: paraclinic?.idCupsCode || null,
+      cupsName: paraclinic?.cupsName || '',
+      idModalityAttention: paraclinic?.idModalityAttention || null,
+      isExternal: paraclinic?.isExternal || false,
+      codViaIngreso: paraclinic?.codViaIngreso || '',
+      idUser: paraclinic?.idUser || null,
+      idConsultationFinality: paraclinic?.idConsultationFinality || null,
+      groupServiceCode: paraclinic?.groupServiceCode || null,
+      idCieCode: paraclinic?.idCIECode || null, 
+      cie10Code: paraclinic?.codigo || '',
+      cie10Description: paraclinic?.nombre || ''
+    });
+
+    this.cdr.detectChanges();
+  }
+
+
   loadModalityAttention(): void {
     this._modalityAttentionUseCase.GetListModalityAttention().subscribe({
       next: (data) => {
@@ -110,7 +187,24 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
     });
   }
 
-  /** 🔍 Búsqueda de CUPS */
+
+  loadDoctors(): void {
+    const companyId = Number(localStorage.getItem('IdCompany')) || 0;
+    this._usersUseCase.GetListDoctors({ pageIndex: 1, pageSize: 100 }, '', '', companyId).subscribe({
+      next: (data) => this.doctors = data.results || [],
+      error: () => this.doctors = []
+    });
+  }
+
+
+  loadConsultationFinalities(): void {
+    this._closeConsultationUseCase.GetConsultationFinalities().subscribe({
+      next: (data) => this.consultationFinalities = data || [],
+      error: () => this.consultationFinalities = []
+    });
+  }
+
+  // Búsqueda de CUPS 
   onCupsInput(value: string) {
     if (value && value.length >= 2) {
       this.cupsPaginator.pageIndex = 1;
@@ -162,7 +256,7 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
     }
   }
 
-  /** 🧾 Archivos */
+  // Archivos 
   onFileAdded(fileEvent: any) {
     const file: File = fileEvent instanceof File ? fileEvent : fileEvent?.file ?? fileEvent?._file ?? fileEvent;
     if (!file) return;
@@ -179,28 +273,32 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
     this.isImage = true;
   }
 
-  /** 💾 Guardar */
-  save() {
+ 
+ /*  save() {
     if (this.form.invalid) return;
 
     const dto: ParaclinicsDTO = {
-      idParaclinics: this.paraclinic?.idParaclinics,
+      idParaclinics: this.paraclinic?.idParaclinics ?? 0,
+
       idPatient: this.idPatient,
       name: this.form.value.name,
       datePerformen: DateTimeHelper.getLocalDateTimeWithOffset(),
       observations: this.form.value.observations,
-      registeredByUserID: this.paraclinic?.registeredByUserID ?? Number(localStorage.getItem('IdUser')),
+      registeredByUserID: Number(localStorage.getItem('IdUser')),
       registeredAt: this.paraclinic?.registeredAt ?? DateTimeHelper.getLocalDateTimeWithOffset(),
       updateByUserID: Number(localStorage.getItem('IdUser')),
       updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
-      imagePath: (this.paraclinic as any)?.imagePath || '',
-      urlFile: (this.paraclinic as any)?.urlFile || '',
       idCupsCode: this.form.value.idCupsCode,
       idModalityAttention: this.form.value.idModalityAttention,
       isExternal: this.form.value.isExternal,
-      codViaIngreso: this.form.value.codViaIngreso
+      codViaIngreso: this.form.value.codViaIngreso,
+      idUser: this.form.value.idUser,
+      idConsultationFinality: this.form.value.idConsultationFinality,
+      groupServiceCode: this.form.value.groupServiceCode,
+      idCieCode: this.form.value.idCieCode
     };
 
+   
     const request$ = this.paraclinic
       ? this.paraclinicsUseCase.UpdateParaclinics(dto)
       : this.paraclinicsUseCase.CreateParaclinics(dto, this.file);
@@ -211,9 +309,267 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
         this.bsModalRef.hide();
       }
     });
+ 
+
+  }
+ */
+  
+/*   save() {
+  if (this.form.invalid) return;
+
+  const now = DateTimeHelper.getLocalDateTimeWithOffset();
+  const currentUserId = Number(localStorage.getItem('IdUser')) || 0;
+
+  const dto: ParaclinicsDTO = {
+    idParaclinics: this.paraclinic?.idParaclinics ?? 0,
+    idPatient: this.idPatient,
+    name: this.form.value.name,
+    datePerformen: this.paraclinic?.datePerformen ?? now,
+    observations: this.form.value.observations || '',
+
+    // Códigos y relaciones
+    idCupsCode: this.form.value.idCupsCode,
+    idModalityAttention: this.form.value.idModalityAttention,
+    idCieCode: this.form.value.idCieCode,
+    isExternal: this.form.value.isExternal,
+    codViaIngreso: this.form.value.codViaIngreso || '',
+
+    // Datos adicionales
+    idUser: this.form.value.idUser,
+    idConsultationFinality: this.form.value.idConsultationFinality,
+    groupServiceCode: this.form.value.groupServiceCode,
+
+    // Metadatos (según Swagger)
+    imagePath: this.paraclinic?.imagePath || '',
+    urlFile: this.paraclinic?.urlFile || '',
+    registeredAt: this.paraclinic?.registeredAt ?? now,
+    registeredByUserID: this.paraclinic?.registeredByUserID ?? currentUserId,
+    updateByUserID: currentUserId,
+    updatedAt: now
+  };
+
+  console.log('DTO enviado al backend:', dto);
+
+  // 🔹 Decidir si es creación o actualización
+  const request$ = this.paraclinic
+    ? this.paraclinicsUseCase.UpdateParaclinics(dto)
+    : this.paraclinicsUseCase.CreateParaclinics(dto, this.file);
+
+  request$.subscribe({
+    next: (success) => {
+      if (success) {
+        this.saved.emit();
+        this.bsModalRef.hide();
+      }
+    },
+    error: (err) => {
+      console.error('Error en el guardado de paraclínico:', err);
+    }
+  });
+} */
+
+
+
+
+/*   save() {
+  if (this.form.invalid) return;
+
+  const now = DateTimeHelper.getLocalDateTimeWithOffset();
+  const currentUserId = Number(localStorage.getItem('IdUser')) || 0;
+
+  // Construir DTO base
+  const dto: ParaclinicsDTO = {
+    idParaclinics: this.paraclinic?.idParaclinics ?? 0,
+    idPatient: this.idPatient,
+    name: this.form.value.name,
+    datePerformen: this.paraclinic?.datePerformen ?? now,
+    observations: this.form.value.observations || '',
+    idCupsCode: this.form.value.idCupsCode,
+    idModalityAttention: this.form.value.idModalityAttention,
+    idCieCode: this.form.value.idCieCode,
+    isExternal: this.form.value.isExternal,
+    codViaIngreso: this.form.value.codViaIngreso || '',
+    idUser: this.form.value.idUser,
+    idConsultationFinality: this.form.value.idConsultationFinality,
+    groupServiceCode: this.form.value.groupServiceCode,
+    registeredAt: this.paraclinic?.registeredAt ?? now,
+    registeredByUserID: this.paraclinic?.registeredByUserID ?? currentUserId,
+    updateByUserID: currentUserId,
+    updatedAt: now
+  };
+
+  console.log('Payload final para update:', dto);
+
+  // 🔹 Crear o Actualizar
+  const request$ = this.paraclinic
+    ? this.paraclinicsUseCase.UpdateParaclinics(dto) // sin file
+    : this.paraclinicsUseCase.CreateParaclinics(dto, this.file); // con file
+
+  request$.subscribe({
+    next: (success) => {
+      if (success) {
+        this.saved.emit();
+        this.bsModalRef.hide();
+      }
+    },
+    error: (err) => {
+      console.error('Error en el guardado de paraclínico:', err);
+    }
+  });
+} */
+
+
+  save() {
+    if (this.form.invalid) return;
+
+    const now = DateTimeHelper.getLocalDateTimeWithOffset();
+    const currentUserId = Number(localStorage.getItem('IdUser')) || 0;
+
+    const dto: ParaclinicsDTO = {
+      idParaclinics: this.paraclinic?.idParaclinics ?? 0,
+      idPatient: this.idPatient,
+      name: this.form.value.name,
+      datePerformen: this.paraclinic?.datePerformen ?? now,
+      observations: this.form.value.observations || '',
+
+      idCupsCode: this.form.value.idCupsCode,
+      idModalityAttention: this.form.value.idModalityAttention,
+      idCieCode: this.form.value.idCieCode,
+      isExternal: this.form.value.isExternal,
+      codViaIngreso: this.form.value.codViaIngreso || '',
+
+      idUser: this.form.value.idUser,
+      idConsultationFinality: this.form.value.idConsultationFinality,
+      groupServiceCode: this.form.value.groupServiceCode,
+
+      // 🔹 Estos campos el backend los exige (aunque no se usen en update)
+      imagePath: null,
+      urlFile: null,
+
+      registeredAt: this.paraclinic?.registeredAt ?? now,
+      registeredByUserID: this.paraclinic?.registeredByUserID ?? currentUserId,
+      updateByUserID: currentUserId,
+      updatedAt: now
+    };
+
+  
+    const request$ = this.paraclinic
+      ? this.paraclinicsUseCase.UpdateParaclinics(dto)
+      : this.paraclinicsUseCase.CreateParaclinics(dto, this.file);
+
+    request$.subscribe({
+      next: (success) => {
+        if (success) {
+          this.saved.emit();
+          this.bsModalRef.hide();
+        }
+      },
+      error: (err) => {
+        console.error('Error al guardar paraclínico:', err);
+      }
+    });
   }
 
+  
   onCancel(): void {
     this.bsModalRef.hide();
   }
+
+
+// 🔹 EVENTOS DE INPUT
+onCieCodeInput(value: string): void {
+  this.form.patchValue({ cie10Description: '' });
+
+  if (value && value.length >= 2) {
+    this.searchCie10({ code: value });
+  } else {
+    this.codeSuggestions = [];
+    this.descriptionSuggestions = [];
+    this.showCodeDropdown = false;
+    this.showDescriptionDropdown = false;
+  }
+}
+
+onCieDescriptionInput(value: string): void {
+  this.form.patchValue({ idCieCode: 0 });
+
+  if (value && value.length >= 3) {
+    this.searchCie10({ name: value });
+  } else {
+    this.codeSuggestions = [];
+    this.descriptionSuggestions = [];
+    this.showCodeDropdown = false;
+    this.showDescriptionDropdown = false;
+  }
+}
+
+// 🔹 BÚSQUEDA CIE10 (idéntico a Diagnósticos)
+
+searchCie10(filters: { code?: string; name?: string }): void {
+  this._cie10UseCase
+    .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
+    .subscribe({
+      next: (data: TableResultDTO) => {
+
+        const results = data?.results || [];
+        this.codeSuggestions = results;
+        this.descriptionSuggestions = results;
+        this.showCodeDropdown = this.codeSuggestions.length > 0;
+        this.showDescriptionDropdown = this.descriptionSuggestions.length > 0;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.codeSuggestions = [];
+        this.descriptionSuggestions = [];
+        this.showCodeDropdown = false;
+        this.showDescriptionDropdown = false;
+      },
+    });
+
+    
+}
+
+
+
+
+// CIE10
+  selectCie10(item: any): void {
+    this.form.patchValue({
+      idCieCode: item.idCIECode,  
+      cie10Code: item.codigo,
+      cie10Description: item.nombre
+    });
+
+    this.codeSuggestions = [];
+    this.descriptionSuggestions = [];
+    this.showCodeDropdown = false;
+    this.showDescriptionDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+
+  private preLoadCie10(): void {
+    if (this.paraclinic?.idCieCode) {
+      const paginator: PaginatorDTO = { pageIndex: 1, pageSize: 1 };
+
+      this._cie10UseCase
+        .GetListCIECodes(paginator, '', this.paraclinic.idCieCode.toString())
+        .subscribe({
+          next: (data: any) => {
+            const cie = data?.results?.find((x: any) => x.idCIECode === this.paraclinic?.idCieCode);
+            if (cie) {
+              this.form.patchValue({
+                idCieCode: cie.idCIECode,
+                cie10Code: cie.codigo,
+                cie10Description: cie.nombre
+              });
+              this.cdr.detectChanges();
+            }
+          },
+          error: (err) => console.error('Error al precargar CIE10:', err),
+        });
+    }
+  }
+
+
 }

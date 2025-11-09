@@ -18,4 +18,14 @@ export interface ParaclinicsDTO {
 
   imagePath?: string;
   urlFile?: string;
+
+  idUser?: number; // Médico tratante
+  idConsultationFinality?: number; // Finalidad de la consulta
+  groupServiceCode?: string; // Código del grupo de servicios
+  idCieCode?: number; // Código CIE10,
+
+  cupsName?: string;
+  idCIECode?: number;
+  codigo?: string;
+  nombre?: string;
 }
