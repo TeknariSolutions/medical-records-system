@@ -11,6 +11,6 @@ export interface MedicalEquipmentDTO {
   expirationDate: string; 
   isActive: boolean;
   registrationDate: string;
-  registeredByUser: number;
+  registeredByUser?: number;
   idCompany: number;
 }

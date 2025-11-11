@@ -80,4 +80,19 @@ export class MedicalConsultationService implements IMedicalConsultationService {
       })
     );
   }
+
+  
+  GetListMedicalConsultationByStatus(paginator: PaginatorDTO): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap((url) => {
+        const params: any = {
+          PageIndex: paginator.pageIndex,
+          PageSize: paginator.pageSize,
+        };
+
+       
+        return this._httpService.get<ResponseDTO>(url, "GetListMedicalConsultationByStatus", params);
+      })
+    );
+  }
 }

@@ -79,4 +79,15 @@ export class MedicalConsultationUseCase {
         );
     }
 
+    GetListMedicalConsultationByStatus(paginator: PaginatorDTO): Observable<TableResultDTO> {
+        return this._medicalConsultationService.GetListMedicalConsultationByStatus(paginator).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    }
+
 }

@@ -116,7 +116,7 @@ export class RipsListComponent implements OnInit {
 
           this._notificationService.showToastSuccessMessage(message);
 
-          // ✅ Limpia los campos tras generar correctamente
+          // Limpia los campos tras generar correctamente
           this.form.reset();
           this.form.markAsPristine();
           this.form.markAsUntouched();

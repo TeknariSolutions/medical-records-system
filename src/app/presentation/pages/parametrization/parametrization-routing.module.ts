@@ -10,6 +10,7 @@ import { ConsultationProceduresComponent } from './consultation-procedures/consu
 import { OrdersComponent } from './consultation-procedures/orders/orders.component';
 import { DoctorProfileComponent } from './doctor-profile/doctor-profile.component';
 import { ParaclinicsComponent } from './patient-procedures/paraclinics/paraclinics.component';
+import { SchedulePatientsComponent } from './schedule-patients/schedule-patients.component';
 
 const routes: Routes = [
     {
@@ -55,6 +56,10 @@ const routes: Routes = [
     {
         path: 'paraclinics/:id',
         component: ParaclinicsComponent
+    },
+    {
+        path: 'schedule-patients',
+        component: SchedulePatientsComponent
     },
 ];
 

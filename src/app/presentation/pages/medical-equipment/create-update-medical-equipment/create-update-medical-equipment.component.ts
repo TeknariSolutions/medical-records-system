@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { MedicalEquipmentDTO } from 'src/app/core/DTOs/app/medical-equipment.dto';
 import { MedicalEquipmentsUseCase } from 'src/app/infrastructure/use-cases/app/medical-equipment.use.case';
+import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
 
 @Component({
   standalone: true,
@@ -20,9 +21,7 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
 
   equipmentForm!: FormGroup;
   submitted = false;
-
   onClose: (result: string) => void = () => { };
-
   equipmentData?: MedicalEquipmentDTO;
   isEditMode: boolean = false;
 
@@ -30,16 +29,14 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
     private fb: FormBuilder,
     private _medicalEquipmentsUseCase: MedicalEquipmentsUseCase,
     public bsModalRef: BsModalRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
 
-    // Si hay data, es modo edición
     if (this.equipmentData) {
       this.isEditMode = true;
 
-      // Convertir fechas a formato ISO corto (yyyy-MM-dd)
       const acquisitionDate = this.equipmentData.acquisitionDate
         ? this.equipmentData.acquisitionDate.split('T')[0]
         : '';
@@ -52,8 +49,19 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
         acquisitionDate,
         expirationDate
       });
-    }
 
+      // Limpia campos nulos que invalidan el formulario
+      Object.keys(this.equipmentForm.controls).forEach((key) => {
+        const control = this.equipmentForm.get(key);
+        if (control?.value === null) {
+          control.setValue(''); // o un valor por defecto
+        }
+        control?.updateValueAndValidity();
+      });
+
+      this.equipmentForm.updateValueAndValidity();
+
+    }
   }
 
   private initForm(): void {
@@ -70,11 +78,12 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
       expirationDate: ['', Validators.required],
       isActive: [true],
       registrationDate: [new Date().toISOString()],
-      registeredByUser: [Number(localStorage.getItem('IdUser')) || 0, Validators.required],
+      //registeredByUser: [Number(localStorage.getItem('IdUser')) || 0, Validators.required],
       idCompany: [Number(localStorage.getItem('IdCompany')) || 0, Validators.required]
     });
   }
 
+ 
   onSubmit(): void {
     this.submitted = true;
 
@@ -83,25 +92,42 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
       return;
     }
 
-    const equipmentData: MedicalEquipmentDTO = {
-      ...this.equipmentForm.value,
-      idMedicalEquipment: this.isEditMode ? this.equipmentData!.idMedicalEquipment : 0
+    const now = DateTimeHelper.getLocalDateTimeWithOffset();
+    const currentUserId = Number(localStorage.getItem('IdUser')) || 0;
+    const companyId = Number(localStorage.getItem('IdCompany')) || 0;
+    const formValue = this.equipmentForm.value;
+
+    const dto: MedicalEquipmentDTO = {
+      idMedicalEquipment: this.isEditMode ? this.equipmentData!.idMedicalEquipment : 0,
+      equipmentName: formValue.equipmentName,
+      description: formValue.description || '',
+      brand: formValue.brand,
+      currentStock: formValue.currentStock,
+      minimumStock: formValue.minimumStock,
+      unitPrice: formValue.unitPrice,
+      supplier: formValue.supplier,
+      acquisitionDate: `${formValue.acquisitionDate}T00:00:00`,
+      expirationDate: `${formValue.expirationDate}T00:00:00`,
+      isActive: formValue.isActive,
+      registrationDate: this.equipmentData?.registrationDate ?? now,
+      ...(this.isEditMode ? {} : { registeredByUser: currentUserId }),
+      idCompany: companyId
     };
 
+
     const request$ = this.isEditMode
-      ? this._medicalEquipmentsUseCase.UpdateMedicalEquipment(equipmentData)
-      : this._medicalEquipmentsUseCase.CreateMedicalEquipment(equipmentData);
+      ? this._medicalEquipmentsUseCase.UpdateMedicalEquipment(dto)
+      : this._medicalEquipmentsUseCase.CreateMedicalEquipment(dto);
 
     request$.subscribe({
       next: () => {
         this.onClose('refresh');
         this.bsModalRef.hide();
       },
-      error: (err) => {
-        console.error('❌ Error al guardar equipo médico:', err);
-      }
+      error: (err) => console.error('❌ Error al guardar equipo médico:', err)
     });
   }
+
 
   onCancel(): void {
     this.bsModalRef.hide();

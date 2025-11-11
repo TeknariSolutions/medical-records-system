@@ -75,7 +75,7 @@ export class MedicalEquipmentListComponent implements OnInit {
     });
   }
 
-  /** 📄 Cambiar página */
+ 
   onPageChange(newPage: number): void {
     this.currentPage = newPage;
     this.loadMedicalEquipments();

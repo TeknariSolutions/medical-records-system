@@ -11,11 +11,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { take } from 'rxjs';
 import { LocationService } from 'src/app/infrastructure/services/common/location/location.service';
-//import { Eps, EpsColombiaService } from 'src/app/infrastructure/services/common/EPS/eps-colombia.service';
 import { CountriesUseCase } from 'src/app/infrastructure/use-cases/app/countries.use-case';
 import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
 import { EpsUseCase } from 'src/app/infrastructure/use-cases/common/eps.use-case';
-//import { Eps } from 'src/app/infrastructure/services/common/EPS/eps.service';
 
 
 @Component({

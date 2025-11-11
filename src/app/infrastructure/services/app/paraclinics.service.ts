@@ -75,7 +75,7 @@ export class ParaclinicsService implements IParaclinicsService {
         formData.append('DatePerformen', paraclinics.datePerformen);
         formData.append('Observations', paraclinics.observations || '');
 
-        // 🔹 Campos existentes
+        // Campos existentes
         if (paraclinics.idCupsCode)
           formData.append('IdCupsCode', paraclinics.idCupsCode.toString());
 
@@ -87,7 +87,6 @@ export class ParaclinicsService implements IParaclinicsService {
         if (paraclinics.codViaIngreso)
           formData.append('CodViaIngreso', paraclinics.codViaIngreso);
 
-        // 🆕 Nuevos campos del endpoint
         if (paraclinics.idUser)
           formData.append('IdUser', paraclinics.idUser.toString());
 
@@ -99,10 +98,8 @@ export class ParaclinicsService implements IParaclinicsService {
 
         if (paraclinics.idCieCode)
           formData.append('IdCIECode', paraclinics.idCieCode.toString());
-
-        // 🧑‍💻 Datos de registro y actualización
-        formData.append('RegisteredByUserID', paraclinics.registeredByUserID?.toString() || '0');
-        formData.append('RegisteredAt', paraclinics.registeredAt || new Date().toISOString());
+          formData.append('RegisteredByUserID', paraclinics.registeredByUserID?.toString() || '0');
+          formData.append('RegisteredAt', paraclinics.registeredAt || new Date().toISOString());
 
         if (paraclinics.updateByUserID)
           formData.append('UpdateByUserID', paraclinics.updateByUserID.toString());
@@ -110,11 +107,10 @@ export class ParaclinicsService implements IParaclinicsService {
         if (paraclinics.updatedAt)
           formData.append('UpdatedAt', paraclinics.updatedAt);
 
-        // 📎 Archivo adjunto (opcional)
+        // Archivo adjunto (opcional)
         if (file)
           formData.append('File', file);
 
-        // Llamada al endpoint
         return this._httpService.post(url, 'CreateParaclinics', null, formData) as Observable<ResponseDTO>;
       })
     );

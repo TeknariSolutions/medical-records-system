@@ -24,6 +24,12 @@ export const MENU: MenuItem[] = [
                 link: '/parametrization/patients',
                 parentId: 2
             },
+            {
+                id: 3,
+                label: 'Agenda',
+                link: '/parametrization/schedule-patients',
+                parentId: 2
+            },
         ]
     },
     {
