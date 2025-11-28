@@ -47,7 +47,8 @@
                   <span class="input-group-text">
                     <i class="bx bx-search-alt-2"></i>
                   </span>
-                    <input type="text" class="form-control" id="activeIngredient" [(ngModel)]="filterActiveIngredient"/>
+                    <input type="text" class="form-control" id="activeIngredient" [(ngModel)]="filterActiveIngredient"
+                    (keydown)="onEnterKey($event)"/>
                 </div>
               </div>
             </div>
@@ -57,12 +58,14 @@
               <div class="mb-0">
                 <button type="button" class="btn btn-light px-5" title="Limpiar" (click)="clearFilters()">
                     <i class="bx bx-revision"></i>
+                    Limpiar
                 </button>
               </div>
 
               <div class="mb-0">
                 <button type="button" class="btn btn-primary px-5" title="Filtrar" (click)="loadMedicines()">
                     <i class="bx bx-search-alt-2"></i>
+                    Filtrar
                 </button>
               </div>
             </div>

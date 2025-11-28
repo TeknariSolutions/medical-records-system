@@ -34,6 +34,8 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
   filePreview: string | null = null;
   isImage = true;
 
+  submitted = false;
+
   // Listas para selects
   modalitiesAttention: any[] = [];
 
@@ -95,16 +97,16 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
       name: [this.paraclinic?.name || '', Validators.required],
       observations: [this.paraclinic?.observations || ''],
       idCupsCode: [this.paraclinic?.idCupsCode || null, Validators.required],
-      cupsName: [''],
+      cupsName: ['', Validators.required],
       idModalityAttention: [this.paraclinic?.idModalityAttention || null, Validators.required],
       isExternal: [this.paraclinic?.isExternal || false],
-      codViaIngreso: [this.paraclinic?.codViaIngreso || ''],
+      codViaIngreso: [this.paraclinic?.codViaIngreso || '', Validators.required],
 
       idUser: [null, Validators.required],
       idConsultationFinality: [null, Validators.required],
       groupServiceCode: [null, Validators.required],
-      cie10Code: [''],             // ← código visible (J45.9)
-      cie10Description: [''],      // ← descripción visible (ASMA BRONQUIAL)
+      cie10Code: ['', Validators.required],             // ← código visible (J45.9)
+      cie10Description: ['', Validators.required],      // ← descripción visible (ASMA BRONQUIAL)
       idCieCode: [null],           // ← ID numérico para backend
     });
 
@@ -272,6 +274,9 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
 
 
   save() {
+
+    this.submitted = true;
+
     if (this.form.invalid) return;
 
     const now = DateTimeHelper.getLocalDateTimeWithOffset();

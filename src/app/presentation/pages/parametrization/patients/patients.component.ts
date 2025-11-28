@@ -133,6 +133,12 @@ export class PatientsComponent implements OnInit {
     this.loadPatients();
   }
 
-
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.currentPage = 1;
+      this.loadPatients();
+    }
+  }
 
 }

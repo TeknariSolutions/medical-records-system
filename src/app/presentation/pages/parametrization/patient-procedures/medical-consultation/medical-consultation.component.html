@@ -20,7 +20,7 @@
               <label for="filterConsultationDate" class="form-label">Fecha</label>
               <div class="input-group">
                 <input type="date" class="form-control" id="filterConsultationDate"
-                  [(ngModel)]="filterConsultationDate" />
+                  [(ngModel)]="filterConsultationDate" (keydown)="onEnterKey($event)"/>
               </div>
             </div>
           </div>
@@ -30,7 +30,7 @@
             <div class="mb-3">
               <label for="filterStatus" class="form-label">Estado</label>
               <div class="input-group">
-                <select id="filterStatus" class="form-control" [(ngModel)]="filterStatus">
+                <select id="filterStatus" class="form-control" [(ngModel)]="filterStatus" (keydown)="onEnterKey($event)">
                   <option [ngValue]="''">Selecciona un estado</option>
                   <option [ngValue]="true">CERRADO</option>
                   <option [ngValue]="false">PENDIENTE</option>

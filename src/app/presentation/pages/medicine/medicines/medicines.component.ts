@@ -139,6 +139,13 @@ export class MedicinesComponent implements OnInit {
     this.loadMedicines();
   }
 
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.currentPage = 1;
+      this.loadMedicines();
+    }
+  }
 
 
 }

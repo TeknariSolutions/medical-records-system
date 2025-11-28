@@ -10,14 +10,19 @@
 
     <div class="mb-3">
       <label>Nombre <span class="text-danger">*</span></label>
-      <input type="text" class="form-control" formControlName="name">
+      <input type="text" class="form-control" formControlName="name" 
+      [ngClass]="{'is-invalid': submitted && form.get('name')?.invalid}">
+
+      <div *ngIf="submitted && form.get('name')?.invalid" class="invalid-feedback">
+        Este campo es requerido.
+      </div>
     </div>
 
     <!-- CUPS Autocomplete -->
     <div class="mb-3 position-relative">
-      <label>CUPS</label>
+      <label>CUPS <span class="text-danger">*</span></label>
       <input type="text" class="form-control" placeholder="Busque un CUPS"
-             formControlName="cupsName"
+             formControlName="cupsName" [ngClass]="{'is-invalid': submitted && form.get('cupsName')?.invalid}"
              (input)="onCupsInput($event.target.value)" (keydown.enter)="$event.preventDefault()">
 
       <ul class="list-group position-absolute w-100 z-3"
@@ -31,20 +36,28 @@
           <button type="button" class="btn btn-sm btn-light" (click)="nextCupsPage()" [disabled]="cupsPaginator.pageIndex >= (totalCupsPages || 1)">Siguiente</button>
         </li>
       </ul>
+
+      <div *ngIf="submitted && form.get('cupsName')?.invalid" class="invalid-feedback">
+        Este campo es requerido.
+      </div>
     </div>
 
     <div class="row">
       <!-- Modalidad de Atención -->
       <div class="col-12 col-lg-6 col-md-6">
         <div class="mb-3">
-          <label for="idModalityAttention" class="form-label">Modalidad de Atención</label>
+          <label for="idModalityAttention" class="form-label">Modalidad de Atención <span class="text-danger">*</span></label>
           <div class="input-group">
-            <select id="idModalityAttention" class="form-control" formControlName="idModalityAttention">
+            <select id="idModalityAttention" class="form-control" formControlName="idModalityAttention"
+            [ngClass]="{'is-invalid': submitted && form.get('idModalityAttention')?.invalid}">
               <option [ngValue]="null" disabled selected>Seleccione una opción</option>
               <option *ngFor="let index of modalitiesAttention" [ngValue]="index.idModalityAttention">
                 {{ index.modalityAttentionName }}
               </option>
             </select>
+            <div *ngIf="submitted && form.get('idModalityAttention')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+            </div>
           </div>
         </div>
       </div>
@@ -52,8 +65,13 @@
       <!-- Código Vía de Ingreso< -->
       <div class="col-12 col-lg-6 col-md-6">
         <div class="mb-3">
-          <label>Código Vía de Ingreso</label>
-          <input type="text" class="form-control" formControlName="codViaIngreso">
+          <label>Código Vía de Ingreso <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" formControlName="codViaIngreso"
+          [ngClass]="{'is-invalid': submitted && form.get('idModalityAttention')?.invalid}">
+
+          <div *ngIf="submitted && form.get('codViaIngreso')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+          </div>
         </div>
       </div>
 
@@ -65,12 +83,16 @@
       <div class="col-12 col-lg-6 col-md-6">
         <div class="mb-3">
           <label>Médico Tratante <span class="text-danger">*</span></label>
-          <select class="form-control" formControlName="idUser">
+          <select class="form-control" formControlName="idUser"
+          [ngClass]="{'is-invalid': submitted && form.get('idUser')?.invalid}">
             <option [ngValue]="null" disabled selected>Seleccione un médico</option>
             <option *ngFor="let doc of doctors" [ngValue]="doc.idUser">
               {{ doc.name }} {{ doc.lastName }}
             </option>
           </select>
+          <div *ngIf="submitted && form.get('idUser')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+          </div>
         </div>
       </div>
     
@@ -78,12 +100,16 @@
       <div class="col-12 col-lg-6 col-md-6">
         <div class="mb-3">
           <label>Finalidad de Consulta <span class="text-danger">*</span></label>
-          <select class="form-control" formControlName="idConsultationFinality">
+          <select class="form-control" formControlName="idConsultationFinality"
+          [ngClass]="{'is-invalid': submitted && form.get('idConsultationFinality')?.invalid}">
             <option [ngValue]="null" disabled selected>Seleccione una opción</option>
             <option *ngFor="let item of consultationFinalities" [ngValue]="item.idConsultationFinality">
               {{ item.consultationFinalityName }}
             </option>
           </select>
+          <div *ngIf="submitted && form.get('idConsultationFinality')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+          </div>
         </div>
       </div>
     </div>
@@ -91,18 +117,22 @@
     <!-- Grupo de Servicios -->
     <div class="mb-3">
       <label>Grupo de Servicios <span class="text-danger">*</span></label>
-      <select class="form-control" formControlName="groupServiceCode">
+      <select class="form-control" formControlName="groupServiceCode"
+      [ngClass]="{'is-invalid': submitted && form.get('groupServiceCode')?.invalid}">
         <option [ngValue]="null" disabled selected>Seleccione una opción</option>
         <option *ngFor="let group of groupServices" [ngValue]="group.code">{{ group.description }}</option>
       </select>
+      <div *ngIf="submitted && form.get('groupServiceCode')?.invalid" class="invalid-feedback">
+           Este campo es requerido.
+      </div>
     </div>
 
     <!-- Código CIE10 -->
     <div class="row">
       <div class="col-md-4 mb-3 position-relative">
-        <label>Código CIE10</label>
+        <label>Código CIE10 <span class="text-danger">*</span></label>
         <input type="text" class="form-control" formControlName="cie10Code" (input)="onCieCodeInput($event.target.value)"
-          autocomplete="off" />
+          autocomplete="off" [ngClass]="{'is-invalid': submitted && form.get('cie10Code')?.invalid}"/>
         <ul class="list-group position-absolute w-100" *ngIf="showCodeDropdown"
           style="z-index: 10; max-height: 200px; overflow-y: auto;">
           <li *ngFor="let item of codeSuggestions" class="list-group-item list-group-item-action"
@@ -110,12 +140,17 @@
             {{ item.codigo }}
           </li>
         </ul>
+
+        <div *ngIf="submitted && form.get('cie10Code')?.invalid" class="invalid-feedback">
+           Este campo es requerido.
+        </div>
       </div>
     
       <div class="col-md-8 mb-3 position-relative">
-        <label>Nombre CIE10</label>
+        <label>Nombre CIE10 <span class="text-danger">*</span></label>
         <input type="text" class="form-control" formControlName="cie10Description"
-          (input)="onCieDescriptionInput($event.target.value)" autocomplete="off" />
+          (input)="onCieDescriptionInput($event.target.value)" autocomplete="off"
+          [ngClass]="{'is-invalid': submitted && form.get('cie10Description')?.invalid}" />
         <ul class="list-group position-absolute w-100" *ngIf="showDescriptionDropdown"
           style="z-index: 10; max-height: 200px; overflow-y: auto;">
           <li *ngFor="let item of descriptionSuggestions" class="list-group-item list-group-item-action"
@@ -123,6 +158,11 @@
             {{ item.nombre }}
           </li>
         </ul>
+
+        <div *ngIf="submitted && form.get('cie10Description')?.invalid" class="invalid-feedback">
+           Este campo es requerido.
+        </div>
+
       </div>
     </div>
 
@@ -133,7 +173,7 @@
     </div>
 
     <div class="mb-3">
-      <label>Archivo</label>
+      <label>Archivo <span class="text-danger">*</span></label>
       @if (filePreview) {
         <div class="mt-2 border rounded p-2 bg-light">
           <div class="d-flex justify-content-between align-items-center mb-1">

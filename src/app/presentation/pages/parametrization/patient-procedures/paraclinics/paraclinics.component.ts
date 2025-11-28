@@ -19,7 +19,7 @@ import { PaginationComponent } from 'src/app/presentation/common/pagination/pagi
     PaginationComponent
   ],
   templateUrl: './paraclinics.component.html',
-  styleUrl: './paraclinics.component.css'
+  styleUrl: './paraclinics.component.scss'
 })
 export class ParaclinicsComponent implements OnInit {
 
@@ -115,4 +115,15 @@ export class ParaclinicsComponent implements OnInit {
     if (!url) return;
     window.open(url, '_blank');
   }
+
+  goBackToProcedures(): void {
+    if (this.idPatient) {
+      this.router.navigate([`/parametrization/patient-procedures`, this.idPatient]);
+    } else {
+      this._notificationService.showToastErrorMessage(
+        'No se pudo determinar el paciente ❌'
+      );
+    }
+  }
+
 }

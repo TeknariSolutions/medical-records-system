@@ -34,7 +34,8 @@
               <div class="mb-3">
                 <label for="idDocument" class="form-label">Documento</label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="idDocument" [(ngModel)]="filterIdDocument" />
+                  <input type="text" class="form-control" id="idDocument" [(ngModel)]="filterIdDocument"
+                  (keydown)="onEnterKey($event)" />
                 </div>
               </div>
             </div>
@@ -43,7 +44,8 @@
               <div class="mb-3">
                 <label for="firstName" class="form-label">Primer Nombre</label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="firstName" [(ngModel)]="filterFirstName" />
+                  <input type="text" class="form-control" id="firstName" [(ngModel)]="filterFirstName"
+                  (keydown)="onEnterKey($event)" />
                 </div>
               </div>
             </div>
@@ -52,7 +54,8 @@
               <div class="mb-3">
                 <label for="firstLastName" class="form-label">Primer Apellido</label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="firstLastName" [(ngModel)]="filterFirstLastName" />
+                  <input type="text" class="form-control" id="firstLastName" [(ngModel)]="filterFirstLastName"
+                  (keydown)="onEnterKey($event)" />
                 </div>
               </div>
             </div>

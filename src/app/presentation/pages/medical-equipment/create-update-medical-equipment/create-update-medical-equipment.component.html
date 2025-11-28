@@ -16,7 +16,7 @@
           <input type="text" class="form-control" formControlName="equipmentName"
             [ngClass]="{'is-invalid': submitted && equipmentForm.get('equipmentName')?.invalid}">
           <div *ngIf="submitted && equipmentForm.get('equipmentName')?.invalid" class="invalid-feedback">
-            El nombre del equipo es requerido.
+            Este campo es requerido.
           </div>
         </div>
 

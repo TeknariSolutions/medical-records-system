@@ -86,4 +86,12 @@ export class CupsListComponent implements OnInit {
     this.loadCUPS();
   }
 
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.currentPage = 1;
+      this.loadCUPS();
+    }
+  }
+
 }

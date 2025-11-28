@@ -93,4 +93,12 @@ export class CIE10ListComponent {
     this.loadCie10();
   }
 
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.currentPage = 1;
+      this.loadCie10();
+    }
+  }
+
 }

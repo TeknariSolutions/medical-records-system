@@ -171,4 +171,13 @@ export class MedicalConsultationComponent implements OnInit {
       'parametrization/consultation-procedures',consultation.idMedicalConsultation]);
   }
 
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.currentPage = 1;
+      this.loadConsults();
+    }
+  }
+
+
 }

@@ -49,6 +49,25 @@ export const MENU: MenuItem[] = [
 
     },
 
+     {
+        id: 4,
+        label: 'Equipos Médicos',
+        icon: 'bx bx-dna',
+        roleAuthenticated: [1, 3],
+        subItems: [
+            {
+                id: 3,
+                label: 'Listado de Equipos Médicos',
+                link: '/equipments/list-equipments',
+                parentId: 3,
+                roleAuthenticated: [1, 3]
+            }
+        ]
+
+    },
+
+
+
     {
         id: 2,
         label: 'Codigos CIE10',
@@ -83,22 +102,7 @@ export const MENU: MenuItem[] = [
 
     },
 
-    {
-        id: 4,
-        label: 'Equipos Médicos',
-        icon: 'bx bx-dna',
-        roleAuthenticated: [1, 3],
-        subItems: [
-            {
-                id: 3,
-                label: 'Listado de Equipos Médicos',
-                link: '/equipments/list-equipments',
-                parentId: 3,
-                roleAuthenticated: [1, 3]
-            }
-        ]
-
-    },
+   
 
     {
         id: 5,
