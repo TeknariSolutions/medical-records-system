@@ -10,6 +10,7 @@ import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultati
 import { DatePipe } from '@angular/common';
 import { CreateUpdateMedicalConsultationComponent } from '../patient-procedures/medical-consultation/create-update-medical-consultation/create-update-medical-consultation.component';
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-schedule-patients',
@@ -42,6 +43,7 @@ export class SchedulePatientsComponent implements OnInit {
   pageSizeOptions = [5, 10, 25, 50];
 
   constructor(
+    private router: Router,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
     private _notificationService: NotificationsService
   ) {}
@@ -95,5 +97,9 @@ export class SchedulePatientsComponent implements OnInit {
     this.pageSize = newSize;
     this.currentPage = 1;
     this.loadConsultations();
+  }
+
+  goBackToPatients(): void {
+      this.router.navigate([`/parametrization/patients`]);
   }
 }

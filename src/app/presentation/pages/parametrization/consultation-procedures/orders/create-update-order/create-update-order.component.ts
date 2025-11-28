@@ -57,7 +57,7 @@ export class CreateUpdateOrderComponent implements OnInit {
 
 
     if (this.orderToEdit) {
-      // 👇 precargar observaciones generales
+      // precargar observaciones generales
       this.orderForm.patchValue({
         generalObservations: this.orderToEdit.generalObservations || ''
       });

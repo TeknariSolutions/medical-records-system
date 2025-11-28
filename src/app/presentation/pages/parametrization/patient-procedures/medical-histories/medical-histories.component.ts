@@ -36,7 +36,7 @@ export class MedicalHistoriesComponent {
 
   ngOnInit(): void {
     this.idPatient = Number(this.route.snapshot.paramMap.get('id'));
-   
+
     this.loadListMedicalHistory();
   }
 
@@ -62,78 +62,54 @@ export class MedicalHistoriesComponent {
 
 
   openViewMedicalHistoryModal(medicalHistory: MedicalHistoryDTO): void {
-  const initialState = {
-    lastMedicalHistory: medicalHistory,
-    idPatient: this.idPatient,
-    idUser: Number(localStorage.getItem('IdUser')),
-    isReadOnly: true,
-    isEditMode: false
-  };
-
-  this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
-    initialState,
-    class: 'modal-lg'
-  });
-}
-
-  /* openEditLastMedicalHistoryModal(): void {
-    if (!this.medicalHistories.length) {
-      this._notificationService.showInfoMessage('No hay antecedentes para editar');
-      return;
-    }
-
-    const lastHistory = this.medicalHistories[0];
-
     const initialState = {
-      lastMedicalHistory: lastHistory,
+      lastMedicalHistory: medicalHistory,
       idPatient: this.idPatient,
       idUser: Number(localStorage.getItem('IdUser')),
-      isReadOnly: false,
-      isEditMode: false, // 👈 muy importante: no edición real
-      createFromExisting: true // 👈 flag opcional para saber de dónde viene
+      isReadOnly: true,
+      isEditMode: false
     };
 
     this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
       initialState,
       class: 'modal-lg'
     });
+  }
 
-    this.modalRef.onHidden?.subscribe(() => this.loadListMedicalHistory());
-  } */
 
   openEditLastMedicalHistoryModal(): void {
-  this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
-    .subscribe({
-      next: (lastHistory) => {
-        if (!lastHistory) {
-          this._notificationService.showInfoMessage('No hay antecedentes para editar');
-          return;
+    this._medicalHistoryUseCase.GetLastMedicalHistory(this.idPatient)
+      .subscribe({
+        next: (lastHistory) => {
+          if (!lastHistory) {
+            this._notificationService.showInfoMessage('No hay antecedentes para editar');
+            return;
+          }
+
+          const initialState = {
+            lastMedicalHistory: lastHistory,
+            idPatient: this.idPatient,
+            idUser: Number(localStorage.getItem('IdUser')),
+            isReadOnly: false,
+            isEditMode: false, // 👈 no edición real
+            createFromExisting: true
+          };
+
+          this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
+            initialState,
+            class: 'modal-lg'
+          });
+
+          this.modalRef.onHidden?.subscribe(() => this.loadListMedicalHistory());
+        },
+        error: (err) => {
+          console.error('Error al cargar el último antecedente', err);
+          this._notificationService.showToastErrorMessage(
+            'No se pudo cargar el último antecedente ❌'
+          );
         }
-
-        const initialState = {
-          lastMedicalHistory: lastHistory,
-          idPatient: this.idPatient,
-          idUser: Number(localStorage.getItem('IdUser')),
-          isReadOnly: false,
-          isEditMode: false, // 👈 no edición real
-          createFromExisting: true
-        };
-
-        this.modalRef = this.modalService.show(CreateUpdateMedicalHistoryComponent, {
-          initialState,
-          class: 'modal-lg'
-        });
-
-        this.modalRef.onHidden?.subscribe(() => this.loadListMedicalHistory());
-      },
-      error: (err) => {
-        console.error('Error al cargar el último antecedente', err);
-        this._notificationService.showToastErrorMessage(
-          'No se pudo cargar el último antecedente ❌'
-        );
-      }
-    });
-}
+      });
+  }
 
 
   goBackToProcedures(): void {

@@ -161,7 +161,6 @@ export class CreateUpdateMedicalConsultationComponent {
         consultationReason: ['', Validators.required],
         consultationDate: this.getLocalDateTime(),
         isFirstTime: [true],
-        status: [false],
         currentIllness: [''],
         idUser: [null, Validators.required],
         idCupsCode: [null],
@@ -205,6 +204,7 @@ export class CreateUpdateMedicalConsultationComponent {
         idConsultationFinality: [null],
         idExitCondition: [null],
         idExternalCauseCode: [null],
+        status: [false]
       }),
       analysisOrConcept: this.fb.group({
         analysisOrConcept: [null],
@@ -228,8 +228,8 @@ export class CreateUpdateMedicalConsultationComponent {
 
     // Forzar switch "status" a false y deshabilitar solo si es auxiliar (2)
     if (idRol === 2) {
-      this.form.get('basicInfo.status')?.setValue(false);
-      this.form.get('basicInfo.status')?.disable();
+      this.form.get('closeConsultation.status')?.setValue(false);
+      this.form.get('closeConsultation.status')?.disable();
     }
 
     // 🔒 Si la consulta está cerrada y el rol es 2 o 3 → deshabilitar todo
@@ -237,7 +237,7 @@ export class CreateUpdateMedicalConsultationComponent {
       this.form.disable({ emitEvent: false });
     } else {
       // Advertencia solo para roles 2 y 3
-      this.form.get('basicInfo.status')?.valueChanges.subscribe(async (value) => {
+      this.form.get('closeConsultation.status')?.valueChanges.subscribe(async (value) => {
         if (value && (idRol === 2 || idRol === 3)) {
           const confirmed = await this._notificationService.confirm(
             'Advertencia',
@@ -245,7 +245,7 @@ export class CreateUpdateMedicalConsultationComponent {
             'warning'
           );
           if (!confirmed) {
-            this.form.get('basicInfo.status')?.setValue(false, { emitEvent: false });
+            this.form.get('closeConsultation.status')?.setValue(false, { emitEvent: false });
           }
         }
       });
@@ -438,7 +438,6 @@ export class CreateUpdateMedicalConsultationComponent {
         consultationReason: c.consultationReason ?? '',
         consultationDate: c.consultationDate ? new Date(c.consultationDate) : new Date(),
         isFirstTime: c.isFirstTime ?? true,
-        status: c.status ?? false,
         currentIllness: c.currentIllness ?? '',
         idUser: c.idUser || null,
         idCupsCode: c.idCupsCode || null,
@@ -485,6 +484,7 @@ export class CreateUpdateMedicalConsultationComponent {
         idConsultationFinality: c.idConsultationFinality || null,
         idExitCondition: c.idExitCondition || null,
         idExternalCauseCode: c.idExternalCauseCode || null,
+        status: c.status ?? false
       },
     };
   }
@@ -624,7 +624,6 @@ export class CreateUpdateMedicalConsultationComponent {
         ? this.consultationToEdit!.consultationDate // ✅ mantener original en edición
         : this.getLocalDateTime(), // ✅ nueva consulta usa localDateTime
       isFirstTime: formValues.basicInfo.isFirstTime,
-      status: formValues.basicInfo.status,
       currentIllness: formValues.basicInfo.currentIllness,
 
       hydrationStatus: formValues.clinicalStates.hydrationStatus,
@@ -641,16 +640,6 @@ export class CreateUpdateMedicalConsultationComponent {
       weightKg: Number(formValues.vitalSigns.weightKg),
       heightCm: String(formValues.vitalSigns.heightCm),
       bmi: Number(formValues.vitalSigns.bmi),
-
-      /* physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck,
-      physicalExam_Chest: formValues.physicalExam.physicalExam_Chest,
-      physicalExam_Heart: formValues.physicalExam.physicalExam_Heart,
-      physicalExam_Abdomen: formValues.physicalExam.physicalExam_Abdomen,
-      physicalExam_GU: formValues.physicalExam.physicalExam_GU,
-      physicalExam_Musculoskeletal: formValues.physicalExam.physicalExam_Musculoskeletal,
-      physicalExam_Neuro: formValues.physicalExam.physicalExam_Neuro,
-      physicalExam_Skin: formValues.physicalExam.physicalExam_Skin,
-      observations: formValues.physicalExam.observations, */
 
       physicalExam_HeadNeck: formValues.physicalExam.physicalExam_HeadNeck && formValues.physicalExam.physicalExam_HeadNeck.trim() !== ''
         ? formValues.physicalExam.physicalExam_HeadNeck.trim()
@@ -697,6 +686,7 @@ export class CreateUpdateMedicalConsultationComponent {
       idConsultationFinality: formValues.closeConsultation.idConsultationFinality ?? null,
       idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
       idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
+       status: formValues.closeConsultation.status,
 
       
 

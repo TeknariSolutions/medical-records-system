@@ -234,6 +234,12 @@ export class DetailsConsultationComponent implements OnInit {
           ? [{ text: 'DIAGNÓSTICOS:', style: 'sectionHeader' }, this.buildDiagnosisTable()]
           : []),
 
+        { text: 'ANALISIS O CONCEPTO:', style: 'sectionHeader' },
+        this.buildAnalysisOrConceptTable(),
+
+        { text: 'CIERRE DE CONSULTA:', style: 'sectionHeader' },
+        this.buildCloseConsultationTable(),
+
         ...(this.doctorProfile ? [this.buildDoctorSignature()] : [])
       ],
 
@@ -451,6 +457,40 @@ export class DetailsConsultationComponent implements OnInit {
       margin: [0, 0, 0, 15]
     };
   }
+
+  private buildAnalysisOrConceptTable() {
+    return {
+      table: {
+        widths: ['35%', '65%'],
+        body: [
+          [{ text: 'Análisis o Concepto', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.analysisOrConcept)],
+          [{ text: 'Tratamiento', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.treatment)],
+        ]
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 15]
+    };
+  }
+
+  
+
+  private buildCloseConsultationTable() {
+    return {
+      table: {
+        widths: ['35%', '65%'],
+        body: [
+          [{ text: 'Condición de Salida', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.analysisOrConcept)],
+          [{ text: 'Causa Externa', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.treatment)],
+          [{ text: 'Finalidad de Consulta', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.treatment)],
+        ]
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 15]
+    };
+  }
+
+
+
 
 
   private buildDoctorSignature() {
