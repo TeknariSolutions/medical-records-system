@@ -141,6 +141,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
       dosage: [isMedicine ? '' : null, isMedicine ? Validators.required : []],
       frequency: [isMedicine ? '' : null, isMedicine ? Validators.required : []],
       duration: [isMedicine ? '' : null, isMedicine ? Validators.required : []],
+      quantity: [isMedicine ? '' : null, isMedicine ? Validators.required : []],
 
       // Equipo
       idMedicalEquipment: [null, !isMedicine ? Validators.required : []],
@@ -313,6 +314,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
           dosage: d.dosage,
           frequency: d.frequency,
           duration: d.duration,
+          quantity: d.quantity,
           prescribedQuantity: 0,
           instructions: d.instructions,
           updatedByUserId: this.consultationData.idUser,
@@ -330,6 +332,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
           dosage: null,
           frequency: null,
           duration: null,
+          quantity: null,
           prescribedQuantity: 0,
           instructions: d.instructions,
           updatedByUserId: this.consultationData.idUser,

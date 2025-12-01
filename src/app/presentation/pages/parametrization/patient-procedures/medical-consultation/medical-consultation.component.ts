@@ -16,6 +16,7 @@ import { DataTransferService } from 'src/app/infrastructure/services/common/data
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/doctor-profile-use-case';
 import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medical-history.use-case';
+import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
 
 @Component({
   selector: 'app-medical-consultation',
@@ -62,7 +63,8 @@ export class MedicalConsultationComponent implements OnInit {
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
     private _doctorProfileUseCase: DoctorProfileUseCase,
     private _notificationService: NotificationsService,
-    private _medicalHistoryUseCase: MedicalHistoryUseCase ,
+    private _medicalHistoryUseCase: MedicalHistoryUseCase,
+    private _closeConsultationUseCase: CloseConsultationUseCase ,
     private modalService: BsModalService,
     private _dataTransferService: DataTransferService
   ) { }
@@ -148,6 +150,7 @@ export class MedicalConsultationComponent implements OnInit {
       this._doctorProfileUseCase,
       this._notificationService,
       this._medicalHistoryUseCase,
+      this._closeConsultationUseCase
     );
 
     component.idPatient = consultation.idPatient;

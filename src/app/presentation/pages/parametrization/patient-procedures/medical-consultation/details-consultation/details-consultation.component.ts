@@ -14,7 +14,10 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medical-history.use-case';
 import { MedicalHistoryDTO } from 'src/app/core/DTOs/app/medical-history.dto';
+import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
+//import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
+
 
 @Component({
   selector: 'app-details-consultation',
@@ -32,12 +35,17 @@ export class DetailsConsultationComponent implements OnInit {
   doctorProfile: DoctorProfileResponseDTO | null = null;
   medicalHistory: MedicalHistoryDTO | null = null;
 
+  consultationFinalities: any[] = [];
+  exitConditions: any[] = [];
+  externalCauses: any[] = [];
+
 
   constructor(
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
     private _doctorProfileUseCase: DoctorProfileUseCase,
     private _notificationService: NotificationsService,
-    private _medicalHistoryUseCase: MedicalHistoryUseCase 
+    private _medicalHistoryUseCase: MedicalHistoryUseCase,
+    private _closeConsultationUseCase: CloseConsultationUseCase 
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +98,9 @@ export class DetailsConsultationComponent implements OnInit {
         pdfMake.createPdf(docDefinition).download(filename);
 
 
+        
+
+
         this._notificationService.showSuccessMessage('Documento generado correctamente');
       } catch (error) {
         console.error('Error al generar el PDF:', error);
@@ -100,6 +111,7 @@ export class DetailsConsultationComponent implements OnInit {
   // ===========================
   // Cargar datos de la consulta
   // ===========================
+
   private async ensureDataLoaded(): Promise<void> {
     if (!this.idMedicalConsultation) {
       //this._notificationService.showToastWarningMessage('No se encontró la información de la consulta.');
@@ -113,6 +125,18 @@ export class DetailsConsultationComponent implements OnInit {
 
       this.dataConsultation = consultaResp.main.length > 0 ? consultaResp.main[0] : null;
       this.diagnoses = consultaResp.related ?? [];
+
+      // 🔹 Cargar diccionarios para reemplazar IDs por nombres
+      const [finalities, conditions, causes] = await Promise.all([
+        firstValueFrom(this._closeConsultationUseCase.GetConsultationFinalities()),
+        firstValueFrom(this._closeConsultationUseCase.GetExitConditions()),
+        firstValueFrom(this._closeConsultationUseCase.GetExternalCauseCodes()),
+      ]);
+
+      this.consultationFinalities = finalities || [];
+      this.exitConditions = conditions || [];
+      this.externalCauses = causes || [];
+
 
       if (!this.dataConsultation) {
         //this._notificationService.showToastWarningMessage('No se encontró información clínica para esta consulta.');
@@ -474,14 +498,39 @@ export class DetailsConsultationComponent implements OnInit {
 
   
 
+ /*  private buildCloseConsultationTable() {
+    return {
+      table: {
+        widths: ['35%', '65%'],
+        body: [
+          [{ text: 'Condición de Salida', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.idConsultationFinality)],
+          [{ text: 'Causa Externa', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.idExitCondition)],
+          [{ text: 'Finalidad de Consulta', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.idConsultationFinality)],
+        ]
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 15]
+    };
+  }
+ */
+
   private buildCloseConsultationTable() {
     return {
       table: {
         widths: ['35%', '65%'],
         body: [
-          [{ text: 'Condición de Salida', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.analysisOrConcept)],
-          [{ text: 'Causa Externa', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.treatment)],
-          [{ text: 'Finalidad de Consulta', style: 'tableHeader' }, this.nullAsNA(this.dataConsultation?.treatment)],
+          [
+            { text: 'Condición de Salida', style: 'tableHeader' },
+            this.getExitConditionName(this.dataConsultation?.idExitCondition ?? null)
+          ],
+          [
+            { text: 'Causa Externa', style: 'tableHeader' },
+            this.getExternalCauseName(this.dataConsultation?.idExternalCauseCode ?? null)
+          ],
+          [
+            { text: 'Finalidad de Consulta', style: 'tableHeader' },
+            this.getConsultationFinalityName(this.dataConsultation?.idConsultationFinality ?? null)
+          ]
         ]
       },
       layout: 'lightHorizontalLines',
@@ -536,4 +585,27 @@ export class DetailsConsultationComponent implements OnInit {
     const s = String(value).trim();
     return s === '' ? 'N/A' : s;
   }
+
+
+
+  private getConsultationFinalityName(id: number | null): string {
+    if (!id) return 'N/A';
+    const item = this.consultationFinalities.find(x => x.idConsultationFinality === id);
+    return item?.consultationFinalityName ?? 'N/A';
+  }
+
+  private getExitConditionName(id: number | null): string {
+    if (!id) return 'N/A';
+    const item = this.exitConditions.find(x => x.idExitCondition === id);
+    return item?.exitConditionName ?? 'N/A';
+  }
+
+  private getExternalCauseName(id: number | null): string {
+    if (!id) return 'N/A';
+    const item = this.externalCauses.find(x => x.idExternalCauseCode === id);
+    return item?.externalCauseName ?? 'N/A';
+  }
+
+
+
 }

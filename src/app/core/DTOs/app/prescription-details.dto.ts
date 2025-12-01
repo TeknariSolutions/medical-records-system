@@ -5,6 +5,7 @@ export interface PrescriptionDetailDTO {
     dosage: string;
     frequency: string;
     duration: string;
+    quantity: string;
     prescribedQuantity: number;
     instructions: string;
     updatedByUserId: number;
