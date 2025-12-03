@@ -226,7 +226,7 @@ private buildPatientInfoSection() {
   private buildPrescriptionTable(medicineDetails: PrescriptionDetailExtendedDTO[]) {
     return {
       table: {
-        widths: ['30%', '15%', '15%', '15%', '25%'],
+        widths: ['30%', '10%', '15%', '15%', '10%', '20%'],
         dontBreakRows: true,
         body: [
           [
@@ -234,6 +234,7 @@ private buildPatientInfoSection() {
             { text: 'Dosis', style: 'tableHeader' },
             { text: 'Frecuencia', style: 'tableHeader' },
             { text: 'Duración', style: 'tableHeader' },
+            { text: 'Cantidad', style: 'tableHeader' },
             { text: 'Instrucciones', style: 'tableHeader' }
           ],
           ...medicineDetails.map(d => [
@@ -241,6 +242,7 @@ private buildPatientInfoSection() {
             this.nullAsNA(d.dosage),
             this.nullAsNA(d.frequency),
             this.nullAsNA(d.duration),
+            this.nullAsNA(d.quantity),
             this.nullAsNA(d.instructions)
           ])
         ]

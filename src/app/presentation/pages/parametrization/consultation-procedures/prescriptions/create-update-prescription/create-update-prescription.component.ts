@@ -103,6 +103,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
               dosage: d.dosage,
               frequency: d.frequency,
               duration: d.duration,
+              quantity: d.quantity,
               instructions: d.instructions
             });
 
