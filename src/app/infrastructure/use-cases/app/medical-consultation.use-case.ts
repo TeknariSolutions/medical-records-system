@@ -79,8 +79,8 @@ export class MedicalConsultationUseCase {
         );
     }
 
-    GetListMedicalConsultationByStatus(paginator: PaginatorDTO): Observable<TableResultDTO> {
-        return this._medicalConsultationService.GetListMedicalConsultationByStatus(paginator).pipe(
+    GetListMedicalConsultationByStatus(paginator: PaginatorDTO, idDocument: string, firstName: string, lastName: string ): Observable<TableResultDTO> {
+        return this._medicalConsultationService.GetListMedicalConsultationByStatus(paginator, idDocument,firstName,lastName).pipe(
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {
                     this._notificationService.showToastErrorMessage(response.message!);

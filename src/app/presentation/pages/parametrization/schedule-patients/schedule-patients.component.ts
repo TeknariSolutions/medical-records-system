@@ -42,6 +42,10 @@ export class SchedulePatientsComponent implements OnInit {
   totalRecords: number = 0;
   pageSizeOptions = [5, 10, 25, 50];
 
+  filterIdDocument: string = '';
+  filterFirstName: string = '';
+  filterFirstLastName: string = '';
+
   constructor(
     private router: Router,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
@@ -60,7 +64,12 @@ export class SchedulePatientsComponent implements OnInit {
       pageSize: this.pageSize
     };
 
-    this._medicalConsultationUseCase.GetListMedicalConsultationByStatus(paginator).subscribe({
+    this._medicalConsultationUseCase.GetListMedicalConsultationByStatus(
+      paginator,
+      this.filterIdDocument,
+      this.filterFirstName,
+      this.filterFirstLastName
+    ).subscribe({
       next: (data: TableResultDTO) => {
         this.consultations = data.results || [];
         this.totalRecords = data.totalRecords || 0;
@@ -72,6 +81,18 @@ export class SchedulePatientsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  applyFilter(): void {
+    this.currentPage = 1; // reset paginación al aplicar filtro
+    this.loadConsultations();
+  }
+
+  clearFilter(): void {
+    this.filterIdDocument = '';
+    this.filterFirstName = '';
+    this.filterFirstLastName = '';
+    this.loadConsultations();
   }
 
 
@@ -101,5 +122,13 @@ export class SchedulePatientsComponent implements OnInit {
 
   goBackToPatients(): void {
       this.router.navigate([`/parametrization/patients`]);
+  }
+
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.currentPage = 1;
+      this.loadConsultations();
+    }
   }
 }

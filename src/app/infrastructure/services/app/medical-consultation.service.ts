@@ -82,12 +82,15 @@ export class MedicalConsultationService implements IMedicalConsultationService {
   }
 
   
-  GetListMedicalConsultationByStatus(paginator: PaginatorDTO): Observable<ResponseDTO> {
+  GetListMedicalConsultationByStatus(paginator: PaginatorDTO, idDocument: string, firstName: string, lastName: string ): Observable<ResponseDTO> {
     return this._configService.getUrl().pipe(
       switchMap((url) => {
         const params: any = {
           PageIndex: paginator.pageIndex,
           PageSize: paginator.pageSize,
+          idDocument,
+          firstName,
+          lastName
         };
 
        

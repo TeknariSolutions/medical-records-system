@@ -28,9 +28,70 @@
         Volver al inicio
     </button>
 
+    <!-- Filter -->
+   <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mt-1 mb-1">
+
+            <h6 class="mb-4">Filtrar por:</h6>
+
+            <div class="col-12 col-md-4 col-lg-4">
+              <div class="mb-3">
+                <label for="idDocument" class="form-label">Documento</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="idDocument" [(ngModel)]="filterIdDocument"
+                  (keydown)="onEnterKey($event)" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-4">
+              <div class="mb-3">
+                <label for="firstName" class="form-label">Primer Nombre</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="firstName" [(ngModel)]="filterFirstName"
+                  (keydown)="onEnterKey($event)" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-4">
+              <div class="mb-3">
+                <label for="firstLastName" class="form-label">Primer Apellido</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="firstLastName" [(ngModel)]="filterFirstLastName"
+                  (keydown)="onEnterKey($event)" />
+                </div>
+              </div>
+            </div>
+
+  
+            <div class="col-md-6 d-flex align-items-center gap-3">
+              <div class="mb-0">
+                <button type="button" class="btn btn-light px-5" title="Limpiar" (click)="clearFilter()">
+                  <i class="ri-restart-line"></i>
+                  Limpiar
+                </button>
+              </div>
+
+              <div class="mb-0">
+                <button type="button" class="btn btn-primary px-5" title="Filtrar" (click)="applyFilter()">
+                  <i class="bx bx-search-alt-2"></i>
+                  Filtrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
 
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
+
+  <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
     <h4>
       <i class="ri-calendar-2-line me-2"></i> Consultas Médicas Programadas
     </h4>
@@ -39,6 +100,13 @@
   <!-- Container Table -->
   <div class="card">
     <div class="card-body">
+
+      <!-- No Data -->
+      @if(!isLoading && consultations.length === 0) {
+      <div class="no-data-container d-flex justify-content-center ">
+        <p>No hay datos disponibles</p>
+      </div>
+      }
 
       <!-- Table with data -->
       @if(!isLoading && consultations.length > 0) {
