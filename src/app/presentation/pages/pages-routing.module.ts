@@ -13,6 +13,7 @@ const routes: Routes = [
   { path: 'cups', loadChildren: () => import('./CUPS/cups.module').then(m => m.CupsModule) },
   { path: 'equipments', loadChildren: () => import('./medical-equipment/medical-equipment.module').then(m => m.MedicalEquipmentModule) },
   { path: 'rips', loadChildren: () => import('./RIPS/rips.module').then(m => m.RipsModule) },
+  { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
 ];
 
 @NgModule({

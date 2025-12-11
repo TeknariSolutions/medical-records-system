@@ -11,6 +11,8 @@ import { NotificationsService } from 'src/app/infrastructure/services/common/not
 import { NgClass } from '@angular/common';
 import { PaginationComponent } from 'src/app/presentation/common/pagination/pagination.component';
 import { DoctorProfileComponent } from '../doctor-profile/doctor-profile.component';
+import { AuthUseCase } from 'src/app/infrastructure/use-cases/auth/auth.use-case';
+import { ResetPasswordModalComponent } from './reset-password-modal/reset-password-modal.component';
 
 
 @Component({
@@ -18,7 +20,8 @@ import { DoctorProfileComponent } from '../doctor-profile/doctor-profile.compone
   imports: [
     NgClass,
     LoadingComponent,
-    PaginationComponent
+    PaginationComponent,
+    //ResetPasswordModalComponent
   ],
   selector: 'app-users',
   templateUrl: './users.component.html',
@@ -40,6 +43,7 @@ export class UsersComponent implements OnInit {
   constructor(
     private router: Router,
     private _userUseCase: UsersUseCase,
+    private authUseCase: AuthUseCase,
     private modalService: BsModalService,
     private _notificationService: NotificationsService
   ) { }
@@ -120,7 +124,7 @@ export class UsersComponent implements OnInit {
   }
 
 
-goToDoctorProfile(idUser: number): void {
+  goToDoctorProfile(idUser: number): void {
     this.router.navigate(['/parametrization/doctor-profile', idUser]);
   }
 
@@ -140,6 +144,42 @@ goToDoctorProfile(idUser: number): void {
     });
   }
 
+  openResetPasswordModal(idUser: number): void {
+    const initialState = {
+      userId: idUser
+    };
 
+    const modalRef = this.modalService.show(ResetPasswordModalComponent, {
+      initialState,
+      class: 'modal-sm'
+    });
+
+    modalRef.content.onClose.subscribe((data: { idUser: number, password: string }) => {
+      this.resetPassword(data.idUser, data.password);
+    });
+  }
+
+  resetPassword(idUser: number, newPassword: string): void {
+
+    this.isLoading = true;
+
+    this.authUseCase.resetUserPassword(idUser, newPassword).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+
+        if (res.isSuccess) {
+          this._notificationService.showSuccessMessage('Contraseña actualizada correctamente.');
+
+        } else {
+          this._notificationService.showToastErrorMessage('No se pudo restablecer la contraseña');
+
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this._notificationService.showToastErrorMessage('No se pudo restablecer la contraseña');
+      }
+    });
+  }
 
 }

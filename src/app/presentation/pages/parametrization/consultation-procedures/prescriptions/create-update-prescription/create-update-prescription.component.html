@@ -42,7 +42,7 @@
                    formControlName="medicineName"
                    placeholder="Busque un medicamento"
                    (input)="onMedicineInput($event.target.value, i)"
-                   (keydown.enter)="$event.preventDefault()" />
+                   (keydown.enter)="$event.preventDefault()" [ngClass]="{'is-invalid': submitted && detail.get('idMedicine')?.invalid}"/>
             <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
               <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">
                 {{ med.commercialName }} - {{ med.activeIngredient }}
@@ -55,24 +55,44 @@
                         [disabled]="medicinesPaginator[i].pageIndex >= (totalPagesByDetail[i] || 1)">Siguiente</button>
               </li>
             </ul>
+
+             <div *ngIf="submitted && detail.get('idMedicine')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+             </div>
           </div>
 
           <div class="row g-2">
             <div class="col-12 col-md-3">
               <label>Dosis</label>
-              <input type="text" formControlName="dosage" class="form-control">
+              <input type="text" formControlName="dosage" class="form-control"
+              [ngClass]="{'is-invalid': submitted && detail.get('dosage')?.invalid}">
+              <div *ngIf="submitted && detail.get('dosage')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+             </div>
             </div>
             <div class="col-12 col-md-3">
               <label>Frecuencia</label>
-              <input type="text" formControlName="frequency" class="form-control">
+              <input type="text" formControlName="frequency" class="form-control"
+              [ngClass]="{'is-invalid': submitted && detail.get('frequency')?.invalid}">
+              <div *ngIf="submitted && detail.get('frequency')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+             </div>
             </div>
             <div class="col-12 col-md-3">
               <label>Duración</label>
-              <input type="text" formControlName="duration" class="form-control">
+              <input type="text" formControlName="duration" class="form-control"
+              [ngClass]="{'is-invalid': submitted && detail.get('duration')?.invalid}">
+              <div *ngIf="submitted && detail.get('duration')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+             </div>
             </div>
             <div class="col-12 col-md-3">
               <label>Cantidad</label>
-              <input type="text" formControlName="quantity" class="form-control">
+              <input type="text" formControlName="quantity" class="form-control"
+              [ngClass]="{'is-invalid': submitted && detail.get('quantity')?.invalid}">
+              <div *ngIf="submitted && detail.get('quantity')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+             </div>
             </div>
           </div>
         </ng-container>
@@ -86,12 +106,16 @@
                    formControlName="equipmentName"
                    placeholder="Busque un equipo médico"
                    (input)="onEquipmentInput($event.target.value, i)"
-                   (keydown.enter)="$event.preventDefault()" />
+                   (keydown.enter)="$event.preventDefault()" 
+                   [ngClass]="{'is-invalid': submitted && detail.get('idMedicalEquipment')?.invalid}"/>
             <ul class="list-group position-absolute w-100" *ngIf="showEquipmentsDropdown[i]">
               <li class="list-group-item" *ngFor="let eq of equipmentSuggestions[i]" (click)="selectEquipment(eq, i)">
                 {{ eq.equipmentName }} - {{ eq.brand }}
               </li>
             </ul>
+            <div *ngIf="submitted && detail.get('idMedicalEquipment')?.invalid" class="invalid-feedback">
+              Este campo es requerido.
+             </div>
           </div>
         </ng-container>
 
@@ -109,7 +133,7 @@
 
 <div class="modal-footer">
   <button type="button" class="btn btn-light" (click)="close()">Cancelar</button>
-  <button type="submit" class="btn btn-primary" [disabled]="prescriptionForm.invalid" (click)="onSubmit()">
+  <button type="submit" class="btn btn-primary" (click)="onSubmit()">
     Guardar
   </button>
 </div>

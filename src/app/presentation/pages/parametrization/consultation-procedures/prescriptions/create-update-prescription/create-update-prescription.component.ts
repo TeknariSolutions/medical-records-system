@@ -47,6 +47,8 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
   showEquipmentsDropdown: boolean[] = [];
   equipmentsPaginator: PaginatorDTO[] = [];
 
+  submitted = false;
+
   constructor(
     private fb: FormBuilder,
     private prescriptionsUseCase: PrescriptionsUseCase,
@@ -296,6 +298,16 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
 
   /** ---------- SUBMIT (mezclado) ---------- */
   onSubmit() {
+
+    /* console.log('📌 FORM VALUE:', this.prescriptionForm.value);
+    console.log('📌 FORM STATUS:', this.prescriptionForm.status);
+    console.log('📌 DETAILS ARRAY:', this.details.value);
+
+    console.log('consultationData', this.consultationData) */
+
+    this.submitted = true;
+
+
     if (this.prescriptionForm.invalid) {
       this.prescriptionForm.markAllAsTouched();
       return;
@@ -336,13 +348,17 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
           quantity: null,
           prescribedQuantity: 0,
           instructions: d.instructions,
-          updatedByUserId: this.consultationData.idUser,
+          //updatedByUserId: this.consultationData.idUser,
+          updatedByUserId: this.consultationData?.idUser || 0,
           updatedAt: DateTimeHelper.getLocalDateTimeWithOffset(),
-          registeredByUser: this.consultationData.idUser,
+          //registeredByUser: this.consultationData.idUser,
+          registeredByUser: this.consultationData?.idUser || 0,
           registeredAt: DateTimeHelper.getLocalDateTimeWithOffset(),
         } as PrescriptionDetailDTO;
       }
     });
+
+    //console.log('📌 DTO FINAL PARA ENVIAR:', details);
 
     if (isEditing) {
       // Update/Create por ítem según tenga idPrescriptionDetail
@@ -367,6 +383,9 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
         prescriptionDate: DateTimeHelper.getLocalDateTimeWithOffset(),
         isActive: true
       };
+
+      //console.log("CONSULTATION DATA:", header);
+
 
       this.prescriptionsUseCase.CreatePrescription(header).subscribe({
         next: (res) => {

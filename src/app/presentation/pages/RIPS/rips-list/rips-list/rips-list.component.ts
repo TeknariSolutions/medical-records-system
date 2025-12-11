@@ -7,6 +7,7 @@ import { NotificationsService } from 'src/app/infrastructure/services/common/not
 import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-rips-list',
@@ -18,7 +19,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     NgSelectModule
   ],
   templateUrl: './rips-list.component.html',
-  styleUrl: './rips-list.component.css'
+  styleUrl: './rips-list.component.scss'
 })
 export class RipsListComponent implements OnInit {
 
@@ -29,6 +30,7 @@ export class RipsListComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private _epsUseCase: EpsUseCase,
     private _generateRipsUseCase: GenerateRipsUseCase,
     private _notificationService: NotificationsService
@@ -132,5 +134,9 @@ export class RipsListComponent implements OnInit {
         this._notificationService.showToastErrorMessage(backendMessage);
       }
     });
+  }
+
+   goBackToProcedures(): void {
+      this.router.navigate([`/parametrization/patients`]);
   }
 }

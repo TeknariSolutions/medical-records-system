@@ -65,6 +65,16 @@ export class CreateUpdateParaclinicsComponent implements OnInit {
     { code: '05', description: 'Atención inmediata' }
   ];
 
+  codesViaIngreso = [
+    { code: '01', description: 'Remisión' },
+    { code: '02', description: 'Consulta Externa' },
+    { code: '03', description: 'Urgencias' },
+    { code: '04', description: 'Reingreso' },
+    { code: '05', description: 'Referencia' },
+    { code: '06', description: 'Traslado' },
+    { code: '99', description: 'Otro' }
+  ];
+
   cie10Suggestions: any[] = [];
   showCie10Dropdown = false;
 

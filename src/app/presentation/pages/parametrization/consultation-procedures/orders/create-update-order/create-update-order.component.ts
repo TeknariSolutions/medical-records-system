@@ -37,6 +37,8 @@ export class CreateUpdateOrderComponent implements OnInit {
   cupsPaginator: PaginatorDTO[] = [];
   totalCupsPagesByDetail: number[] = [];
 
+  submitted = false;
+
   constructor(
     private fb: FormBuilder,
     private ordersUseCase: OrdersUseCase,
@@ -108,9 +110,9 @@ export class CreateUpdateOrderComponent implements OnInit {
   addDetail() {
     const detail = this.fb.group({
       idCupsCode: [null, Validators.required],
-      cupsName: [''],
+      cupsName: ['', Validators.required],
       procedureDescription: ['', Validators.required],
-      quantity: [1, [Validators.required, Validators.min(1)]],
+      quantity: [null, Validators.required],
       instructions: ['']
     });
 
@@ -196,6 +198,9 @@ export class CreateUpdateOrderComponent implements OnInit {
 
 
  onSubmit() {
+
+  this.submitted = true;
+
   if (this.orderForm.invalid) {
     this.orderForm.markAllAsTouched();
     return;
@@ -248,7 +253,7 @@ export class CreateUpdateOrderComponent implements OnInit {
     return;
   }
 
-  // 👉 Crear nueva orden
+  // Crear nueva orden
   this.ordersUseCase.CreateOrders(orderData).subscribe({
     next: (res) => {
       if (res.isSuccess) {

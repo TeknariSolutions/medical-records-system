@@ -26,7 +26,8 @@
         <div class="mb-2 position-relative">
           <label>CUPS</label>
           <input type="text" class="form-control" [formControlName]="'cupsName'" placeholder="Busque un CUPS"
-            (input)="onCupsInput($event.target.value, i)" (keydown.enter)="$event.preventDefault()" />
+            (input)="onCupsInput($event.target.value, i)" (keydown.enter)="$event.preventDefault()"
+            [ngClass]="{'is-invalid': submitted && detail.get('idCupsCode')?.invalid}">
         
           <!-- Sugerencias -->
           <ul class="list-group position-absolute w-100" *ngIf="showCupsDropdown[i] && cupsSuggestions[i]?.length > 0">
@@ -49,18 +50,31 @@
             </li>
           </ul>
 
+          <div *ngIf="submitted && detail.get('idCupsCode')?.invalid" class="invalid-feedback">
+            Este campo es requerido.
+          </div>
+
         </div>
 
 
         <div class="mb-2">
           <label>Descripción del Procedimiento</label>
-          <input type="text" class="form-control" formControlName="procedureDescription">
+          <input type="text" class="form-control" formControlName="procedureDescription"
+          [ngClass]="{'is-invalid': submitted && detail.get('procedureDescription')?.invalid}">
+          <div *ngIf="submitted && detail.get('procedureDescription')?.invalid" class="invalid-feedback">
+             Este campo es requerido.
+          </div>
         </div>
 
         <div class="row g-2">
           <div class="col">
             <label>Cantidad</label>
-            <input type="number" class="form-control" formControlName="quantity">
+            <input type="number" class="form-control" formControlName="quantity"
+            [ngClass]="{'is-invalid': submitted && detail.get('quantity')?.invalid}">
+
+            <div *ngIf="submitted && detail.get('quantity')?.invalid" class="invalid-feedback">
+             Este campo es requerido.
+            </div>
           </div>
         </div>
 
@@ -78,7 +92,10 @@
     <div class="mb-3">
       <label for="generalObservations" class="form-label">Observaciones Generales</label>
       <textarea id="generalObservations" formControlName="generalObservations"
-        class="form-control" rows="3"></textarea>
+        class="form-control" rows="3" [ngClass]="{'is-invalid': submitted && orderForm.get('generalObservations')?.invalid}"></textarea>
+        <div *ngIf="submitted && orderForm.get('generalObservations')?.invalid" class="invalid-feedback">
+          Este campo es requerido.
+        </div>
     </div>
 
 

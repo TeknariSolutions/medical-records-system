@@ -36,4 +36,9 @@ export class AuthUseCase {
     sessionStorage.clear();
     return of(true);
   }
+
+  resetUserPassword(idUser: number, password: string): Observable<ResponseDTO> {
+    return this._auth.ResetUserPassword(idUser, password);
+  }
+
 }

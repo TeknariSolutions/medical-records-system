@@ -146,7 +146,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     this.menuItems = MENU;
   } */
 
-  initialize(): void {
+  /* initialize(): void {
     const roleId = Number(localStorage.getItem('IdRol'));
     const filteredMenu = JSON.parse(JSON.stringify(MENU)) as MenuItem[];
 
@@ -162,6 +162,36 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     this.menuItems = filteredMenu;
+  } */
+
+
+  initialize(): void {
+    const roleId = Number(localStorage.getItem('IdRol'));
+
+    // Clonar menú para no mutar el original
+    const filteredMenu = JSON.parse(JSON.stringify(MENU)) as MenuItem[];
+
+    // Filtrar items principales por rol
+    this.menuItems = filteredMenu.filter(item => {
+      // Si no tiene roleAuthenticated, mostrar
+      if (!item.roleAuthenticated) return true;
+
+      // Si lo tiene, validar
+      return item.roleAuthenticated.includes(roleId);
+    }).map(item => {
+
+      // Filtrar subItems
+      if (item.subItems?.length) {
+        item.subItems = item.subItems.filter(sub => {
+          return (
+            !sub.roleAuthenticated ||
+            sub.roleAuthenticated.includes(roleId)
+          );
+        });
+      }
+
+      return item;
+    });
   }
 
 

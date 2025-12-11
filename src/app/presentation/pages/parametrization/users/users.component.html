@@ -129,6 +129,12 @@
                           </li>
                           }
 
+                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Restablecer contraseña">
+                          <button class="btn btn-sm btn-soft-warning" (click)="openResetPasswordModal(data.idUser)">
+                            <i class="mdi mdi-key"></i>
+                          </button>
+                        </li>
+
 
                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                           <button class="btn btn-sm btn-soft-info" (click)="editUser(data)">
@@ -141,16 +147,6 @@
                             <i class="mdi mdi-delete-outline"></i>
                           </button>
                         </li>
-
-                        <!-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="Perfil Doctor">
-                          <button 
-                          class="btn btn-sm btn-soft-primary"
-                          (click)="viewDoctorProfile(data.idUser)">
-                          <i class="mdi mdi-account-outline"></i>
-                          </button>
-                        </li> -->
-
-                      
 
                       </ul>
                     </td>

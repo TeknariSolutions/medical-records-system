@@ -27,8 +27,8 @@ import { MedicalConsultationByIdDTO } from 'src/app/core/DTOs/app/medical-consul
 })
 export class ConsultationProceduresComponent implements OnInit {
 
-  //consultationData?: MedicalConsultationDTO;
-  consultationData: Partial<MedicalConsultationDTO> = {};
+  consultationData?: MedicalConsultationDTO;
+  //consultationData: Partial<MedicalConsultationDTO> = {};
 
 
   diagnoses: MedicalDiagnosisDTO[] = [];
@@ -52,7 +52,11 @@ export class ConsultationProceduresComponent implements OnInit {
 
  ngOnInit(): void {
 
+  
+
   this.patientData = this._dataTransferService.getData<PatientDTO>('patientData')!;
+
+  //console.log('PATIENT DATA:', this.patientData)
 
   const idConsultation = Number(this._route.snapshot.paramMap.get('idMedicalConsultation'));
 
@@ -64,12 +68,30 @@ export class ConsultationProceduresComponent implements OnInit {
 
    this._medicalConsultationUseCase.GetMedicalConsultationById(idConsultation)
      .subscribe({
-       next: (response: MedicalConsultationByIdDTO) => {
+       /* next: (response: MedicalConsultationByIdDTO) => {
          if (response) {
            this.consultationData = response.main?.[0];
            this.diagnoses = response.related ?? [];
          }
-       },
+       }
+        */
+
+       next: (response: MedicalConsultationByIdDTO) => {
+         if (response) {
+           this.consultationData = {
+             ...response.main?.[0],
+             idMedicalConsultation: idConsultation, // 👈 IMPORTANTE
+             idPatient: response.main?.[0]?.idPatient ?? this.patientData?.idPatient,
+             idUser: Number(localStorage.getItem('IdUser'))
+           };
+
+           //console.log(this.consultationData)
+
+           this.diagnoses = response.related ?? [];
+         }
+       }
+
+       ,
        error: () => {
          this._notificationService.showToastErrorMessage(
            'Error al cargar la consulta desde el servidor'

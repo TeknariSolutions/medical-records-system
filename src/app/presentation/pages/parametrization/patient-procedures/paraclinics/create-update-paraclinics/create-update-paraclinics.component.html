@@ -23,7 +23,8 @@
       <label>CUPS <span class="text-danger">*</span></label>
       <input type="text" class="form-control" placeholder="Busque un CUPS"
              formControlName="cupsName" [ngClass]="{'is-invalid': submitted && form.get('cupsName')?.invalid}"
-             (input)="onCupsInput($event.target.value)" (keydown.enter)="$event.preventDefault()">
+             (input)="onCupsInput($event.target.value)" (keydown.enter)="$event.preventDefault()"
+             [ngClass]="{'is-invalid': submitted && form.get('cupsName')?.invalid}">
 
       <ul class="list-group position-absolute w-100 z-3"
           *ngIf="showCupsDropdown && cupsSuggestions?.length > 0">
@@ -64,7 +65,7 @@
 
       <!-- Código Vía de Ingreso< -->
       <div class="col-12 col-lg-6 col-md-6">
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label>Código Vía de Ingreso <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="codViaIngreso"
           [ngClass]="{'is-invalid': submitted && form.get('idModalityAttention')?.invalid}">
@@ -72,8 +73,24 @@
           <div *ngIf="submitted && form.get('codViaIngreso')?.invalid" class="invalid-feedback">
               Este campo es requerido.
           </div>
+        </div> -->
+
+        <div class="mb-3">
+          <label>Código Vía de Ingreso  <span class="text-danger">*</span></label>
+          <select class="form-control" formControlName="codViaIngreso"
+            [ngClass]="{'is-invalid': submitted && form.get('codViaIngreso')?.invalid}">
+            <option [ngValue]="null" disabled selected>Seleccione una opción</option>
+            <option *ngFor="let codeVia of codesViaIngreso" [ngValue]="codeVia.code">{{ codeVia.description }}</option>
+          </select>
+          <div *ngIf="submitted && form.get('codViaIngreso')?.invalid" class="invalid-feedback">
+            Este campo es requerido.
+          </div>
         </div>
+
+
       </div>
+
+      
 
     </div>
 

@@ -35,4 +35,16 @@ export class AuthService {
     return of(true);
     
   }
+
+
+  ResetUserPassword(idUser: number, password: string): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        const body = { idUser, password };
+        return this._httpService.put(url, "ResetUserPassword", null, body);
+      })
+    );
+  }
+
+  
 }

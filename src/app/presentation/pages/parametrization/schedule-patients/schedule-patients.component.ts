@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NotificationsService } from 'src/app/infrastructure/services/common/notifications/notifications.service';
 import { LoadingComponent } from 'src/app/presentation/common/loading/loading.component';
@@ -11,6 +11,11 @@ import { DatePipe } from '@angular/common';
 import { CreateUpdateMedicalConsultationComponent } from '../patient-procedures/medical-consultation/create-update-medical-consultation/create-update-medical-consultation.component';
 import { MedicalConsultationUseCase } from 'src/app/infrastructure/use-cases/app/medical-consultation.use-case';
 import { Router } from '@angular/router';
+import { DoctorProfileUseCase } from 'src/app/infrastructure/use-cases/app/doctor-profile-use-case';
+import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medical-history.use-case';
+import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
+import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
+import { DetailsConsultationComponent } from '../patient-procedures/medical-consultation/details-consultation/details-consultation.component';
 
 @Component({
   selector: 'app-schedule-patients',
@@ -46,11 +51,17 @@ export class SchedulePatientsComponent implements OnInit {
   filterFirstName: string = '';
   filterFirstLastName: string = '';
 
+  @ViewChild(DetailsConsultationComponent) detailsComponent!: DetailsConsultationComponent;
+
   constructor(
     private router: Router,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
-    private _notificationService: NotificationsService
-  ) {}
+    private _notificationService: NotificationsService,
+    private _doctorProfileUseCase: DoctorProfileUseCase,
+    private _medicalHistoryUseCase: MedicalHistoryUseCase,
+    private _closeConsultationUseCase: CloseConsultationUseCase,
+    private _dataTransferService: DataTransferService,
+  ) { }
 
   ngOnInit(): void {
     this.loadConsultations();
@@ -131,4 +142,48 @@ export class SchedulePatientsComponent implements OnInit {
       this.loadConsultations();
     }
   }
+
+  onDownloadPDF(consultation: MedicalConsultationDTO) {
+    const component = new DetailsConsultationComponent(
+      this._medicalConsultationUseCase,
+      this._doctorProfileUseCase,
+      this._notificationService,
+      this._medicalHistoryUseCase,
+      this._closeConsultationUseCase
+    );
+
+    component.idPatient = consultation.idPatient;
+    component.idMedicalConsultation = consultation.idMedicalConsultation;
+    component.patientData = { firstName: '', secondName: '', firstLastName: '', secondLastName: '' } as any;
+
+    component.generatePDF();
+  }
+
+  /* viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
+  if (!consultation.idMedicalConsultation) {
+    this._notificationService.showToastErrorMessage('No se encontró el ID de la consulta');
+    return;
+  }
+
+  const patientData = {
+    idPatient: consultation.idPatient,
+    firstName: consultation.firstName,
+    secondName: consultation.secondName,
+    firstLastName: consultation.firstLastName,
+    secondLastName: consultation.secondLastName,
+    idDocument: consultation.idDocument,
+    documentType: ''
+  } as PatientDTO;
+
+  // Guarda info del paciente para la siguiente vista
+  this._dataTransferService.setData('patientData', patientData);
+
+  this.router.navigate([
+    'parametrization/consultation-procedures',
+    consultation.idMedicalConsultation
+  ]);
+}
+ */
+
+
 }
