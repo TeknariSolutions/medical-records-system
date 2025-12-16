@@ -49,6 +49,8 @@ export class DetailsPrescriptionComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+
+    console.log(this.prescriptionData)
     await this.generatePDF();
   }
 
@@ -159,9 +161,9 @@ private buildDocDefinition(logoBase64: string) {
     );
   }
 
-  if (this.doctorProfile) {
+ /*  if (this.doctorProfile) {
     content.push(this.buildDoctorSignature());
-  }
+  } */
 
   return {
     pageSize: { width: 612, height: 396 }, // Media carta horizontal

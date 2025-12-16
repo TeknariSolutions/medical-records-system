@@ -118,7 +118,7 @@ export class MedicalEquipmentListComponent implements OnInit {
   }
 
 
-  deleteEquipment(idMedicalEquipment: number): void {
+  /* deleteEquipment(idMedicalEquipment: number): void {
     this._notificationService
       .confirm('¿Estás seguro de eliminar este equipo?', 'Esta acción no se puede deshacer.')
       .then(confirmed => {
@@ -141,7 +141,49 @@ export class MedicalEquipmentListComponent implements OnInit {
           });
         }
       });
-  }
+  } */
 
+ /*  deleteEquipment(idMedicalEquipment: number): void {
+    this._notificationService
+      .confirm('¿Estás seguro de eliminar este equipo?', 'Esta acción no se puede deshacer.')
+      .then(confirmed => {
+        if (confirmed) {
+          const idCompany = Number(localStorage.getItem('IdCompany')) || 0;
+
+          this._medicalEquipmentsUseCase
+            .DeleteMedicalEquipment(idMedicalEquipment, idCompany)
+            .subscribe({
+              next: (success) => {
+                if (success) {
+                  this._notificationService.showToastSuccessMessage('Equipo eliminado correctamente');
+                  this.loadMedicalEquipments(); // 🔥 único responsable del refresh
+                }
+              },
+              error: () => {
+                this._notificationService.showToastErrorMessage('Error al eliminar el equipo');
+              }
+            });
+        }
+      });
+  } */
+
+  deleteEquipment(idMedicalEquipment: number): void {
+    this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
+      if (confirmed) {
+        this.isLoading = true;
+        const idCompany = Number(localStorage.getItem('IdCompany')) || 0;
+        this._medicalEquipmentsUseCase
+          .DeleteMedicalEquipment(idMedicalEquipment, idCompany).subscribe({
+            next: () => {
+              this.loadMedicalEquipments();
+              this.isLoading = false;
+            },
+            error: () => {
+              this.isLoading = false;
+            }
+          });
+      }
+    });
+  }
 
 }

@@ -114,6 +114,8 @@ export class PrescriptionsComponent {
     component.prescriptionData = prescription;
     component.patientData = this.patientData;
 
+    console.log(prescription)
+
     component.generatePDF();
   }
 

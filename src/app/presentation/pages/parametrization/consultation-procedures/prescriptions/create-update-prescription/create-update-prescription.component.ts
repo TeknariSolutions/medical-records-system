@@ -196,7 +196,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
   }
 
   /** ---------- AUTOCOMPLETE MEDS ---------- */
-  onMedicineInput(value: string, index: number) {
+  /* onMedicineInput(value: string, index: number) {
     if (value && value.trim().length >= 2) {
       const term = value.trim();
       this.medicinesPaginator[index].pageIndex = 1;
@@ -205,7 +205,28 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
       this.medicinesSuggestions[index] = [];
       this.showMedicinesDropdown[index] = false;
     }
+  } */
+
+  onMedicineInput(value: string, index: number) {
+    const group = this.details.at(index) as FormGroup;
+
+    if (!value || value.trim().length === 0) {
+      group.get('idMedicine')?.setValue(null);
+      this.medicinesSuggestions[index] = [];
+      this.showMedicinesDropdown[index] = false;
+      return;
+    }
+
+    if (value.trim().length >= 2) {
+      const term = value.trim();
+      this.medicinesPaginator[index].pageIndex = 1;
+      this.searchMedicines(term, index);
+    } else {
+      this.medicinesSuggestions[index] = [];
+      this.showMedicinesDropdown[index] = false;
+    }
   }
+
 
   searchMedicines(term: string, index: number) {
     const paginator = this.medicinesPaginator[index];
@@ -253,6 +274,17 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
     this.medicinesSuggestions[index] = [];
     this.showMedicinesDropdown[index] = false;
   }
+
+  onMedicineNameManualEdit(value: string, index: number) {
+    const group = this.details.at(index) as FormGroup;
+
+    // Si ya hay un medicamento seleccionado, NO lo limpiamos
+    if (group.get('idMedicine')?.value) {
+      // Solo actualizamos el texto, no el id
+      group.get('medicineName')?.setValue(value, { emitEvent: false });
+    }
+  }
+
 
   /** ---------- AUTOCOMPLETE EQUIPOS ---------- */
   onEquipmentInput(value: string, index: number) {
