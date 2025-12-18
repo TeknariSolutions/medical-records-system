@@ -17,6 +17,7 @@ import { MedicalHistoryDTO } from 'src/app/core/DTOs/app/medical-history.dto';
 import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
 //import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
+import { DateTimeHelper } from 'src/app/infrastructure/helpers/date-time.helper';
 
 
 @Component({
@@ -72,6 +73,11 @@ export class DetailsConsultationComponent implements OnInit {
   // Generación PDF
   // ===========================
     async generatePDF(): Promise<void> {
+
+      //const generatedAt = DateTimeHelper.getLocalDateTimeWithOffset();
+
+
+
       try {
         this._notificationService.showInfoMessage('Generando documento, por favor espere...');
 
@@ -188,6 +194,10 @@ export class DetailsConsultationComponent implements OnInit {
   // ===========================
 
   private buildDocDefinition(logoBase64: string) {
+
+    const generatedAt = DateTimeHelper.getLocalDateTimeWithOffset();
+
+
     return {
       pageSize: 'LETTER',
       // 👇 aumentamos el margen superior para todas las páginas
@@ -218,7 +228,7 @@ export class DetailsConsultationComponent implements OnInit {
               alignment: 'center',
               margin: [0, 0, 0, 5] // un poco menos de margen aquí
             },
-            {
+            /* {
               text: [
                 { text: 'Fecha de Ingreso: ', bold: true },
                 { text: this.formatDate(this.patientData.registerDate) + '\n' },
@@ -227,7 +237,30 @@ export class DetailsConsultationComponent implements OnInit {
               ],
               alignment: 'center',
               margin: [10, 10, 10, 30]
+            } */
+           /*  {
+              text: [
+                { text: 'Fecha de Consulta: ', bold: true },
+                { text: this.formatDate(this.dataConsultation?.consultationDate) + '\n' },
+                { text: 'Hora de Consulta: ', bold: true },
+                { text: this.formatTime(this.dataConsultation?.consultationDate) }
+              ],
+              alignment: 'center',
+              margin: [10, 10, 10, 30]
+            } */
+
+            {
+              text: [
+                { text: 'Fecha de Consulta: ', bold: true },
+                { text: this.formatDate(generatedAt) + '\n' },
+                { text: 'Hora de Consulta: ', bold: true },
+                { text: this.formatTime(generatedAt) }
+              ],
+              alignment: 'center',
+              margin: [10, 10, 10, 30]
             }
+
+
           ]
         },
 
@@ -566,7 +599,12 @@ export class DetailsConsultationComponent implements OnInit {
   // ===========================
   // Helpers
   // ===========================
+ /*  private formatDate(date: string | Date): string {
+    return new Date(date).toLocaleDateString('es-CO');
+  } */
+
   private formatDate(date: string | Date): string {
+    if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('es-CO');
   }
 

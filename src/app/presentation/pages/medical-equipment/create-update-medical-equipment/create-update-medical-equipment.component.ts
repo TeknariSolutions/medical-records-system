@@ -97,6 +97,11 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
     const companyId = Number(localStorage.getItem('IdCompany')) || 0;
     const formValue = this.equipmentForm.value;
 
+    const normalizeDate = (value: string | null): string | null => {
+      return value ? `${value}T00:00:00` : null;
+    };
+
+
     const dto: MedicalEquipmentDTO = {
       idMedicalEquipment: this.isEditMode ? this.equipmentData!.idMedicalEquipment : 0,
       equipmentName: formValue.equipmentName,
@@ -106,10 +111,10 @@ export class CreateUpdateMedicalEquipmentComponent implements OnInit {
       minimumStock: formValue.minimumStock,
       unitPrice: formValue.unitPrice,
       supplier: formValue.supplier,
-      //acquisitionDate: `${formValue.acquisitionDate}T00:00:00`,
-      acquisitionDate: formValue.acquisitionDate,
-      //expirationDate: `${formValue.expirationDate}T00:00:00`,
-      expirationDate: formValue.expirationDate,
+      /* acquisitionDate: formValue.acquisitionDate,
+      expirationDate: formValue.expirationDate, */
+      acquisitionDate: normalizeDate(formValue.acquisitionDate),
+      expirationDate: normalizeDate(formValue.expirationDate),
       isActive: formValue.isActive,
       registrationDate: this.equipmentData?.registrationDate ?? now,
       ...(this.isEditMode ? {} : { registeredByUser: currentUserId }),

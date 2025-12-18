@@ -17,6 +17,18 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { MedicalEquipmentDTO } from 'src/app/core/DTOs/app/medical-equipment.dto';
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
+ import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType } from 'docx';
+import { saveAs } from 'file-saver'; 
+
+/* import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType } from 'docx';
+import { saveAs } from 'file-saver'; */
+
+
+
+
+
+
+
 
 type PrescriptionDetailExtendedDTO = PrescriptionDetailDTO & {
   medicineName?: string;
@@ -128,6 +140,135 @@ export class DetailsPrescriptionComponent implements OnInit {
       this._notificationService.showToastErrorMessage('Ocurrió un error al generar la prescripción.');
     }
   }
+
+  // ===============================
+  // Generar WORD
+  // ===============================
+  async generateWord(): Promise<void> {
+  try {
+    this._notificationService.showInfoMessage('Generando documento Word...');
+
+    await this.ensureDataLoaded();
+
+    const medicineDetails = this.details.filter(d => d.idMedicine && d.idMedicine > 0);
+    const equipmentDetails = this.details.filter(d => d.idMedicalEquipment && d.idMedicalEquipment > 0);
+
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+            this.buildWordTitle(),
+            ...this.buildPatientInfoWord(),
+           ...this.buildMedicinesWord(medicineDetails),
+            ...this.buildEquipmentWord(equipmentDetails)
+          ]
+        }
+      ]
+    });
+
+    const blob = await Packer.toBlob(doc);
+
+    const fullName = `${this.patientData.firstName ?? ''} ${this.patientData.firstLastName ?? ''}`
+      .replace(/\s+/g, '_');
+
+    saveAs(blob, `Prescripcion_${fullName}.docx`);
+
+    this._notificationService.showSuccessMessage('Documento Word generado correctamente');
+  } catch (error) {
+    console.error(error);
+    this._notificationService.showToastErrorMessage('Error al generar el documento Word');
+  }
+}
+
+private buildWordTitle(): Paragraph {
+  return new Paragraph({
+    children: [
+      new TextRun({
+        text: 'PRESCRIPCIÓN MÉDICA',
+        bold: true,
+        size: 28
+      })
+    ],
+    alignment: 'center',
+    spacing: { after: 300 }
+  });
+}
+
+
+private buildPatientInfoWord(): Paragraph[] {
+  const fullName = `${this.patientData.firstName ?? ''} ${this.patientData.secondName ?? ''} 
+    ${this.patientData.firstLastName ?? ''} ${this.patientData.secondLastName ?? ''}`.trim();
+
+  return [
+    new Paragraph(`Paciente: ${fullName}`),
+    new Paragraph(`Documento: ${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`),
+    new Paragraph(`Fecha de Prescripción: ${this.formatDateTime(this.prescriptionData.prescriptionDate)}`),
+    new Paragraph({ text: '', spacing: { after: 200 } })
+  ];
+}
+
+ private buildMedicinesWord(details: PrescriptionDetailExtendedDTO[]): Table[] {
+  if (!details.length) return [];
+
+  return [
+    new Paragraph({ text: 'DETALLES DE MEDICAMENTOS',  spacing: { after: 200 } }),
+    new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows: [
+        new TableRow({
+          children: [
+            'Medicamento', 'Dosis', 'Frecuencia', 'Duración', 'Cantidad', 'Instrucciones'
+          ].map(h => new TableCell({
+            children: [new Paragraph({ text: h})]
+          }))
+        }),
+        ...details.map(d =>
+          new TableRow({
+            children: [
+              d.activeIngredient,
+              d.dosage,
+              d.frequency,
+              d.duration,
+              d.quantity,
+              d.instructions
+            ].map(v => new TableCell({
+              children: [new Paragraph(this.nullAsNA(v))]
+            }))
+          })
+        )
+      ]
+    }),
+    new Paragraph({ text: '', spacing: { after: 300 } })
+  ];
+}
+
+private buildEquipmentWord(details: any[]): Table[] {
+  if (!details.length) return [];
+
+  return [
+    new Paragraph({ text: 'DETALLES DE EQUIPOS MÉDICOS', spacing: { after: 200 } }),
+    new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows: [
+        new TableRow({
+          children: ['Equipo Médico', 'Instrucciones'].map(h =>
+            new TableCell({ children: [new Paragraph({ text: h })] })
+          )
+        }),
+        ...details.map(d =>
+          new TableRow({
+            children: [
+              new TableCell({ children: [new Paragraph(this.nullAsNA(d.equipmentName))] }),
+              new TableCell({ children: [new Paragraph(this.nullAsNA(d.instructions))] })
+            ]
+          })
+        )
+      ]
+    })
+  ];
+}
+ 
+
 
   // ===============================
   // Definición de documento

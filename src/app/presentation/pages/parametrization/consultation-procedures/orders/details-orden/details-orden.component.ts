@@ -167,7 +167,7 @@ export class DetailsOrdenComponent implements OnInit {
       { text: 'OBSERVACIONES:', style: 'sectionHeader', margin: [0, 3, 0, 2] },
       { text: this.nullAsNA(this.orderData.generalObservations), margin: [0, 0, 0, 8], fontSize: 7.3 },
 
-      ...(this.doctorProfile ? [this.buildDoctorSignature()] : [])
+      /* ...(this.doctorProfile ? [this.buildDoctorSignature()] : []) */
     ],
 
     styles: {
@@ -225,7 +225,7 @@ export class DetailsOrdenComponent implements OnInit {
       body
     },
     layout: 'lightHorizontalLines',
-    margin: [0, 0, 0, 8] // 🔸 más pegado a Observaciones
+    margin: [0, 0, 0, 8] // más pegado a Observaciones
   };
 }
 

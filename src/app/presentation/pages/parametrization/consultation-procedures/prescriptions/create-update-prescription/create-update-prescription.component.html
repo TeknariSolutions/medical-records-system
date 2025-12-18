@@ -52,7 +52,7 @@
 
             <ul class="list-group position-absolute w-100" *ngIf="showMedicinesDropdown[i]">
               <li class="list-group-item" *ngFor="let med of medicinesSuggestions[i]" (click)="selectMedicine(med, i)">
-                {{ med.commercialName }} - {{ med.activeIngredient }}
+                {{ med.activeIngredient }}
               </li>
               <li class="li-custom d-flex justify-content-between align-items-center">
                 <button type="button" class="btn btn-sm btn-light" (click)="previousPage(i)"

@@ -16,6 +16,8 @@ import { MedicalHistoryUseCase } from 'src/app/infrastructure/use-cases/app/medi
 import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/close-consultation.use-case';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { DetailsConsultationComponent } from '../patient-procedures/medical-consultation/details-consultation/details-consultation.component';
+import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
+import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
 
 @Component({
   selector: 'app-schedule-patients',
@@ -61,6 +63,7 @@ export class SchedulePatientsComponent implements OnInit {
     private _medicalHistoryUseCase: MedicalHistoryUseCase,
     private _closeConsultationUseCase: CloseConsultationUseCase,
     private _dataTransferService: DataTransferService,
+    private _patientsUseCase: PatientsUseCase,
   ) { }
 
   ngOnInit(): void {
@@ -132,7 +135,7 @@ export class SchedulePatientsComponent implements OnInit {
   }
 
   goBackToPatients(): void {
-      this.router.navigate([`/parametrization/patients`]);
+    this.router.navigate([`/parametrization/patients`]);
   }
 
   onEnterKey(event: KeyboardEvent): void {
@@ -143,47 +146,69 @@ export class SchedulePatientsComponent implements OnInit {
     }
   }
 
-  onDownloadPDF(consultation: MedicalConsultationDTO) {
-    const component = new DetailsConsultationComponent(
-      this._medicalConsultationUseCase,
-      this._doctorProfileUseCase,
-      this._notificationService,
-      this._medicalHistoryUseCase,
-      this._closeConsultationUseCase
-    );
+  onDownloadPDF(consultation: MedicalConsultationDTO): void {
 
-    component.idPatient = consultation.idPatient;
-    component.idMedicalConsultation = consultation.idMedicalConsultation;
-    component.patientData = { firstName: '', secondName: '', firstLastName: '', secondLastName: '' } as any;
+    if (!consultation.idPatient || !consultation.idMedicalConsultation) {
+      this._notificationService.showToastErrorMessage('Datos incompletos para generar PDF');
+      return;
+    }
 
-    component.generatePDF();
+    this.isLoading = true;
+
+    this._patientsUseCase
+      .GetPatientByIdAll(consultation.idPatient)
+      .subscribe({
+        next: (patient: PatientDTO) => {
+
+          const component = new DetailsConsultationComponent(
+            this._medicalConsultationUseCase,
+            this._doctorProfileUseCase,
+            this._notificationService,
+            this._medicalHistoryUseCase,
+            this._closeConsultationUseCase
+          );
+
+          component.idPatient = consultation.idPatient!;
+          component.idMedicalConsultation = consultation.idMedicalConsultation!;
+          component.patientData = patient;
+
+          component.generatePDF();
+          this.isLoading = false;
+        },
+        error: () => {
+          this._notificationService.showToastErrorMessage('Error al obtener el paciente');
+          this.isLoading = false;
+        }
+      });
   }
 
-  /* viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
-  if (!consultation.idMedicalConsultation) {
-    this._notificationService.showToastErrorMessage('No se encontró el ID de la consulta');
-    return;
+
+  viewMedicalConsultationProcedures(consultation: MedicalConsultationDTO): void {
+
+    if (!consultation.idMedicalConsultation || !consultation.idPatient) {
+      this._notificationService.showToastErrorMessage('Datos incompletos');
+      return;
+    }
+
+    this.isLoading = true;
+
+    this._patientsUseCase.GetPatientByIdAll(consultation.idPatient).subscribe({
+      next: (patient: PatientDTO) => {
+
+        this._dataTransferService.setData('patientData', patient);
+
+        this.router.navigate([
+          'parametrization/consultation-procedures',
+          consultation.idMedicalConsultation
+        ]);
+
+        this.isLoading = false;
+      },
+      error: () => {
+        this._notificationService.showToastErrorMessage('Error al obtener datos del paciente');
+        this.isLoading = false;
+      }
+    });
   }
-
-  const patientData = {
-    idPatient: consultation.idPatient,
-    firstName: consultation.firstName,
-    secondName: consultation.secondName,
-    firstLastName: consultation.firstLastName,
-    secondLastName: consultation.secondLastName,
-    idDocument: consultation.idDocument,
-    documentType: ''
-  } as PatientDTO;
-
-  // Guarda info del paciente para la siguiente vista
-  this._dataTransferService.setData('patientData', patientData);
-
-  this.router.navigate([
-    'parametrization/consultation-procedures',
-    consultation.idMedicalConsultation
-  ]);
-}
- */
-
 
 }

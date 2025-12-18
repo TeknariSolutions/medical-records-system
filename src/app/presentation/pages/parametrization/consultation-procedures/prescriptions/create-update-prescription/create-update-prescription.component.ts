@@ -232,7 +232,7 @@ export class CreateUpdatePrescriptionComponent implements OnInit {
     const paginator = this.medicinesPaginator[index];
 
     this.medicineUseCase
-      .GetListMedicines(paginator, term, term)
+      .GetListMedicines(paginator, term, '')
       .subscribe({
         next: (data: TableResultDTO) => {
           const results = data?.results || [];

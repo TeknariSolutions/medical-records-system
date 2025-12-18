@@ -361,7 +361,7 @@ export class CreateUpdateMedicalConsultationComponent {
     }
   }
 
-  onDescriptionInput(value: string, index: number) {
+ /*  onDescriptionInput(value: string, index: number) {
     this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
 
     if (value && value.length >= 4) {
@@ -372,9 +372,55 @@ export class CreateUpdateMedicalConsultationComponent {
       this.showCodeDropdown[index] = false;
       this.showDescriptionDropdown[index] = false;
     }
+  } */
+
+/*   onDescriptionInput(value: string, index: number) {
+    this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
+
+    const normalized = this.normalizeSearchText(value);
+
+    if (normalized.length >= 3) {
+      // 🔑 usar solo la primera palabra
+      const firstWord = normalized.split(' ')[0];
+
+      this.searchCIE10({ name: firstWord }, index);
+    } else {
+      this.clearSuggestions(index);
+    }
+  } */
+
+  onDescriptionInput(value: string, index: number) {
+    this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
+
+    const normalized = this.normalizeSearchText(value);
+
+    if (normalized.length >= 3) {
+      const firstWord = normalized.split(' ')[0];
+
+      // 🔹 PASAMOS AMBOS
+      this.searchCIE10(
+        { name: firstWord },
+        index,
+        normalized
+      );
+    } else {
+      this.clearSuggestions(index);
+    }
   }
 
-  searchCIE10(
+
+  private clearSuggestions(index: number) {
+    this.codeSuggestions[index] = [];
+    this.descriptionSuggestions[index] = [];
+    this.showCodeDropdown[index] = false;
+    this.showDescriptionDropdown[index] = false;
+  }
+
+
+
+
+
+  /* searchCIE10(
     filters: { code?: string; name?: string },
     index: number
   ) {
@@ -400,6 +446,44 @@ export class CreateUpdateMedicalConsultationComponent {
           this.showCodeDropdown[index] = false;
           this.showDescriptionDropdown[index] = false;
         },
+      });
+  } */
+
+
+  searchCIE10(
+    filters: { code?: string; name?: string },
+    index: number,
+    fullSearchText?: string
+  ) {
+    this.cie10UseCase
+      .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
+      .subscribe({
+        next: (data: TableResultDTO) => {
+          let results: any[] = data?.results ?? [];
+
+          if (fullSearchText) {
+            const search = fullSearchText.toUpperCase();
+
+            results = results.filter(r =>
+              r.nombre?.toUpperCase().includes(search)
+            );
+
+            results.sort((a, b) => {
+              const aExact = a.nombre?.toUpperCase() === search;
+              const bExact = b.nombre?.toUpperCase() === search;
+              return Number(bExact) - Number(aExact);
+            });
+          }
+
+          this.codeSuggestions[index] = results;
+          this.descriptionSuggestions[index] = results;
+
+          this.showCodeDropdown[index] = results.length > 0;
+          this.showDescriptionDropdown[index] = results.length > 0;
+
+          this.cdr.detectChanges();
+        },
+        error: () => this.clearSuggestions(index),
       });
   }
 
@@ -991,6 +1075,14 @@ export class CreateUpdateMedicalConsultationComponent {
   resetStepper() {
     this.goToStep(1);
   }
+
+  private normalizeSearchText(value: string): string {
+    return value
+      .trim()
+      .replace(/\s+/g, ' ')     // elimina dobles espacios
+      .toUpperCase();           // opcional, depende del backend
+  }
+
 
 
 }
