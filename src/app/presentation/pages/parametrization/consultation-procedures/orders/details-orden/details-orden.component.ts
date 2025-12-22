@@ -129,18 +129,18 @@ export class DetailsOrdenComponent implements OnInit {
   }
 
   // ===============================
- private buildDocDefinition(logoBase64: string) {
+/*  private buildDocDefinition(logoBase64: string) {
   return {
-    // 🧾 Media carta horizontal (Landscape)
     pageSize: { width: 612, height: 396 },
-    pageMargins: [16, 55, 16, 16], // 🔸 márgenes más pequeños
+    
+    pageMargins: [16, 55, 16, 16], 
 
     header: {
       image: logoBase64,
       width: 520,
       height: 70,
       alignment: 'center',
-      margin: [0, 2, 0, 8] // 🔸 más cerca del contenido
+      margin: [0, 2, 0, 8] 
     },
 
     footer: (currentPage: number, pageCount: number) => ({
@@ -167,7 +167,6 @@ export class DetailsOrdenComponent implements OnInit {
       { text: 'OBSERVACIONES:', style: 'sectionHeader', margin: [0, 3, 0, 2] },
       { text: this.nullAsNA(this.orderData.generalObservations), margin: [0, 0, 0, 8], fontSize: 7.3 },
 
-      /* ...(this.doctorProfile ? [this.buildDoctorSignature()] : []) */
     ],
 
     styles: {
@@ -180,10 +179,68 @@ export class DetailsOrdenComponent implements OnInit {
       lineHeight: 1.0
     }
   };
+} */
+
+ private buildDocDefinition(logoBase64: string) {
+  return {
+    // 🧾 Media carta vertical (Portrait)
+    pageSize: { width: 396, height: 612 },
+    pageMargins: [10, 66, 10, 10],
+
+    header: {
+      image: logoBase64,
+      width: 330,
+      height: 58,
+      alignment: 'center',
+      margin: [0, 2, 0, 8]
+    },
+
+    footer: (currentPage: number, pageCount: number) => ({
+      text: `${currentPage} / ${pageCount}`,
+      alignment: 'right',
+      margin: [0, 0, 12, 6],
+      fontSize: 5.5
+    }),
+
+    content: [
+      {
+        text: 'ORDEN MÉDICA',
+        style: 'header',
+        alignment: 'center',
+        margin: [0, 3, 0, 6]
+      },
+
+      this.buildPatientInfoTable(),
+
+      { text: 'DETALLE DE ÓRDENES', style: 'sectionHeader', margin: [0, 2, 0, 3] },
+
+      ...(this.orderDetails.length > 0 ? [this.buildOrderDetailsTable()] : []),
+
+      { text: 'OBSERVACIONES:', style: 'sectionHeader', margin: [0, 3, 0, 2] },
+      {
+        text: this.nullAsNA(this.orderData.generalObservations),
+        margin: [0, 0, 0, 6],
+        fontSize: 6.6
+      }
+    ],
+
+    styles: {
+      header: { fontSize: 6.8, bold: true },
+      sectionHeader: { fontSize: 6.0, bold: true },
+      tableHeader: { bold: true, fillColor: '#f2f2f2', fontSize: 5.8 }
+    },
+
+    defaultStyle: {
+      fontSize: 5.9,
+      lineHeight: 1.05
+    }
+  };
 }
 
+
+
   // ===============================
-  private buildPatientInfoTable() {
+/*   private buildPatientInfoTable() {
   const fullName = `${this.patientData.firstName ?? ''} ${this.patientData.secondName ?? ''} ${this.patientData.firstLastName ?? ''} ${this.patientData.secondLastName ?? ''}`.trim();
 
   return {
@@ -199,6 +256,48 @@ export class DetailsOrdenComponent implements OnInit {
     },
     layout: 'lightHorizontalLines',
     margin: [0, 0, 0, 8] 
+  };
+}
+ */
+
+private buildPatientInfoTable() {
+  const fullName = `
+    ${this.patientData.firstName ?? ''}
+    ${this.patientData.secondName ?? ''}
+    ${this.patientData.firstLastName ?? ''}
+    ${this.patientData.secondLastName ?? ''}
+  `.replace(/\s+/g, ' ').trim();
+
+  return {
+    table: {
+      widths: ['15%', '35%', '15%', '35%'],
+      body: [
+        // 🔹 Nombre completo (una sola fila)
+        [
+          { text: 'Paciente', style: 'tableHeader', colSpan: 1 },
+          { text: fullName || 'N/A', colSpan: 3 },
+          {}, {}
+        ],
+
+        // 🔹 Documento | Teléfono
+        [
+          { text: 'Documento', style: 'tableHeader' },
+          `${this.patientData.documentType ?? ''} ${this.patientData.idDocument ?? ''}`,
+          { text: 'Teléfono', style: 'tableHeader' },
+          this.nullAsNA(this.patientData.phoneNumber)
+        ],
+
+        // 🔹 Dirección | Fecha
+        [
+          { text: 'Dirección', style: 'tableHeader' },
+          this.nullAsNA(this.patientData.address),
+          { text: 'Fecha', style: 'tableHeader' },
+          this.formatDate(this.orderData.orderDate)
+        ]
+      ]
+    },
+    layout: 'lightHorizontalLines',
+    margin: [0, 0, 0, 6] // 🔽 menos espacio vertical
   };
 }
 
@@ -221,7 +320,7 @@ export class DetailsOrdenComponent implements OnInit {
 
   return {
     table: {
-      widths: ['35%', '15%', '50%'],
+      widths: ['45%', '15%', '40%'],
       body
     },
     layout: 'lightHorizontalLines',
