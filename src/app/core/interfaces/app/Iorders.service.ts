@@ -6,4 +6,5 @@ export interface IOrdersService {
     CreateOrders(order: OrderDTO): Observable<ResponseDTO>;
     UpdateOrders(order: OrderDTO): Observable<ResponseDTO>;
     GetListOrders(idMedicalConsultation?: number): Observable<ResponseDTO>;
+    DeleteOrderById(idOrder: number): Observable<ResponseDTO>;
 }

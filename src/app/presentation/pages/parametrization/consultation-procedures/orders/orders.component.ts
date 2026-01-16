@@ -36,6 +36,8 @@ export class OrdersComponent {
   isLoading: boolean = false;
   modalRef?: BsModalRef;
 
+  idRol: number = 0; 
+
   constructor(private router: Router,
     private modalService: BsModalService,
     private _ordersUseCase: OrdersUseCase,
@@ -44,6 +46,8 @@ export class OrdersComponent {
     private _orderDetailsUseCase: OrderDetailsUseCase,   // 👈 nuevo
     private _cupsCodeUseCase: CupsCodeUseCase,  
     private _notificationService: NotificationsService) {
+
+      this.idRol = Number(localStorage.getItem('IdRol')) || 0;
   }
 
   ngOnInit(): void {
@@ -95,6 +99,23 @@ export class OrdersComponent {
     component.orderData = order;
     component.patientData = this.patientData;
     component.generatePDF();
+  }
+
+  deleteOrder(idOrder: number): void {
+    this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
+      if (confirmed) {
+        this.isLoading = true;
+        this._ordersUseCase.DeleteOrderById(idOrder).subscribe({
+          next: () => {
+            this.loadOrders();
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          }
+        });
+      }
+    });
   }
 
 

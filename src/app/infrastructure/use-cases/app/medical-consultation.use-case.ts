@@ -13,9 +13,15 @@ import { MedicalConsultationByIdDTO } from "src/app/core/DTOs/app/medical-consul
 })
 
 export class MedicalConsultationUseCase {
+
+    
+
+
     constructor(private _medicalConsultationService: MedicalConsultationService,
         private _notificationService: NotificationsService
-    ) { }
+    ) {
+        
+     }
 
     CreateMedicalConsultation(medicalConsultation: MedicalConsultationDTO): Observable<ResponseDTO> {
         return this._medicalConsultationService.CreateMedicalConsultation(medicalConsultation).pipe(
@@ -84,6 +90,19 @@ export class MedicalConsultationUseCase {
             map((response: ResponseDTO) => {
                 if (!response.isSuccess) {
                     this._notificationService.showToastErrorMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    }
+
+    DeleteMedicalConsultation(idMedicalConsultation: number): Observable<boolean> {
+        return this._medicalConsultationService.DeleteMedicalConsultation(idMedicalConsultation).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                } else {
+                    this._notificationService.showToastSuccessMessage(response.message!);
                 }
                 return response.data;
             })

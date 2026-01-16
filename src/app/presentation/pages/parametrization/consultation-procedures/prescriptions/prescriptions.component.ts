@@ -40,6 +40,8 @@ export class PrescriptionsComponent {
 
   @ViewChild(DetailsPrescriptionComponent) detailsComponent!: DetailsPrescriptionComponent;
 
+  idRol: number = 0; 
+
   constructor(private router: Router,
     private modalService: BsModalService,
     private _prescriptionsUseCase: PrescriptionsUseCase,
@@ -48,6 +50,7 @@ export class PrescriptionsComponent {
     private _patientsUseCase: PatientsUseCase,
     private _notificationService: NotificationsService
   ) {
+      this.idRol = Number(localStorage.getItem('IdRol')) || 0;
   }
 
   ngOnInit(): void {
@@ -119,6 +122,23 @@ export class PrescriptionsComponent {
     //component.generatePDF();
     component.generateWord();
 
+  }
+
+  deletePrescription(idPrescription: number): void {
+    this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
+      if (confirmed) {
+        this.isLoading = true;
+        this._prescriptionsUseCase.DeletePrescriptionById(idPrescription).subscribe({
+          next: () => {
+            this.loadPrescriptions();
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          }
+        });
+      }
+    });
   }
 
 

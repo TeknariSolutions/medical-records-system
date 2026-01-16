@@ -172,6 +172,14 @@
                       <i class="ri-heart-pulse-line"></i>
                     </button>
                   </li>
+
+                  @if(idRol == 1) {
+                  <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                    <button class="btn btn-sm btn-soft-danger" (click)="deleteConsultation(consultation.idMedicalConsultation)">
+                      <i class="mdi mdi-delete-outline"></i>
+                    </button>
+                  </li>
+                  }
               
                   <!-- Editar -->
                   <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">

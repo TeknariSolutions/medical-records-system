@@ -141,6 +141,14 @@
                         </button>
                       </li>
 
+                      @if(idRol == 1) {
+                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                          <button class="btn btn-sm btn-soft-danger" (click)="deleteConsultation(data.idMedicalConsultation)">
+                            <i class="mdi mdi-delete-outline"></i>
+                          </button>
+                        </li>
+                      }
+
                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                         <button class="btn btn-sm btn-soft-success" (click)="onEditConsultation(data)">
                           <i class="mdi mdi-pencil-outline"></i>

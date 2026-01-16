@@ -57,6 +57,14 @@
                                                         </button>
                                                     </li>
 
+                                                    @if(idRol == 1) {
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+                                                        <button class="btn btn-sm btn-soft-danger" (click)="deletePrescription(data.idPrescription)">
+                                                            <i class="mdi mdi-delete-outline"></i>
+                                                        </button>
+                                                    </li>
+                                                    }
+
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                                         <button class="btn btn-sm btn-soft-success" (click)="openPrescriptionModal(data)">
                                                             <i class="mdi mdi-pencil-outline"></i>

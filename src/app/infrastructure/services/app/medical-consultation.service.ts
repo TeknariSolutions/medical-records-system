@@ -98,4 +98,17 @@ export class MedicalConsultationService implements IMedicalConsultationService {
       })
     );
   }
+
+  DeleteMedicalConsultation(idMedicalConsultation: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idMedicalConsultation
+        }
+        return this._httpService.delete(url, "DeleteMedicalConsultation", params);
+      })
+    );
+  }
+
+
 }

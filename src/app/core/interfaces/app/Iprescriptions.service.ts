@@ -5,4 +5,5 @@ import { PrescriptionDTO } from '../../DTOs/app/prescription.dto';
 export interface IPrescriptionsService {
     CreatePrescription(prescription: PrescriptionDTO): Observable<ResponseDTO>;
     GetListPrescriptions(idMedicalConsultation?: number): Observable<ResponseDTO>;
+    DeletePrescriptionById(idPrescription: number): Observable<ResponseDTO>;
 }

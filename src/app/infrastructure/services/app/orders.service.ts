@@ -44,4 +44,15 @@ export class OrdersService implements IOrdersService {
       })
     );
   }
+
+   DeleteOrderById(idOrder: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idOrder
+        }
+        return this._httpService.delete(url, "DeleteOrderById", params);
+      })
+    );
+  }
 }

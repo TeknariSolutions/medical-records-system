@@ -52,4 +52,17 @@ export class OrdersUseCase {
         );
     }
 
+    DeleteOrderById(idOrder: number): Observable<boolean> {
+        return this._ordersService.DeleteOrderById(idOrder).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                } else {
+                    this._notificationService.showToastSuccessMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    }
+
 }

@@ -56,6 +56,8 @@ export class MedicalConsultationComponent implements OnInit {
 
   filterConsultationDate: string = '';
 
+  idRol: number = 0; 
+
   @ViewChild(DetailsConsultationComponent) detailsComponent!: DetailsConsultationComponent;
 
   constructor(
@@ -67,7 +69,9 @@ export class MedicalConsultationComponent implements OnInit {
     private _closeConsultationUseCase: CloseConsultationUseCase ,
     private modalService: BsModalService,
     private _dataTransferService: DataTransferService
-  ) { }
+  ) {
+    this.idRol = Number(localStorage.getItem('IdRol')) || 0;
+   }
 
   ngOnInit(): void {
     if (this.idPatient) {
@@ -180,6 +184,23 @@ export class MedicalConsultationComponent implements OnInit {
       this.currentPage = 1;
       this.loadConsults();
     }
+  }
+
+  deleteConsultation(idMedicalConsultation: number): void {
+    this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
+      if (confirmed) {
+        this.isLoading = true;
+        this._medicalConsultationUseCase.DeleteMedicalConsultation(idMedicalConsultation).subscribe({
+          next: () => {
+            this.loadConsults();
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          }
+        });
+      }
+    });
   }
 
 

@@ -450,7 +450,7 @@ export class CreateUpdateMedicalConsultationComponent {
   } */
 
 
-  searchCIE10(
+  /* searchCIE10(
     filters: { code?: string; name?: string },
     index: number,
     fullSearchText?: string
@@ -485,8 +485,49 @@ export class CreateUpdateMedicalConsultationComponent {
         },
         error: () => this.clearSuggestions(index),
       });
-  }
+  } */
 
+  searchCIE10(
+    filters: { code?: string; name?: string },
+    index: number,
+    fullSearchText?: string
+  ) {
+    this.cie10UseCase
+      .GetListCIECodes(
+        this.paginator,
+        '',                     // description ❌ no se usa aquí
+        filters.code || '',     // code
+        filters.name || ''      // name ✅ correcto
+      )
+      .subscribe({
+        next: (data: TableResultDTO) => {
+          let results: any[] = data?.results ?? [];
+
+          if (fullSearchText) {
+            const search = fullSearchText.toUpperCase();
+
+            results = results.filter(r =>
+              r.nombre?.toUpperCase().includes(search)
+            );
+
+            results.sort((a, b) => {
+              const aExact = a.nombre?.toUpperCase() === search;
+              const bExact = b.nombre?.toUpperCase() === search;
+              return Number(bExact) - Number(aExact);
+            });
+          }
+
+          this.codeSuggestions[index] = results;
+          this.descriptionSuggestions[index] = results;
+
+          this.showCodeDropdown[index] = results.length > 0;
+          this.showDescriptionDropdown[index] = results.length > 0;
+
+          this.cdr.detectChanges();
+        },
+        error: () => this.clearSuggestions(index),
+      });
+  }
 
   selectSuggestion(item: any, index: number) {
     const diagnosisGroup = this.diagnoses.at(index) as FormGroup;

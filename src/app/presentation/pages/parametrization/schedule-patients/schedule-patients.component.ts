@@ -55,6 +55,8 @@ export class SchedulePatientsComponent implements OnInit {
 
   @ViewChild(DetailsConsultationComponent) detailsComponent!: DetailsConsultationComponent;
 
+  idRol: number = 0; 
+
   constructor(
     private router: Router,
     private _medicalConsultationUseCase: MedicalConsultationUseCase,
@@ -64,7 +66,9 @@ export class SchedulePatientsComponent implements OnInit {
     private _closeConsultationUseCase: CloseConsultationUseCase,
     private _dataTransferService: DataTransferService,
     private _patientsUseCase: PatientsUseCase,
-  ) { }
+  ) { 
+      this.idRol = Number(localStorage.getItem('IdRol')) || 0;
+  }
 
   ngOnInit(): void {
     this.loadConsultations();
@@ -207,6 +211,23 @@ export class SchedulePatientsComponent implements OnInit {
       error: () => {
         this._notificationService.showToastErrorMessage('Error al obtener datos del paciente');
         this.isLoading = false;
+      }
+    });
+  }
+
+  deleteConsultation(idMedicalConsultation: number): void {
+    this._notificationService.confirm('¿Estás seguro de eliminar este registro?', 'Esta acción no se puede deshacer.').then(confirmed => {
+      if (confirmed) {
+        this.isLoading = true;
+        this._medicalConsultationUseCase.DeleteMedicalConsultation(idMedicalConsultation).subscribe({
+          next: () => {
+            this.loadConsultations();
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          }
+        });
       }
     });
   }

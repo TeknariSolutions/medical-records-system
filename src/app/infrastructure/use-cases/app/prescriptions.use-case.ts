@@ -40,4 +40,17 @@ export class PrescriptionsUseCase {
         );
     }
 
+    DeletePrescriptionById(idPrescription: number): Observable<boolean> {
+        return this._prescriptionService.DeletePrescriptionById(idPrescription).pipe(
+            map((response: ResponseDTO) => {
+                if (!response.isSuccess) {
+                    this._notificationService.showToastErrorMessage(response.message!);
+                } else {
+                    this._notificationService.showToastSuccessMessage(response.message!);
+                }
+                return response.data;
+            })
+        );
+    }
+
 }

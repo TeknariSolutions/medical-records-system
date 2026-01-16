@@ -35,4 +35,17 @@ export class PrescriptionService implements IPrescriptionsService {
       })
     );
   }
+
+  DeletePrescriptionById(idPrescription: number): Observable<ResponseDTO> {
+    return this._configService.getUrl().pipe(
+      switchMap(url => {
+        let params: any = {
+          idPrescription
+        }
+        return this._httpService.delete(url, "DeletePrescriptionById", params);
+      })
+    );
+  }
+
+  
 }
