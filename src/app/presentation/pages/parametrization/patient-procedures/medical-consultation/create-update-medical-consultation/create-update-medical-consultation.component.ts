@@ -871,7 +871,7 @@ export class CreateUpdateMedicalConsultationComponent {
       updateAt: this.getLocalDateTime()
     };
 
-    // 🔒 Normalización de strings opcionales (evita null en backend)
+    // Normalización de strings opcionales (evita null en backend)
     baseData.idCupsCode = baseData.idCupsCode ?? null;
     baseData.idMedicalServices = baseData.idMedicalServices ?? null;
     baseData.idModalityAttention = baseData.idModalityAttention ?? null;
