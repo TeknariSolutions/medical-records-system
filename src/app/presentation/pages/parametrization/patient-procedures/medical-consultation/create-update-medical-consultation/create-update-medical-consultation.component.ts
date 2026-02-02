@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MedicalConsultationDTO } from 'src/app/core/DTOs/app/medical-consultation.dto';
 import { MedicalDiagnosisDTO } from 'src/app/core/DTOs/app/medical-diagnosis.dto';
@@ -31,6 +31,7 @@ import { UsersUseCase } from 'src/app/infrastructure/use-cases/app/users.use-cas
 import { CupsCodeUseCase } from 'src/app/infrastructure/use-cases/common/cups-code.use.case';
 import { MedicalServicesUseCase } from 'src/app/infrastructure/use-cases/app/medical-services.use-case';
 import { ModalityAttentionUseCase } from 'src/app/infrastructure/use-cases/common/modality-attention.use-case';
+import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 
 
 
@@ -55,6 +56,18 @@ import { ModalityAttentionUseCase } from 'src/app/infrastructure/use-cases/commo
 })
 export class CreateUpdateMedicalConsultationComponent {
 
+  @Input() patientData?: PatientDTO;
+
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(event: BeforeUnloadEvent) {
+    if (this.form.dirty) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
+
+
   isLinear = false;
   currentStep = 1;
 
@@ -64,6 +77,8 @@ export class CreateUpdateMedicalConsultationComponent {
   @Input() idPatient!: number;
   @Input() consultationToEdit?: MedicalConsultationDTO;
   @Output() backToList = new EventEmitter<void>();
+  @Output() requestExit = new EventEmitter<boolean>();
+
 
   form: FormGroup;
 
@@ -264,10 +279,12 @@ export class CreateUpdateMedicalConsultationComponent {
   }
 
 
-  ngOnChanges(changes: SimpleChanges): void {
+ /* ngOnChanges(changes: SimpleChanges): void {
     if (changes['consultationToEdit'] && this.consultationToEdit) {
       const normalized = this.normalizeConsultationData(this.consultationToEdit);
-      this.form.patchValue(normalized);
+      //this.form.patchValue(normalized);
+      this.form.markAsPristine();
+
 
       // ✅ Aplicar bloqueo dinámico solo si rol = 2 o 3 y está cerrada
       if (this.consultationToEdit.status && (this.idRol === 2 || this.idRol === 3)) {
@@ -322,7 +339,96 @@ export class CreateUpdateMedicalConsultationComponent {
         }
       }
     }
+  }  */
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['consultationToEdit']) {
+
+      /* ============================
+      MODO CREACIÓN
+      ============================ */
+      if (!this.consultationToEdit) {
+        // Forzamos dirty SOLO en creación
+        setTimeout(() => {
+          this.form.markAsDirty();
+        });
+        return;
+      }
+
+      /* ============================
+        MODO EDICIÓN
+      ============================ */
+
+      // 1️- Precargar datos base
+      const normalized = this.normalizeConsultationData(this.consultationToEdit);
+      this.form.patchValue(normalized, { emitEvent: false });
+
+      // 2️- Limpiar estado
+      this.form.markAsPristine();
+
+      // 3️- Bloqueo por rol / estado
+      if (this.consultationToEdit.status && (this.idRol === 2 || this.idRol === 3)) {
+        this.form.disable({ emitEvent: false });
+      } else {
+        this.form.enable({ emitEvent: false });
+      }
+
+      // 4️- Diagnósticos (admin y médico)
+      if (this.idRol === 1 || this.idRol === 3) {
+
+        if (!this.form.contains('diagnoses')) {
+          this.form.addControl('diagnoses', this.fb.array([]));
+        }
+
+        const array = this.form.get('diagnoses') as FormArray;
+        array.clear();
+
+        if (this.consultationToEdit.idMedicalConsultation) {
+          this._medicalConsultationDiagnosisUseCase
+            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(
+              this.consultationToEdit.idMedicalConsultation
+            )
+            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
+
+              if (diagnoses?.length) {
+                diagnoses.forEach(d => {
+                  const group = this.createDiagnosisGroup();
+
+                  const matchedType = this.diagnosisTypes.find(t =>
+                    String(t.codeDiagnosisType) === String(d.codeDiagnosisType) ||
+                    t.diagnosisType === d.diagnosisType
+                  );
+
+                  group.patchValue({
+                    idMedicalConsultationDiagnosis: d.idMedicalConsultationDiagnosis ?? 0,
+                    idMedicalConsultation: d.idMedicalConsultation ?? this.consultationToEdit!.idMedicalConsultation,
+                    diagnosisCode: d.diagnosisCode ?? '',
+                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription ?? ''),
+                    codeDiagnosisType: d.codeDiagnosisType ?? '',
+                    comment: d.comment || '',
+                    isPrincipal: d.isPrincipal || false,
+                    diagnosisType: matchedType ?? d.diagnosisType
+                  }, { emitEvent: false });
+
+                  array.push(group);
+                });
+              } else {
+                this.addDiagnosis();
+              }
+
+              // aseguramos estado limpio tras carga async
+              this.form.markAsPristine();
+            });
+
+        } else {
+          this.addDiagnosis();
+          this.form.markAsPristine();
+        }
+      }
+    }
   }
+
 
   private patchDiagnoses(): void {
     if (this.consultationToEdit?.diagnoses?.length) {
@@ -361,35 +467,7 @@ export class CreateUpdateMedicalConsultationComponent {
     }
   }
 
- /*  onDescriptionInput(value: string, index: number) {
-    this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
-
-    if (value && value.length >= 4) {
-      this.searchCIE10({ name: value }, index);
-    } else {
-      this.codeSuggestions[index] = [];
-      this.descriptionSuggestions[index] = [];
-      this.showCodeDropdown[index] = false;
-      this.showDescriptionDropdown[index] = false;
-    }
-  } */
-
-/*   onDescriptionInput(value: string, index: number) {
-    this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
-
-    const normalized = this.normalizeSearchText(value);
-
-    if (normalized.length >= 3) {
-      // 🔑 usar solo la primera palabra
-      const firstWord = normalized.split(' ')[0];
-
-      this.searchCIE10({ name: firstWord }, index);
-    } else {
-      this.clearSuggestions(index);
-    }
-  } */
-
-  onDescriptionInput(value: string, index: number) {
+  /* onDescriptionInput(value: string, index: number) {
     this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
 
     const normalized = this.normalizeSearchText(value);
@@ -397,7 +475,7 @@ export class CreateUpdateMedicalConsultationComponent {
     if (normalized.length >= 3) {
       const firstWord = normalized.split(' ')[0];
 
-      // 🔹 PASAMOS AMBOS
+      // PASAMOS AMBOS
       this.searchCIE10(
         { name: firstWord },
         index,
@@ -406,7 +484,21 @@ export class CreateUpdateMedicalConsultationComponent {
     } else {
       this.clearSuggestions(index);
     }
+  } */
+
+  onDescriptionInput(value: string, index: number) {
+  this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
+
+  const normalized = this.normalizeSearchText(value);
+
+  if (normalized.length >= 3) {
+    // 🔥 PASAMOS EL TEXTO COMPLETO
+    this.searchCIE10({ name: normalized }, index);
+  } else {
+    this.clearSuggestions(index);
   }
+}
+
 
 
   private clearSuggestions(index: number) {
@@ -417,46 +509,18 @@ export class CreateUpdateMedicalConsultationComponent {
   }
 
 
-
-
-
-  /* searchCIE10(
-    filters: { code?: string; name?: string },
-    index: number
-  ) {
-    this.cie10UseCase
-      .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
-      .subscribe({
-        next: (data: TableResultDTO) => {
-          const results = data?.results || [];
-
-          // llenar ambas listas
-          this.codeSuggestions[index] = results;
-          this.descriptionSuggestions[index] = results;
-
-          // mostrar ambos dropdowns
-          this.showCodeDropdown[index] = this.codeSuggestions[index].length > 0;
-          this.showDescriptionDropdown[index] = this.descriptionSuggestions[index].length > 0;
-
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.codeSuggestions[index] = [];
-          this.descriptionSuggestions[index] = [];
-          this.showCodeDropdown[index] = false;
-          this.showDescriptionDropdown[index] = false;
-        },
-      });
-  } */
-
-
-  /* searchCIE10(
+ /*  searchCIE10(
     filters: { code?: string; name?: string },
     index: number,
     fullSearchText?: string
   ) {
     this.cie10UseCase
-      .GetListCIECodes(this.paginator, filters.name || '', filters.code || '')
+      .GetListCIECodes(
+        this.paginator,
+        '',                     // description no se usa aquí
+        filters.code || '',     // code
+        filters.name || ''      // name 
+      )
       .subscribe({
         next: (data: TableResultDTO) => {
           let results: any[] = data?.results ?? [];
@@ -489,33 +553,18 @@ export class CreateUpdateMedicalConsultationComponent {
 
   searchCIE10(
     filters: { code?: string; name?: string },
-    index: number,
-    fullSearchText?: string
+    index: number
   ) {
     this.cie10UseCase
       .GetListCIECodes(
         this.paginator,
-        '',                     // description ❌ no se usa aquí
+        '',                     // description
         filters.code || '',     // code
-        filters.name || ''      // name ✅ correcto
+        filters.name || ''      // 🔥 name completo
       )
       .subscribe({
         next: (data: TableResultDTO) => {
-          let results: any[] = data?.results ?? [];
-
-          if (fullSearchText) {
-            const search = fullSearchText.toUpperCase();
-
-            results = results.filter(r =>
-              r.nombre?.toUpperCase().includes(search)
-            );
-
-            results.sort((a, b) => {
-              const aExact = a.nombre?.toUpperCase() === search;
-              const bExact = b.nombre?.toUpperCase() === search;
-              return Number(bExact) - Number(aExact);
-            });
-          }
+          const results = data?.results ?? [];
 
           this.codeSuggestions[index] = results;
           this.descriptionSuggestions[index] = results;
@@ -528,6 +577,7 @@ export class CreateUpdateMedicalConsultationComponent {
         error: () => this.clearSuggestions(index),
       });
   }
+
 
   selectSuggestion(item: any, index: number) {
     const diagnosisGroup = this.diagnoses.at(index) as FormGroup;
@@ -821,6 +871,24 @@ export class CreateUpdateMedicalConsultationComponent {
       updateAt: this.getLocalDateTime()
     };
 
+    // 🔒 Normalización de strings opcionales (evita null en backend)
+    baseData.idCupsCode = baseData.idCupsCode ?? 0;
+    baseData.idMedicalServices = baseData.idMedicalServices ?? 0;
+    baseData.idModalityAttention = baseData.idModalityAttention ?? 0;
+    baseData.groupServiceCode = baseData.groupServiceCode?.trim() || '';
+    baseData.analysisOrConcept = baseData.analysisOrConcept?.trim() || '';
+    baseData.treatment = baseData.treatment?.trim() || '';
+    baseData.currentIllness = baseData.currentIllness?.trim() || '';
+    baseData.paraClinicalTest = baseData.paraClinicalTest?.trim() || '';
+    (baseData as any).typeOfAttention = false;
+
+    baseData.idConsultationFinality = baseData.idConsultationFinality ?? 0;
+    baseData.idExitCondition = baseData.idExitCondition ?? 0;
+    baseData.idExternalCauseCode = baseData.idExternalCauseCode ?? 0;
+
+
+
+
     let operation: Observable<any>;
 
     if (isEdit) {
@@ -834,6 +902,7 @@ export class CreateUpdateMedicalConsultationComponent {
             if (res.data) {
               this.form.patchValue(res.data);
               this.consultationToEdit = res.data;
+              this.form.markAsPristine();
             } else {
               // fallback: al menos sincronizamos con lo que acabamos de enviar
               this.form.patchValue(baseData);
@@ -846,7 +915,10 @@ export class CreateUpdateMedicalConsultationComponent {
             this._notificationService.showInfoMessage('Consulta actualizada correctamente');
 
             // Si quieres volver a la lista, hazlo aquí (después de refrescar datos)
-            this.backToList.emit();
+            //this.backToList.emit();
+            this.form.markAsPristine();
+            this.requestExit.emit();
+
           } else {
             this._notificationService.showInfoMessage('Error al actualizar la consulta');
           }
@@ -898,8 +970,11 @@ export class CreateUpdateMedicalConsultationComponent {
     operation.subscribe({
       next: (res) => {
         if (res.isSuccess) {
+          this.form.markAsPristine();
           this._notificationService.showInfoMessage('Consulta creada correctamente');
-          this.backToList.emit();
+          //this.backToList.emit();
+          this.form.markAsPristine();
+          this.requestExit.emit();
         } else {
           this._notificationService.showInfoMessage('Error al crear la consulta');
         }
@@ -975,9 +1050,7 @@ export class CreateUpdateMedicalConsultationComponent {
   });
 }
 
-  back() {
-    this.backToList.emit();
-  }
+  
 
   // Medical History
 
@@ -1120,9 +1193,45 @@ export class CreateUpdateMedicalConsultationComponent {
   private normalizeSearchText(value: string): string {
     return value
       .trim()
-      .replace(/\s+/g, ' ')     // elimina dobles espacios
+      //.replace(/\s+/g, ' ')     // elimina dobles espacios
       .toUpperCase();           // opcional, depende del backend
   }
+
+  async confirmExitIfDirty(): Promise<boolean> {
+    if (!this.form.dirty) {
+      return true;
+    }
+
+    const confirmed = await this._notificationService.confirm(
+      'Cambios sin guardar',
+      'Si sale ahora perderá la información ingresada. ¿Desea continuar?',
+      'warning'
+    );
+
+    return confirmed;
+  }
+
+
+  async back() {
+    const canExit = await this.confirmExitIfDirty();
+    if (canExit) {
+      this.requestExit.emit(true);
+    }
+  }
+
+  getAgeFromBirthDay(birthDay: string): number {
+    const today = new Date();
+    const birthDate = new Date(birthDay);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
+
+
 
 
 

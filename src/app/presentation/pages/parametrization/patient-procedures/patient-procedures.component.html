@@ -43,7 +43,11 @@
                 <p class="mb-1"><strong>EDAD:</strong>
                     {{patientData?.birthDay ? getAgeFromBirthDay(patientData?.birthDay) + ' años' : 'N/A'}}
                 </p>
-    
+
+                <p class="mb-1">
+                    <strong>FECHA DE NACIMIENTO:</strong>
+                    {{ patientData?.birthDay | date:'dd/MM/yyyy' }}
+                </p>
             </div>
     
             <div class="col-12 col-md-6 col-lg-4">
@@ -120,10 +124,16 @@
 
     <!-- Componente MedicalConsultation -->
     <div *ngIf="showConsultations">
-        <button class="btn btn-outline-secondary mb-3 button-back" (click)="showConsultations = false">
+        <!-- <button class="btn btn-outline-secondary mb-3 button-back" (click)="showConsultations = false">
+            <i class="mdi mdi-chevron-left"></i>
+            Volver al inicio
+        </button> -->
+
+        <button class="btn btn-outline-secondary mb-3 button-back" (click)="goBackToHome()">
             <i class="mdi mdi-chevron-left"></i>
             Volver al inicio
         </button>
+
 
         <app-medical-consultation [idPatient]="patientData?.idPatient"
             [patientData]="patientData"></app-medical-consultation>

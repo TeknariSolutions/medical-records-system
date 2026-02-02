@@ -228,9 +228,15 @@
             </button>
           </div>
 
-          <app-create-update-medical-consultation [idPatient]="selectedConsultation?.idPatient || 0"
+          <!-- <app-create-update-medical-consultation [idPatient]="selectedConsultation?.idPatient || 0"
             [consultationToEdit]="selectedConsultation" (backToList)="onBackToList()">
+          </app-create-update-medical-consultation> -->
+
+          <app-create-update-medical-consultation [idPatient]="selectedConsultation?.idPatient || 0"
+            [consultationToEdit]="selectedConsultation" [patientData]="_dataTransferService.getData('patientData')"
+            (backToList)="onBackToList()">
           </app-create-update-medical-consultation>
+
 
         </div>
       </div>

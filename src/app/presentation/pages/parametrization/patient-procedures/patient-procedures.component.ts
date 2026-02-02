@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PatientDTO } from 'src/app/core/DTOs/app/patient.dto';
 import { DataTransferService } from 'src/app/infrastructure/services/common/data-transfer/data-transfer.service';
 import { MedicalConsultationComponent } from './medical-consultation/medical-consultation.component';
 import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.use-case';
+import { CreateUpdateMedicalConsultationComponent } from './medical-consultation/create-update-medical-consultation/create-update-medical-consultation.component';
 
 @Component({
   selector: 'app-patient-procedures',
@@ -18,6 +19,10 @@ import { PatientsUseCase } from 'src/app/infrastructure/use-cases/app/patients.u
   ]
 })
 export class PatientProceduresComponent implements OnInit {
+
+  @ViewChild(MedicalConsultationComponent)
+  consultationComponent?: MedicalConsultationComponent;
+
 
   patientData?: PatientDTO;
 
@@ -80,5 +85,15 @@ export class PatientProceduresComponent implements OnInit {
   goBackToPatients(): void {
     this._router.navigate(['/parametrization/patients']);
   }
+
+  async goBackToHome(): Promise<void> {
+  if (this.consultationComponent) {
+    const canExit = await this.consultationComponent.canExitForm();
+    if (!canExit) return;
+  }
+
+  this.showConsultations = false;
+}
+
 
 }

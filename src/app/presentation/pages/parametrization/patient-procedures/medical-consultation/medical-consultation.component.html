@@ -171,13 +171,16 @@
 
           <!-- Si estamos en el formulario -->
           @if (showForm) {
-          <button class="btn btn-outline-secondary mb-3 button-back" (click)="onBackToList()">
+          <button class="btn btn-outline-secondary mb-3 button-back" (click)="onBackToListSafe()">
             <i class="mdi mdi-chevron-left"></i>
             Volver a consultas
           </button>
 
-          <app-create-update-medical-consultation [idPatient]="idPatient" [consultationToEdit]="selectedConsultation"
-            (backToList)="onBackToList()"></app-create-update-medical-consultation>
+          <app-create-update-medical-consultation 
+            [idPatient]="idPatient" 
+            [consultationToEdit]="selectedConsultation"
+            (requestExit)="onRequestExit()">
+          </app-create-update-medical-consultation>
           }
         </div>
       </div>

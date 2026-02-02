@@ -114,10 +114,29 @@ export class SchedulePatientsComponent implements OnInit {
   }
 
 
-  onEditConsultation(consultation: MedicalConsultationDTO): void {
+  /* onEditConsultation(consultation: MedicalConsultationDTO): void {
     this.selectedConsultation = consultation;
     this.showForm = true;
+  } */
+
+  onEditConsultation(consultation: MedicalConsultationDTO): void {
+    if (!consultation.idPatient) return;
+
+    this._patientsUseCase.GetPatientByIdAll(consultation.idPatient).subscribe({
+      next: (patient: PatientDTO) => {
+        this.selectedConsultation = consultation;
+        this.selectedConsultation.idPatient = patient.idPatient;
+        this.showForm = true;
+
+        // Guardamos el paciente para pasarlo al formulario
+        this._dataTransferService.setData('patientData', patient);
+      },
+      error: () => {
+        this._notificationService.showToastErrorMessage('Error al cargar datos del paciente');
+      }
+    });
   }
+
 
 
   onBackToList(): void {

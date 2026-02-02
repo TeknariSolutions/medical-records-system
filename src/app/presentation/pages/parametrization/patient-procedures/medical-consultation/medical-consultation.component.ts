@@ -34,6 +34,10 @@ import { CloseConsultationUseCase } from 'src/app/infrastructure/use-cases/app/c
 })
 export class MedicalConsultationComponent implements OnInit {
 
+  @ViewChild(CreateUpdateMedicalConsultationComponent)
+  formComponent?: CreateUpdateMedicalConsultationComponent;
+
+
   @Input() idPatient!: number;
   @Output() createNewConsultation = new EventEmitter<void>();
 
@@ -201,6 +205,31 @@ export class MedicalConsultationComponent implements OnInit {
         });
       }
     });
+  }
+
+  onRequestExit() {
+    this.showForm = false;
+    this.loadConsults();
+  }
+
+
+  async onBackToListSafe(): Promise<void> {
+
+    console.log('se ejecuta el atras');
+
+    const canExit = await this.canExitForm();
+    if (!canExit) return;
+
+    this.showForm = false;
+    this.loadConsults();
+  }
+
+
+  async canExitForm(): Promise<boolean> {
+    if (this.showForm && this.formComponent) {
+      return await this.formComponent.confirmExitIfDirty();
+    }
+    return true;
   }
 
 
