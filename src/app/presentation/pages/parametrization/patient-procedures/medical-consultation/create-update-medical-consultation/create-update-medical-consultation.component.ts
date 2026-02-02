@@ -872,9 +872,9 @@ export class CreateUpdateMedicalConsultationComponent {
     };
 
     // 🔒 Normalización de strings opcionales (evita null en backend)
-    baseData.idCupsCode = baseData.idCupsCode ?? 0;
-    baseData.idMedicalServices = baseData.idMedicalServices ?? 0;
-    baseData.idModalityAttention = baseData.idModalityAttention ?? 0;
+    baseData.idCupsCode = baseData.idCupsCode ?? null;
+    baseData.idMedicalServices = baseData.idMedicalServices ?? null;
+    baseData.idModalityAttention = baseData.idModalityAttention ?? null;
     baseData.groupServiceCode = baseData.groupServiceCode?.trim() || '';
     baseData.analysisOrConcept = baseData.analysisOrConcept?.trim() || '';
     baseData.treatment = baseData.treatment?.trim() || '';
@@ -882,9 +882,9 @@ export class CreateUpdateMedicalConsultationComponent {
     baseData.paraClinicalTest = baseData.paraClinicalTest?.trim() || '';
     (baseData as any).typeOfAttention = false;
 
-    baseData.idConsultationFinality = baseData.idConsultationFinality ?? 0;
-    baseData.idExitCondition = baseData.idExitCondition ?? 0;
-    baseData.idExternalCauseCode = baseData.idExternalCauseCode ?? 0;
+    baseData.idConsultationFinality = baseData.idConsultationFinality ?? null;
+    baseData.idExitCondition = baseData.idExitCondition ?? null;
+    baseData.idExternalCauseCode = baseData.idExternalCauseCode ?? null;
 
 
 
