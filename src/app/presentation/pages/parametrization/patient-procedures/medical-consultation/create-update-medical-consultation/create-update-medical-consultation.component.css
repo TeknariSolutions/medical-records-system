@@ -5,9 +5,17 @@
     align-items: center;
 }
 
-.readonly-form input,
-.readonly-form textarea,
-.readonly-form select {
+/* Solo lectura: fondo gris y texto seleccionable para copiar. Select y checkbox siguen sin clic. */
+.readonly-form input:not([type="checkbox"]),
+.readonly-form textarea {
+    background-color: #f8f9fa;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+.readonly-form select,
+.readonly-form input[type="checkbox"] {
     background-color: #f8f9fa;
     pointer-events: none;
 }

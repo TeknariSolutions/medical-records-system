@@ -175,6 +175,7 @@
               <span class="text-danger">*</span>
             </label>
             <textarea class="form-control mb-2" formControlName="consultationReason" rows="1"
+              [readonly]="isReadOnlyForm"
               [ngClass]="{ 'is-invalid': submitted && form.get('basicInfo.consultationReason')?.invalid }">
                       </textarea>
           
@@ -189,7 +190,7 @@
 
           <div class="col-12 mb-3">
             <label>Enfermedad Actual</label>
-            <textarea class="form-control mb-2" formControlName="currentIllness" rows="4"></textarea>
+            <textarea class="form-control mb-2" formControlName="currentIllness" rows="4" [readonly]="isReadOnlyForm"></textarea>
           </div>
 
             <!-- Médico Tratante -->
@@ -448,12 +449,12 @@
 
             <div class="col-12 col-md-4 col-lg-4 mb-3">
               <label>Estado de Respiración</label>
-              <input class="form-control" type="text" formControlName="respiratoryStatus" />
+              <input class="form-control" type="text" formControlName="respiratoryStatus" [readonly]="isReadOnlyForm" />
             </div>
 
             <div class="col-12 col-md-4 col-lg-4 mb-3">
               <label>Estado General</label>
-              <input class="form-control" type="text" formControlName="generalStatus" />
+              <input class="form-control" type="text" formControlName="generalStatus" [readonly]="isReadOnlyForm" />
             </div>
           </div>
 
@@ -468,38 +469,38 @@
           <div class="row mt-4">
               <div class="col-md-4 mb-3">
                 <label>Presión Arterial</label>
-                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" />
+                <input formControlName="vitalSigns_BP" type="string" class="form-control" placeholder="Ej: 120/80" [readonly]="isReadOnlyForm" />
               </div>
 
               <div class="col-md-4 mb-3">
                 <label>Frecuencia Cardíaca</label>
-                <input formControlName="vitalSigns_HR" type="number" class="form-control" />
+                <input formControlName="vitalSigns_HR" type="number" class="form-control" [readonly]="isReadOnlyForm" />
               </div>
 
               <div class="col-md-4 mb-3">
                 <label>Frecuencia Respiratoria</label>
-                <input formControlName="vitalSigns_RR" type="number" class="form-control" />
+                <input formControlName="vitalSigns_RR" type="number" class="form-control" [readonly]="isReadOnlyForm" />
               </div>
 
               <div class="col-12 col-lg-6 mb-3">
                 <label>Temperatura</label>
-                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" />
+                <input formControlName="vitalSigns_Temp" type="number" class="form-control" step="0.1" [readonly]="isReadOnlyForm" />
               </div>
 
               <div class="col-12 col-lg-6 mb-3">
                 <label>Saturación de Oxígeno SpO2</label>
-                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" />
+                <input formControlName="vitalSigns_SPO2" type="number" class="form-control" [readonly]="isReadOnlyForm" />
               </div>
 
                <div class="col-md-4 mb-3">
                 <label>Peso (Kg)</label>
-                <input class="form-control" type="number" formControlName="weightKg" />
+                <input class="form-control" type="number" formControlName="weightKg" [readonly]="isReadOnlyForm" />
               </div>
 
              
               <div class="col-md-4 mb-3">
                 <label>Estatura (cm) <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" formControlName="heightCm"
+                <input type="number" class="form-control" formControlName="heightCm" [readonly]="isReadOnlyForm"
                   [ngClass]="{ 'is-invalid': (submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.invalid }">
               
                 @if((submitted || form.get('vitalSigns.heightCm')?.touched) && form.get('vitalSigns.heightCm')?.errors) {
@@ -533,42 +534,42 @@
 
             <div class="col-md-6 mb-3">
               <label>Cabeza y Cuello</label>
-              <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_HeadNeck" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Corazón</label>
-              <textarea formControlName="physicalExam_Heart" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_Heart" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Tórax</label>
-              <textarea formControlName="physicalExam_Chest" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_Chest" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Abdomen</label>
-              <textarea formControlName="physicalExam_Abdomen" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_Abdomen" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Genitourinario GU</label>
-              <textarea formControlName="physicalExam_GU" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_GU" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Musculoesquelético</label>
-              <textarea formControlName="physicalExam_Musculoskeletal" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_Musculoskeletal" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Neurológico</label>
-              <textarea formControlName="physicalExam_Neuro" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_Neuro" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
             <div class="col-md-6 mb-3">
               <label>Piel</label>
-              <textarea formControlName="physicalExam_Skin" type="text" class="form-control"></textarea>
+              <textarea formControlName="physicalExam_Skin" type="text" class="form-control" [readonly]="isReadOnlyForm"></textarea>
             </div>
           </div>
 
           <!-- Observaciones -->
           <div class="mb-3">
             <label>Observaciones</label>
-            <textarea formControlName="observations" type="text" class="form-control" rows="3"></textarea>
+            <textarea formControlName="observations" type="text" class="form-control" rows="3" [readonly]="isReadOnlyForm"></textarea>
           </div>
 
           <!-- <div class="mt-3">
@@ -581,7 +582,7 @@
         <div *ngIf="currentStep === 6" formGroupName="paraClinicals">
           <div class="col-12">
             <label>Paraclínicos</label>
-            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5"></textarea>
+            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5" [readonly]="isReadOnlyForm"></textarea>
           </div>
 
           <!-- <div class="mt-3">
@@ -620,7 +621,7 @@
                 <div class="col-md-4 mb-2 position-relative">
                   <label>Código</label>
                   <input type="text" formControlName="diagnosisCode" class="form-control"
-                    (input)="onCodeInput($event.target.value, i)" autocomplete="off" />
+                    (input)="onCodeInput($event.target.value, i)" autocomplete="off" [readonly]="isReadOnlyForm" />
                   <ul class="list-group position-absolute w-100" style="z-index:10; max-height:200px; overflow-y:auto;">
                     <li *ngFor="let item of codeSuggestions[i]" class="list-group-item list-group-item-action"
                       (mousedown)="selectSuggestion(item, i)">
@@ -632,7 +633,7 @@
                 <div class="col-md-8 mb-2 position-relative">
                   <label>Nombre</label>
                   <input type="text" formControlName="diagnosisDescription" class="form-control"
-                    (input)="onDescriptionInput($event.target.value, i)" autocomplete="off" />
+                    (input)="onDescriptionInput($event.target.value, i)" autocomplete="off" [readonly]="isReadOnlyForm" />
                   <ul class="list-group position-absolute w-100" style="z-index:10; max-height:200px; overflow-y:auto;">
                     <li *ngFor="let item of descriptionSuggestions[i]" class="list-group-item list-group-item-action"
                       (mousedown)="selectSuggestion(item, i)">
@@ -680,12 +681,12 @@
         <div *ngIf="currentStep === 8" formGroupName="analysisOrConcept">
           <div class="col-12">
             <label>Análisis o Concepto </label>
-            <textarea class="form-control mb-2" formControlName="analysisOrConcept" rows="5"></textarea>
+            <textarea class="form-control mb-2" formControlName="analysisOrConcept" rows="5" [readonly]="isReadOnlyForm"></textarea>
           </div>
 
           <div class="col-12">
             <label>Tratamiento</label>
-            <textarea class="form-control mb-2" formControlName="treatment" rows="5"></textarea>
+            <textarea class="form-control mb-2" formControlName="treatment" rows="5" [readonly]="isReadOnlyForm"></textarea>
           </div>
 
         <!--   <div class="mt-3">

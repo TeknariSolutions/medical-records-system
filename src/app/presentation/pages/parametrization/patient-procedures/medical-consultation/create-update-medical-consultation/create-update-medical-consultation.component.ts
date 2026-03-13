@@ -84,6 +84,11 @@ export class CreateUpdateMedicalConsultationComponent {
 
   idRol: number = 0; // agrega esta propiedad
 
+  /** True cuando la consulta está CERRADA y el usuario no es administrador (rol 1). Permite seleccionar y copiar texto. */
+  get isReadOnlyForm(): boolean {
+    return !!(this.consultationToEdit?.status && this.idRol !== 1);
+  }
+
   // Lista quemada para diagnosisType
   //diagnosisTypes = ['Confirmado nuevo', 'Confirmado repetido'];
   diagnosisTypes = [
@@ -279,69 +284,6 @@ export class CreateUpdateMedicalConsultationComponent {
   }
 
 
- /* ngOnChanges(changes: SimpleChanges): void {
-    if (changes['consultationToEdit'] && this.consultationToEdit) {
-      const normalized = this.normalizeConsultationData(this.consultationToEdit);
-      //this.form.patchValue(normalized);
-      this.form.markAsPristine();
-
-
-      // ✅ Aplicar bloqueo dinámico solo si rol = 2 o 3 y está cerrada
-      if (this.consultationToEdit.status && (this.idRol === 2 || this.idRol === 3)) {
-        this.form.disable({ emitEvent: false });
-      } else {
-        this.form.enable({ emitEvent: false });
-      }
-
-      // Diagnósticos solo para admin y médico
-      if (this.idRol === 1 || this.idRol === 3) {
-        if (!this.form.contains('diagnoses')) {
-          this.form.addControl('diagnoses', this.fb.array([]));
-        }
-
-        const array = this.form.get('diagnoses') as FormArray;
-        array.clear();
-
-        if (this.consultationToEdit.idMedicalConsultation) {
-          this._medicalConsultationDiagnosisUseCase
-            .GetListMedicalConsultationDiagnosisByIdMedicalConsultation(
-              this.consultationToEdit.idMedicalConsultation
-            )
-            .subscribe((diagnoses: MedicalDiagnosisDTO[]) => {
-              if (diagnoses?.length) {
-                diagnoses.forEach(d => {
-                  const group = this.createDiagnosisGroup();
-
-                  const matchedType = this.diagnosisTypes.find(t =>
-                    String(t.codeDiagnosisType) === String(d.codeDiagnosisType) ||
-                    t.diagnosisType === d.diagnosisType
-                  );
-
-                  group.patchValue({
-                    idMedicalConsultationDiagnosis: d.idMedicalConsultationDiagnosis ?? 0,
-                    idMedicalConsultation: d.idMedicalConsultation ?? this.consultationToEdit?.idMedicalConsultation ?? 0,
-                    diagnosisCode: d.diagnosisCode ?? '',
-                    diagnosisDescription: this.removeHtmlTags(d.diagnosisDescription ?? ''),
-                    codeDiagnosisType: d.codeDiagnosisType ?? '',
-                    comment: d.comment || '',
-                    isPrincipal: d.isPrincipal || false,
-                    diagnosisType: matchedType ?? (d.diagnosisType || '')
-                  });
-
-                  array.push(group);
-                });
-              } else {
-                this.addDiagnosis();
-              }
-            });
-        } else {
-          this.addDiagnosis();
-        }
-      }
-    }
-  }  */
-
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['consultationToEdit']) {
 
@@ -467,24 +409,6 @@ export class CreateUpdateMedicalConsultationComponent {
     }
   }
 
-  /* onDescriptionInput(value: string, index: number) {
-    this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
-
-    const normalized = this.normalizeSearchText(value);
-
-    if (normalized.length >= 3) {
-      const firstWord = normalized.split(' ')[0];
-
-      // PASAMOS AMBOS
-      this.searchCIE10(
-        { name: firstWord },
-        index,
-        normalized
-      );
-    } else {
-      this.clearSuggestions(index);
-    }
-  } */
 
   onDescriptionInput(value: string, index: number) {
   this.diagnoses.at(index).patchValue({ diagnosisCode: '' });
@@ -500,56 +424,12 @@ export class CreateUpdateMedicalConsultationComponent {
 }
 
 
-
   private clearSuggestions(index: number) {
     this.codeSuggestions[index] = [];
     this.descriptionSuggestions[index] = [];
     this.showCodeDropdown[index] = false;
     this.showDescriptionDropdown[index] = false;
   }
-
-
- /*  searchCIE10(
-    filters: { code?: string; name?: string },
-    index: number,
-    fullSearchText?: string
-  ) {
-    this.cie10UseCase
-      .GetListCIECodes(
-        this.paginator,
-        '',                     // description no se usa aquí
-        filters.code || '',     // code
-        filters.name || ''      // name 
-      )
-      .subscribe({
-        next: (data: TableResultDTO) => {
-          let results: any[] = data?.results ?? [];
-
-          if (fullSearchText) {
-            const search = fullSearchText.toUpperCase();
-
-            results = results.filter(r =>
-              r.nombre?.toUpperCase().includes(search)
-            );
-
-            results.sort((a, b) => {
-              const aExact = a.nombre?.toUpperCase() === search;
-              const bExact = b.nombre?.toUpperCase() === search;
-              return Number(bExact) - Number(aExact);
-            });
-          }
-
-          this.codeSuggestions[index] = results;
-          this.descriptionSuggestions[index] = results;
-
-          this.showCodeDropdown[index] = results.length > 0;
-          this.showDescriptionDropdown[index] = results.length > 0;
-
-          this.cdr.detectChanges();
-        },
-        error: () => this.clearSuggestions(index),
-      });
-  } */
 
   searchCIE10(
     filters: { code?: string; name?: string },
