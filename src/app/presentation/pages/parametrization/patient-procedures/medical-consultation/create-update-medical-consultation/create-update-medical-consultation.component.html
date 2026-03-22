@@ -758,6 +758,15 @@
           </div>
 
           <div class="row mt-3">
+            <div class="col-12 mb-3">
+              <label for="paraclinicalResults" class="form-label">Resultados paraclínicos</label>
+              <textarea id="paraclinicalResults" class="form-control" formControlName="paraclinicalResults" rows="4"
+                placeholder="Registre aquí los resultados de exámenes paraclínicos al cierre de la consulta"
+                [readonly]="isReadOnlyForm"></textarea>
+            </div>
+          </div>
+
+          <div class="row mt-3">
             <div class="col-12 col-lg-6">
               <div class="form-check form-switch form-switch-lg mb-3">
               

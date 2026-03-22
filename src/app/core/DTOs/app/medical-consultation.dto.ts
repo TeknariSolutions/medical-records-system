@@ -53,4 +53,6 @@ export interface MedicalConsultationDTO {
   idMedicalServices: number;
   idModalityAttention: number;
   groupServiceCode: string;
+
+  paraclinicalResults: string;
 }

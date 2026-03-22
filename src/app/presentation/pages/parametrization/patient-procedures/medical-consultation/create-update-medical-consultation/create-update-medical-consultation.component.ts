@@ -224,6 +224,7 @@ export class CreateUpdateMedicalConsultationComponent {
         idConsultationFinality: [null],
         idExitCondition: [null],
         idExternalCauseCode: [null],
+        paraclinicalResults: [''],
         status: [false]
       }),
       analysisOrConcept: this.fb.group({
@@ -539,6 +540,7 @@ export class CreateUpdateMedicalConsultationComponent {
         idConsultationFinality: c.idConsultationFinality || null,
         idExitCondition: c.idExitCondition || null,
         idExternalCauseCode: c.idExternalCauseCode || null,
+        paraclinicalResults: c.paraclinicalResults ?? '',
         status: c.status ?? false
       },
     };
@@ -741,6 +743,7 @@ export class CreateUpdateMedicalConsultationComponent {
       idConsultationFinality: formValues.closeConsultation.idConsultationFinality ?? null,
       idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
       idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
+      paraclinicalResults: formValues.closeConsultation.paraclinicalResults ?? '',
        status: formValues.closeConsultation.status,
 
       
@@ -760,6 +763,7 @@ export class CreateUpdateMedicalConsultationComponent {
     baseData.treatment = baseData.treatment?.trim() || '';
     baseData.currentIllness = baseData.currentIllness?.trim() || '';
     baseData.paraClinicalTest = baseData.paraClinicalTest?.trim() || '';
+    baseData.paraclinicalResults = baseData.paraclinicalResults?.trim() || '';
     (baseData as any).typeOfAttention = false;
 
     baseData.idConsultationFinality = baseData.idConsultationFinality ?? null;
