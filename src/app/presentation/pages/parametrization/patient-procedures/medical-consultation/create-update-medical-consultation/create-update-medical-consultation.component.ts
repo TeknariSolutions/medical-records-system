@@ -218,13 +218,13 @@ export class CreateUpdateMedicalConsultationComponent {
         observations: ['NO APLICA'],
       }),
       paraClinicals: this.fb.group({
-        paraClinicalTest: ['']
+        paraClinicalTest: [''],
+        paraclinicalResults: ['']
       }),
       closeConsultation: this.fb.group({
         idConsultationFinality: [null],
         idExitCondition: [null],
         idExternalCauseCode: [null],
-        paraclinicalResults: [''],
         status: [false]
       }),
       analysisOrConcept: this.fb.group({
@@ -530,7 +530,8 @@ export class CreateUpdateMedicalConsultationComponent {
         observations: c.observations ?? ''
       },
       paraClinicals: {
-        paraClinicalTest: c.paraClinicalTest ?? ''
+        paraClinicalTest: c.paraClinicalTest ?? '',
+        paraclinicalResults: c.paraclinicalResults ?? ''
       },
       analysisOrConcept: {
         analysisOrConcept: c.analysisOrConcept ?? '',
@@ -540,7 +541,6 @@ export class CreateUpdateMedicalConsultationComponent {
         idConsultationFinality: c.idConsultationFinality || null,
         idExitCondition: c.idExitCondition || null,
         idExternalCauseCode: c.idExternalCauseCode || null,
-        paraclinicalResults: c.paraclinicalResults ?? '',
         status: c.status ?? false
       },
     };
@@ -736,6 +736,7 @@ export class CreateUpdateMedicalConsultationComponent {
 
 
       paraClinicalTest: formValues.paraClinicals.paraClinicalTest,
+      paraclinicalResults: formValues.paraClinicals.paraclinicalResults ?? '',
 
       analysisOrConcept: formValues.analysisOrConcept.analysisOrConcept,
       treatment: formValues.analysisOrConcept.treatment,
@@ -743,7 +744,6 @@ export class CreateUpdateMedicalConsultationComponent {
       idConsultationFinality: formValues.closeConsultation.idConsultationFinality ?? null,
       idExitCondition: formValues.closeConsultation.idExitCondition ?? null,
       idExternalCauseCode: formValues.closeConsultation.idExternalCauseCode ?? null,
-      paraclinicalResults: formValues.closeConsultation.paraclinicalResults ?? '',
        status: formValues.closeConsultation.status,
 
       
