@@ -581,14 +581,15 @@
         <!-- Paraclínicos -->
         <div *ngIf="currentStep === 6" formGroupName="paraClinicals">
           <div class="col-12">
-            <label>Paraclínicos</label>
-            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5" [readonly]="isReadOnlyForm"></textarea>
+            <label>Examenes externos</label>
+            <textarea class="form-control mb-2" formControlName="paraClinicalTest" rows="5" 
+            placeholder="Registre aquí los resultados de exámenes de consulta" [readonly]="isReadOnlyForm"></textarea>
           </div>
 
           <div class="col-12 mt-3">
-            <label for="paraclinicalResults" class="form-label">Resultados paraclínicos externos</label>
+            <label for="paraclinicalResults" class="form-label">Examenes de consulta</label>
             <textarea id="paraclinicalResults" class="form-control" formControlName="paraclinicalResults" rows="4"
-              placeholder="Registre aquí los resultados de exámenes paraclínicos externos"
+              placeholder="Registre aquí los resultados de exámenes de consulta"
               [readonly]="isReadOnlyForm"></textarea>
           </div>
 
